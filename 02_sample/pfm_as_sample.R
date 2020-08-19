@@ -285,7 +285,7 @@ sp_sample@data <- sp_sample@data %>%
 
 # Keep Only some variables
 sp_sample@data <- sp_sample@data %>%
-  select(select,
+  dplyr::select(select,
          region_c, region_n,
          district_c, district_n,
          ward_c, ward_n,
