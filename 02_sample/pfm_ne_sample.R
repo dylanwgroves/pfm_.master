@@ -24,7 +24,7 @@ set.seed(122)
 #--------------------------------------------------
 # Load Data
 #--------------------------------------------------
-df <- read.csv("01_data/01_raw_data/01_sample/pfm_ne_villagescoping.csv")
+df <- read.csv("../Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/01_sample/pfm_ne_villagescoping.csv")
 
 #--------------------------------------------------
 # Dataset
@@ -139,6 +139,6 @@ df.control$match <- df.matches$treat # Store match from matches DF
 
 df.sample <- rbind(df.treat, df.control) # Bind together treatment group and others
 
-write.csv("01_data/03_final_data/01_sample/pfm_ne_sample_final.csv")
+#write.csv(df.sample, "../Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/01_sample/pfm_ne_sample_final.csv")
 
 
