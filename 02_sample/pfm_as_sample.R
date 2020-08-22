@@ -172,7 +172,14 @@ vills_pfm1 <- vills_pfm1[!is.na(vills_pfm1@data$q1_3_mainvillage_cell),]
 vills_scoping <- vills
 vills_scoping <- merge(vills_scoping, scoping, by=c("District_N", "Ward_Name", "Vil_Mtaa_N"), stringsAsFactors = FALSE)
 vills_scoping <- vills_scoping[!is.na(vills_scoping@data$audio_consent),]
-  
+
+
+#########
+# Save Main Data ----------------------------------------------------------
+save.image(file = "/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/02_mid_data/pfm_as_sample.RData")
+#save.image(file = "wellspring_01_master/01_data/02_mid_data/pfm_as_sample.RData")
+########
+
 # Merge New Village Center Data -----------------------------------------------------------
 
 # This data was generated in QGIS - Martin and Dylan located village centers via map
@@ -228,6 +235,8 @@ df_sample <- merge(df_sample, sp_vill_cent, by.x = c("District_C", "Ward_Code", 
                    by.y=c("district_c", "ward_c", "village_c"), stringsAsFactors = FALSE)
 
 df_sample <- df_sample[df_sample$reject == "0",]
+
+#write.csv(df_sample, "/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/a.csv")
 
 ####################################################################################
 #
