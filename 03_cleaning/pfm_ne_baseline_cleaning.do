@@ -14,6 +14,8 @@ set more off
 version 15 
 set maxvar 30000
 
+
+
 /* Set Globals -----------------------------------------------------------------*/
 use "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
 
@@ -21,7 +23,14 @@ use "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_d
 lab def yesnodkr 0 "No" 1 "Yes" -999 "Dont Know" -888 "Refuse"
 
 /* Drop */
-drop deviceid subscriberid simid devicephonenum starttime endtime skipto* idstring time_* id* villstring
+drop deviceid subscriberid simid devicephonenum starttime endtime skipto* idstring time_*
+
+/* Identifiers */
+egen resp_id = concat(villstring id), punct(_)
+gen village_c = village
+gen ward_c = ward
+gen district_c = district
+
 
 /* Section 0: Consent ---------------------------------------------------------*/
 rename audio_consent s0q1_consent_audio

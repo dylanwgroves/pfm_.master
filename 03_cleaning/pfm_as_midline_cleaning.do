@@ -610,20 +610,4 @@ rename s13q3 s13q4_otherspresent
 * Save -------------------------------------------------------------------------
 save  "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\pfm_as_midline_clean.dta", replace
 
-/*
-preserve
 
-
-reshape long 	mig_age_ mig_gen_ mig_now_ mig_everdum_ mig_evernum_ mig_tripnum_ ///
-				mig_longstay_ mig_where_ mig_occup_ mig_remitqty_ mig_rmitunit_ ///
-				mig_remituse_ mig_remituse_other_ mig_longaway_ mig_rmitamnt_ , i(cases_id) j(migrant)
-				
-
-rename *_ *
-
-save  "../05_data/04_precheck/panganifm2_followup_dg_long.dta", replace
-stop
-restore
-
-					
-		
