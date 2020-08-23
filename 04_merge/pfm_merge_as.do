@@ -31,22 +31,22 @@ _______________________________________________________________________________*
 	/* Audio Screening */
 	
 		/* All villages */
-		use "${data}\01_raw_data\pfm_allvills_clean.dta"
+		use "${data}/01_raw_data/pfm_allvills_clean.dta"
 		sort village_id
 		save `temp_allvills'
 		
 		/* Baseline */
-		use "${data}\02_mid_data\pfm_as_baseline_clean.dta", clear
+		use "${data}/02_mid_data/pfm_as_baseline_clean.dta", clear
 		sort village_id resp_id
 		save `temp_base'
 		
 		/* Midline */
-		use "${data}\01_raw_data\pfm_as_midline_clean.dta", clear
+		use "${data}/01_raw_data/pfm_as_midline_clean.dta", clear
 		sort resp_id 
 		save `temp_mid', replace
 		
 		/* Radio Distribution */
-		use "${data}\02_mid_data\pfm_clean_rd_distribution_as.dta", clear
+		use "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", clear
 		sort resp_id 
 		save `temp_rd_dist'
 		
@@ -55,7 +55,7 @@ _______________________________________________________________________________*
 		save `temp_rd_rand'
 		
 		/* Village Randomization */
-		use "${data}\01_raw_data\pfm_as_randomization.dta", clear
+		use "${data}/01_raw_data/pfm_as_randomization.dta", clear
 		save `temp_rand'
 		
 		/* Merge */

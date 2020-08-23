@@ -14,7 +14,7 @@ set maxvar 30000
 set more off
 
 * Import Data ------------------------------------------------------------------
-use "${data}\01_raw_data\03_surveys\pfm_as_baseline_nopii.dta", clear
+use "${data}/01_raw_data/03_surveys/pfm_pii_as_baseline.dta", clear
 
 * Variable Labels --------------------------------------------------------------
 #d ;
@@ -488,7 +488,7 @@ gen s13q3_worseconditions = 1 if s13q3_livingconditions	== 1 | 	s13q3_livingcond
 rename s13q4 s13q4_otherspresent	
 
 * Save -------------------------------------------------------------------------
-save "${data}\02_mid_data\pfm_as_baseline_clean.dta", replace
+save "${data}/02_mid_data/pfm_as_baseline_clean.dta", replace
 											
 				
 				

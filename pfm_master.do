@@ -59,7 +59,10 @@ else {
 	/* Village Master */
 	
 		do "${code}/02_import/pfm_import_villagemaster.do" // Tanzania census of all villages
-		
+
+/*_______________________________________________________________________________*/
+
+
 
 /* Part 2: Cleaning ____________________________________________________________*/
 
@@ -82,6 +85,10 @@ else {
 	
 		do "${code}/03_clean/pfm_clean_ne_baseline.do" // Baseline
 
+/*_______________________________________________________________________________*/
+
+	
+	
 	
 /* Part 3: Merge _______________________________________________________________*/
 
@@ -97,10 +104,8 @@ else {
 	/* Append Together */
 	
 		do "${code}/04_merge/pfm_append.do" // Baseline
-		
-stop
 
-*_______________________________________________________________________________
+/*_______________________________________________________________________________*/
 
 
 
@@ -110,9 +115,8 @@ stop
 * Tasks: Clean, and generate variables 
 * Note: Prelimenary data collection and PII removal occurs in Box Folders
 
-			do "${code}\pfm_as_merge_baseline_midline.do" 	// Merge Audio Screening Baseline and Endline
-			do "${code}\pfm_as_baseline_cleaning.do"  	// Merge Screening
-			
-*_______________________________________________________________________________
+			do "${code}/05_newvars/pfm_newvars.do" 	// Merge Audio Screening Baseline and Endline
 
+			
+/*_______________________________________________________________________________*/
 

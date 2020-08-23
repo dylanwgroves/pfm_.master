@@ -40,15 +40,16 @@ _______________________________________________________________________________*
 	drop respid
 	sort resp_id
 	save `temp_base', replace
-	
+
 	/* Radio Randomization */
 	use "${data}/01_raw_data/03_surveys/pfm_pii_rd_randomization_ne.dta", clear
 	rename object_id objectid
-	sort objectid																	// Has both version of respid and resp_id
+	sort objectid																// Has both version of respid and resp_id
 	save `temp_rd_rand', replace
 
 	/* Radio Distribution */
 	use "${data}/02_mid_data/pfm_clean_rd_distribution_ne.dta", clear	
+	drop resp_name
 	sort respid																	// Only has the no "_" version of respid
 	save `temp_rd_dist', replace
 

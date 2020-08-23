@@ -22,9 +22,9 @@ _______________________________________________________________________________*
 /* Define Samples ______________________________________________________________*/
 
 	gen sample_survey = 1 if ne_sample == "ne"
-		replace sample = 2 if as_sample == "as"
-		lab def survey_survey 0 "Natural Experiment" 1 "Audio Screening" 2 "Pangani"
-		lab val sample_survey survey
+		replace sample_survey = 2 if as_sample == "as"
+		lab def sample_survey 1 "Natural Experiment" 2 "Audio Screening" 3 "Pangani"
+		lab val sample_survey sample_survey
 		lab var sample_survey "Sample survey (Audio Screening / Natural Experiment / Pangani)"
 	
 	gen sample_ne = (ne_sample == "ne")
@@ -37,7 +37,7 @@ _______________________________________________________________________________*
 		
 /* Treatment Groups ____________________________________________________________*/
 
-	/* Natural Experimetn */
+	/* Natural Experiment */
 	rename ne_treat treat_ne
 		lab def treat_ne 0 "Outside PFM range" 1 "Inside PFM range"
 		lab val treat_ne treat_ne
@@ -57,8 +57,7 @@ _______________________________________________________________________________*
 		lab var treat_rd "Treatment - Radio distribution"
 		
 	/* Drop */
-	drop ne_treat_rd as_treat_rd
-	
+	drop ne_treat_rd as_treat_rd id_re id_2 	
 
 /* Identifiers _________________________________________________________________*/
 
@@ -75,19 +74,31 @@ _______________________________________________________________________________*
 		replace id_resp_c = as_resp_c if sample_as == 1
 		lab var id_resp_c "Respondnet Code"
 	gen id_resp_n = ne_resp_name if sample_ne == 1
-		replace id_resp_n = as_name if sample_as == 1
+		replace id_resp_n = as_name if sample_as == 1							// SOME VILLAGES ARE MISSING
 		lab var id_resp_n "Respondnet Name"
 		
 	/* Unique IDs */
 	egen id_village_uid = concat(id_district_c id_ward_c id_village_c), punct("_")
 		lab var id_village_uid "Village Unique ID"
 		
-	egen id_resp_uid = concat(id_village_uid id_resp_c), punct("_")
+	egen id_resp_uid = concat(id_village_uid id_resp_c), punct("_")				
 		lab var id_resp_uid "Respondent Unique ID"
-	
+
 /* Drop ________________________________________________________________________*/
 
 drop as_cases*
+
+keep sample_* treat_* id_*
+sort id_village_uid id_resp_uid
+order id_* sample_* treat_*
+
+*drop resp_n 
+
+
+/* Export ________________________________________________________________________*/
+
+
+save "${data}/03_final_data/pfm_all.dta", replace
 
 	
 		
