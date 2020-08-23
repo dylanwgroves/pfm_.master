@@ -1,20 +1,28 @@
-/* background -----------------------------------------------------------------
+
+/* Basics ______________________________________________________________________
+
 project: Wellspring Tanzania, Natural Experiment
 purpose: Import raw data and remove PII
 author: dylan groves, dylanwgroves@gmail.com
 date: 2020/08/18
-*/
 
-/* introduction ---------------------------------------------------------------*/
-clear all	
-clear matrix
-clear mata
-set more off
-version 15 
-set maxvar 30000
+________________________________________________________________________________*/
 
-/* set data -----------------------------------------------------------------*/
-use "X:\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis\0 - Raw Data_encrypted\Baseline\panganifm_baseline survey_cleaned.dta" 
+
+/* Introduction ________________________________________________________________*/
+
+	clear all	
+	clear matrix
+	clear mata
+	set more off
+	version 15 
+	set maxvar 30000
+
+	
+/* Import data ____________________________________________________________________*/
+
+use "${ipa_ne}\0 - Raw Data_encrypted\Baseline\panganifm_baseline survey_cleaned.dta" 
+
 
 /* Cleaning ____________________________________________________________________*/
 
@@ -36,12 +44,15 @@ replace id  = "99" if key == "uuid:59e46e33-d26b-47f5-85d8-43f3d238c2ac"
 replace id =  "98" if key == "uuid:cedf83e9-2107-4365-8159-f2aed9000eea"
 
 
-/* drop PII variables ----------------------------------------------------------*/
-*drop head_name resp_name survey_locationlongitude survey_locationlatitude enumerator_notes resp_phon*
+/* Export ____________________________________________________________________*/
 
-/* export ----------------------------------------------------------------------*/
-save "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", replace
-stop
+/* PII */
+save "${data}\01_raw_data\03_surveys\pfm_rawpii_ne_baseline.dta", replace
+
+/* No PII */
+drop head_name resp_name survey_locationlongitude survey_locationlatitude enumerator_notes resp_phon*
+save "${data}\01_raw_data\03_surveys\pfm_rawnopii_ne_baseline.dta", replace
+
 	
 	
 	

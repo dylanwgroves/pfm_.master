@@ -14,7 +14,7 @@ set maxvar 30000
 set more off
 
 * Import Data ------------------------------------------------------------------
-use "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\03_surveys\pfm_as_baseline_nopii.dta", clear
+use "${data}\01_raw_data\03_surveys\pfm_as_baseline_nopii.dta", clear
 
 * Variable Labels --------------------------------------------------------------
 #d ;
@@ -24,6 +24,10 @@ lab define yesnodkr
 -999 "Don't Know"
 -888 "Refuse" ;
 #d cr
+
+* Converting don't know/refuse/other to extended missing values
+qui ds, has(type numeric)
+recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 * Clean up ---------------------------------------------------------------------
 drop subscriberid simid devicephonenum username duration rand_bc
@@ -39,9 +43,16 @@ recode team (3 = 1) (4 = 0) (5 = 0) (9 = 1)(11 = 0)(12 = 1)(13 = 0)(14 = 1)(15 =
 
 * Section 1: Background --------------------------------------------------------
 rename s1q1 s1q1_date
-rename s1q3 s1q3_district
-rename s1q4 s1q7_ward
-rename s1q5 s1q8_village
+rename s1q3 district_c
+rename district_name district_n
+rename s1q4 ward_c
+rename ward_name ward_n
+rename village_c_pull village_c
+rename village_name village_n
+rename id resp_c
+
+drop village_id_pull village
+
 rename s1q6 s1q9_subvillage
 rename s1q7 s1q10_visits
 
@@ -477,7 +488,7 @@ gen s13q3_worseconditions = 1 if s13q3_livingconditions	== 1 | 	s13q3_livingcond
 rename s13q4 s13q4_otherspresent	
 
 * Save -------------------------------------------------------------------------
-save "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\02_mid_data\pfm_as_baseline_clean.dta", replace
+save "${data}\02_mid_data\pfm_as_baseline_clean.dta", replace
 											
 				
 				

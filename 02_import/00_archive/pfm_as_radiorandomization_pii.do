@@ -1,9 +1,9 @@
 *-------------------------------------------------------------------------------
 * Project: Pangani FM 2
-* File: Baseline Pilot Import and Cleaning
-* Date: 7/5/2019
+* File: Radio Distribution Randomization (AS)
+* Date: 8/22/2019
 * Author: Dylan Groves, dgroves@poverty-action.org
-* Overview: This imports piloting data
+* Overview: This imports radio distribution randomization file
 *-------------------------------------------------------------------------------
 
 /* Introduction ___________________________________________________________________*/
@@ -15,8 +15,8 @@ set more off
 
 /* Import Data ___________________________________________________________________*/
 
-import delimited "X:\Box Sync\17_PanganiFM_2\07&08 Questionnaires & Data\03 Baseline\04_Data Quantitative\02 Main Survey Data\05_data\09_radio_distribution\05_Radio_Survey\panganifm2_radiodistribution_master.csv", encoding(ISO-8859-9) clear 
-stop
+import delimited "${ipa_as}\05_data\09_radio_distribution\05_Radio_Survey\panganifm2_radiodistribution_master.csv", encoding(ISO-8859-9) clear 
+
 /* Data Cleaning ___________________________________________________________________*/
 
 * Geographic Variables
@@ -31,11 +31,11 @@ lab var treat_rd "Radio Randomization Treatment"
 /* Export _____________________________________________________________________*/
 
 /* PII */
-save "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\01_sample\pfm_as_radiorandomization_pii.dta", replace
+save "${data}/01_raw_data/01_sample/pfm_as_radiodistribution_pii.dta", replace
 
 /* No PII */
 drop resp_n cases_phone1 cases_phone2 cases_*
-save "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\01_sample\pfm_as_radiorandomization_nopii.dta", replace
+save "${data}/01_raw_data/01_sample/pfm_as_radiodistribution_nopii.dta", replace
 
 
 

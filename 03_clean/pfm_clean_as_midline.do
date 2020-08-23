@@ -9,31 +9,23 @@
 ** NOTES
 ** Need to drop dates from piloting
 
-* Introduction -----------------------------------------------------------------
+
+/* Introduction ________________________________________________________________*/
+
 clear all
 set maxvar 30000
 set more off
-set seed 1956
 
-* Import Data ------------------------------------------------------------------
-use "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\03_surveys\pfm_as_midline_nopii.dta", clear
+
+/* Import Data  ________________________________________________________________*/
+
+use "${data}\01_raw_data\03_surveys\pfm_as_midline_nopii.dta", clear
+
+
+/* Clean Data  _________________________________________________________________*/
 
 * Labels
 lab def yesnodk 0 "No" 1 "Yes" -999 "Dont Know" -888 "Refuse"
-
-* Set date for saving ----------------------------------------------------------
-global date 2019.07.31
-
-* Simple Variable Names
-rename time_1 date
-
-* Drop
-drop submissiondate
-drop isvalidated
-drop pre_village
-*keep if date == "2019-08-07"
-
-gen village = pre_village_name
 
 * Converting don't know/refuse/other to extended missing values
 qui ds, has(type numeric)
@@ -41,12 +33,17 @@ recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 * Section 1 - General Information ----------------------------------------------
 rename s1q1 s1q1_date
-rename pre_district s1q3_district
+drop pre_district
 rename pre_district_name s1q3_district_name
 rename pre_ward s1q4_ward
 rename pre_subvillage_name s1q6_subvillage
 rename s1q2 s1q7_visits
 rename s1q3 s1q8_matchbaseline	
+drop submissiondate
+drop isvalidated
+drop pre_village
+rename time_1 date	
+
 
 * Section 2 - Personal and HH Information --------------------------------------
 rename s2q1 s2q1_gender
@@ -60,7 +57,7 @@ replace s2q4_discussions = subinstr(s2q4_discussions, "-888", "refuse",.)
 
 gen s2q4_discussions_electric = 1 if strpos(s2q4_discussions, "1")				// NEED TO
 gen s2q4_discussions_ipv = 1 if strpos(s2q4_discussions, "2")
-gen s2q4_discussions_discrimination = 1 if strpos(s2q4_discussions, "3")
+gen s2q4_discussions_discrim = 1 if strpos(s2q4_discussions, "3")
 gen s2q4_discussions_ptix = 1 if strpos(s2q4_discussions, "4")
 gen s2q4_discussions_water = 1 if strpos(s2q4_discussions, "5") 	
 gen s2q4_discussions_hiv = 1 if strpos(s2q4_discussions, "6") 	
@@ -472,7 +469,7 @@ rename s8q15 s11q2_ipv_responsenorm
 rename s8q16 s11q3_ipv_knowlaw
 
 
-* Section 11 - Migration History -----------------------------------------------
+/* Section 11 - Migration History -----------------------------------------------
 rename s10bq0 s10bq0_hhhage
 lab var s10bq0_hhhage "Age of head of household"
 
@@ -553,7 +550,8 @@ gen mig_remituse_dk_`num' = 1 if strpos(s3q2_ptix_contact, "dontknow")
 
 rename s10bq16_`num' mig_remituse_other_`num'
 }
-
+*/
+drop s10*
 
 * Section 13 - Political Knowledge ---------------------------------------------
 lab define knowledge 0 "Don't Know" 1 "Know" -999 "Missing" 
@@ -607,7 +605,11 @@ gen comply_disc_comlead = 1 if strpos(s3q2_ptix_contact, "other cm")
 rename s13q1 s13q1_followup
 rename s13q3 s13q4_otherspresent
 
+* Drop and rename
+drop conjoint*
+drop times*
+
 * Save -------------------------------------------------------------------------
-save  "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\pfm_as_midline_clean.dta", replace
+save  "${data}\01_raw_data\pfm_as_midline_clean.dta", replace
 
 

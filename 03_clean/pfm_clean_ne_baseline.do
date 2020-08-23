@@ -16,11 +16,15 @@ set maxvar 30000
 
 
 
-/* Set Globals -----------------------------------------------------------------*/
-use "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
+/* Open -----------------------------------------------------------------*/
+use "${data}\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
 
 /* Labels */
 lab def yesnodkr 0 "No" 1 "Yes" -999 "Dont Know" -888 "Refuse"
+
+* Converting don't know/refuse/other to extended missing values
+qui ds, has(type numeric)
+recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 /* Drop */
 drop deviceid subscriberid simid devicephonenum starttime endtime skipto* idstring time_*
@@ -557,9 +561,12 @@ rename followup_q17_3 s17q3_followup
 
 rename observe_conditions_q17_4 s17q4_conditions
 
+/* Drop -------------------------------------------------------------------------*/
+drop q*
+
 
 * Save -------------------------------------------------------------------------
-save "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\02_mid_data\pfm_ne_baseline_clean.dta", replace
+save "${data}\02_mid_data\pfm_ne_baseline_clean.dta", replace
 											
 				
 				
