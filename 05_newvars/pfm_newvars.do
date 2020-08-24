@@ -28,11 +28,19 @@ _______________________________________________________________________________*
 		lab var sample_survey "Sample survey (Audio Screening / Natural Experiment / Pangani)"
 	
 	gen sample_ne = (ne_sample == "ne")
-		lab var sample_ne "Natural Experiment Sample"
+		lab def sample_ne 0 "No" 1 "Yes"
+		lab val sample_ne sample_ne
+		lab var sample_ne "[Dummy] Natural Experiment Sample"
+	
 	gen sample_as = (as_sample == "as")
-		lab var sample_as "Audio Screening Sample"
+		lab def sample_as 0 "No" 1 "Yes"
+		lab val sample_as sample_as
+		lab var sample_as "[Dummy] Audio Screening Sample"
+	
 	gen sample_rd = (ne_sample_rd == 1) | (as_sample_rd == 1)
-		lab var sample_rd "Radio Distribution Sample"
+		lab def sample_rd 0 "No" 1 "Yes"
+		lab val sample_rd sample_rd
+		lab var sample_rd "[Dummy] Radio Distribution Sample"
 		
 		
 /* Treatment Groups ____________________________________________________________*/
@@ -73,6 +81,7 @@ _______________________________________________________________________________*
 	gen id_resp_c = ne_id
 		replace id_resp_c = as_resp_c if sample_as == 1
 		lab var id_resp_c "Respondnet Code"
+	
 	gen id_resp_n = ne_resp_name if sample_ne == 1
 		replace id_resp_n = as_name if sample_as == 1							// SOME VILLAGES ARE MISSING
 		lab var id_resp_n "Respondnet Name"
@@ -83,21 +92,23 @@ _______________________________________________________________________________*
 		
 	egen id_resp_uid = concat(id_village_uid id_resp_c), punct("_")				
 		lab var id_resp_uid "Respondent Unique ID"
+		
+	gen id_objectid = ne_objectid if sample_ne == 1
+		replace id_objectid = as_objectid if sample_as == 1
+		lab var id_objectid "(TZ Census) Object ID"
 
 /* Drop ________________________________________________________________________*/
 
-drop as_cases*
-
-keep sample_* treat_* id_*
-sort id_village_uid id_resp_uid
-order id_* sample_* treat_*
-
-*drop resp_n 
+	drop as_cases*
+	keep sample_* treat_* id_*
+	sort id_village_uid id_resp_uid
+	order id_* sample_* treat_*
+	*drop resp_n 
 
 
 /* Export ________________________________________________________________________*/
 
-
+replace id_resp_n = ""
 save "${data}/03_final_data/pfm_all.dta", replace
 
 	
