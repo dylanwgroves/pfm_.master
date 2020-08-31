@@ -51,7 +51,7 @@ _______________________________________________________________________________*
 		save `temp_rd_dist'
 		
 		/* Radio Randomization */
-		use "${data}/01_raw_data/pfm_pii_rd_random_as.dta", clear
+		use "${data}/02_mid_data/pfm_rd_randomization_as.dta", clear
 		save `temp_rd_rand'
 		
 		/* Village Randomization */

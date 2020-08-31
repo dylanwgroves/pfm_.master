@@ -21,11 +21,6 @@ ________________________________________________________________________________
 
 use "${ipa_as}/05_data/04_precheck/panganifm2_baseline_clean", clear
 
-/* PII _________________________________________________________________________*/
-
-replace id = "028" if resp_name == "Julieth martin livinga"
-replace id = "93" if resp_name == "Maria joachim Edward"
-replace id = "88" if resp_name == "Hussein Rajabu Kiluwa"
 
 /* Export  _____________________________________________________________________*/
 
