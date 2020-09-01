@@ -61,12 +61,15 @@ set maxvar 30000
 	replace pfm_yes = panganiFM_test2 if pfm_yes == 2 | pfm_yes == 3 // try moving around house if difficult at first
 	lab def pfm 1 "Yes, clear" 2 "Yes, but difficult" 3 "Not clear"
 	lab val pfm_yes pfm
+	
+	** Create Master Dummy 
+	gen rd_dist_ne = 1
 
 
 /* Export _______________________________________________________________________*/
 
 	* Keep
-	keep survey* village* respid resp_* alt_* neighbor_* pfm_*
+	keep survey* village* respid resp_* alt_* neighbor_* pfm_* rd_dist_ne
 
 	* Export
 	save "${data}\02_mid_data\pfm_clean_rd_distribution_ne.dta", replace

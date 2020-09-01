@@ -25,6 +25,7 @@ lab define yesnodkr
 -888 "Refuse" ;
 #d cr
 
+
 * Converting don't know/refuse/other to extended missing values
 qui ds, has(type numeric)
 recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)

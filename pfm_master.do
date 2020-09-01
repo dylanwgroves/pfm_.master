@@ -23,18 +23,52 @@ ________________________________________________________________________________
 cap assert "$`{globals_set}'" == "yes"
 if _rc!=0 {  
 	* Set the path below to lead to the globals dofile. 
-	do "X:\Documents/pfm_.master/01_setup/pfm_paths_master.do"	
+	do "X:\Documents/pfm_.master/00_setup/pfm_paths_master.do"	
 	* Now open the globals dofile, and set paths as needed 
 	}
 else { 
 	di "Globals have already been set."
 }
-
+stop
 
 /* Part 1: Import ______________________________________________________________*/
 
 * Tasks: Import files from Box, remove PII
 * Note: This can only be run by authors with Boxcryptor Access
+
+	/* Radio Distribution */
+		
+		do "${code}/01_import/pfm_import_rd_randomization_ne.do" // Randomization - Audio screening
+		do "${code}/01_import/pfm_import_rd_randomization_ne.do" // Randomizatoin - Natural experiment
+
+		do "${code}/01_import/pfm_import_rd_distribution_as.do" // Distribution - Audio Screening
+		do "${code}/01_import/pfm_import_rd_distribution_ne.do" // Distribution - Natural Experiment
+		
+	/* Audio Screening */
+
+		do "${code}/01_import/pfm_import_as_sample.do" // Randomization
+		do "${code}/01_import/pfm_import_as_baseline.do" // Baseline
+		do "${code}/01_import/pfm_import_as_midline.do" // Midline
+	
+	/* Natural Experiment */
+	
+		do "${code}/01_import/pfm_import_ne_randomization.do" // Randomization
+		do "${code}/01_import/pfm_import_ne_baseline.do" // Baseline
+		
+
+	/* Village Master */
+	
+		do "${code}/01_import/pfm_import_villagemaster.do" // Tanzania census of all villages
+
+/*_______________________________________________________________________________*/
+
+
+
+/* Part 2: Randomzation ________________________________________________________
+
+Note that only radio distribution and audio screening are randomized, the natural
+experiment was generated using GenMatch											*/
+
 
 	/* Radio Distribution */
 		
@@ -46,7 +80,7 @@ else {
 		
 	/* Audio Screening */
 
-		do "${code}/02_import/pfm_import_as_randomization.do" // Randomization
+		do "${code}/02_import/pfm_import_as_sample.do" // Randomization
 		do "${code}/02_import/pfm_import_as_baseline.do" // Baseline
 		do "${code}/02_import/pfm_import_as_midline.do" // Midline
 	
@@ -61,6 +95,7 @@ else {
 		do "${code}/02_import/pfm_import_villagemaster.do" // Tanzania census of all villages
 
 /*_______________________________________________________________________________*/
+
 
 
 
