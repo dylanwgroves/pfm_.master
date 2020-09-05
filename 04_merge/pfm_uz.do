@@ -14,15 +14,7 @@ _______________________________________________________________________________*
 
 /* Temfiles __________________________________________________________________*/
 	
-	tempfile temp_allvills
-	tempfile temp_base
-	tempfile temp_mid
-	tempfile temp_rd_dist
-	tempfile temp_rd_rand
-	tempfile temp_rand
-	
-	tempfile temp_rd_ri
-	tempfile temp_ri
+set seed 1956
 
 /* Import Data ________________________________________________________________*/
 
@@ -30,13 +22,32 @@ _______________________________________________________________________________*
 	- 	we might want to consider adding a prefix to each survey so we know where its
 		coming from																*/
 
+	/* All villages */
+	use "${data}/01_raw_data/pfm_allvills_clean.dta"
+	keep if id_district_n == "Pangani"
 
-	/* Audio Screening */
 	
-		/* All villages */
-		use "${data}/01_raw_data/pfm_allvills_clean.dta"
-		sort village_id
-		save `temp_allvills'
+/* Randomize 1 ________________________________________________________________*/
+
+gen random_1 = runiform()
+
+sort random_1
+gen rank_1 = _n
+gen pick_1 = (rank_1 <= 13)
+
+order *village_n *ward_n 
+
+bys *ward_n : gen rank_2 = _n
+gen pick_2 = (rank_2 == 1)
+
+order pick_2 
+sort pick_2
+
+
+
+
+
+stop
 		
 		/* Baseline */
 		use "${data}/02_mid_data/pfm_as_baseline_clean.dta", clear

@@ -12,10 +12,6 @@ clear all
 set maxvar 30000
 set more off
 
-* Set Global -------------------------------------------------------------------
-global pfm2 "X:\Box Sync\17_PanganiFM_2\07&08 Questionnaires & Data\03 Baseline\04_Data Quantitative\02 Main Survey Data"
-global stata "X:\Box Sync\Wellspring Tanzania Papers\Wellspring Tanzania - Audio Screening"
-
 * Labels
 lab def yesnodk 0 "No" 1 "Yes" -999 "Dont Know" -888 "Refuse"
 lab def reversedyesno 0 "Yes" 1 "No" .d "Don't Know"
@@ -25,23 +21,13 @@ lab def reversedyesno 0 "Yes" 1 "No" .d "Don't Know"
 *-------------------------------------------------------------------------------
 
 * Import Basline ---------------------------------------------------------------
-	use "$pfm2/05_data/04_precheck/panganifm2_baseline_clean_dg.dta", clear
-	destring district_c_pull, gen(district_c)
-	destring ward_c_pull, gen(ward_c)
-	destring village_c_pull, gen(village_c)
-	save hfc_data, replace
-
-rename * b_*
-rename b_resp_id respid
-
-* Merge Endline ----------------------------------------------------------------
-	merge 1:1 respid using "$pfm2/05_data/04_precheck/panganifm2_followup_dg.dta", gen(_merge_b_e)
+use "${data}/03_final_data/pfm_as_merged.dta", clear
 
 *-------------------------------------------------------------------------------
 * Remove PII
 *-------------------------------------------------------------------------------
 
-* Baseline
+/* Baseline
 drop b_resp_name b_district_n b_ward_n b_village_n b_cases_label b_cases_resp_name ///
 		b_district_name b_ward_name b_village_name b_s1q9_subvillage b_idstring ///
 		b_resp_name2 b_resp_phone1 b_re_phone1 b_resp_phone2 b_re_phone2 b_head_name ///
@@ -50,7 +36,7 @@ drop b_resp_name b_district_n b_ward_n b_village_n b_cases_label b_cases_resp_na
 		
 * Endline
 drop s13q4 s13q4_oth resp_track_note resp_name resp_phone1 re_phone1 resp_phone2 re_phone2 head_name ///
-		
+	
 		
 *-------------------------------------------------------------------------------
 * Remove Desideratum
@@ -73,7 +59,7 @@ drop _merge deviceid subscriberid simid devicephonenum username rand_bc selectio
 		pre_hhh_phone pre_resp_name pre_resp_gender_txt pre_hhh_name s1q6_subvillage ///
 		pre_village_name pre_ward_name s1q4_ward s1q3_district intro_note* formdef_version key ///
 		fo_string village
-
+*/	
 *-------------------------------------------------------------------------------
 * Baseline Covariates
 *-------------------------------------------------------------------------------
@@ -98,7 +84,7 @@ replace c_education_years = 16 if b_s2q19_education > 16 // Dont have a way to c
 replace c_education_years = 16 if b_s2q19_education_oth == "Astashahada"
 
 
-gen c_equalchildcare = b_s6q1_gh_eqkid
+gen c_equalchildcare = b_s6q1_gh_noeqkid	
 gen c_dadchoosehusband = b_s6q2_gh_marry
 gen c_equallearningbad = b_s6q3_gh_earn
 gen c_equalearningbad = b_s6q3_gh_earn
@@ -145,7 +131,7 @@ replace c_believewitchcraft  = 0 if c_believewitchcraft  == .d
 gen c_cellinternet = b_s12q3a_cellint 
 gen c_longcellbattery = b_s12q3b_battery_weeks
 gen c_mudwalls = b_s11q3_mudwalls
-bys b_s1q8_village : egen c_vill_attend = count(comply_attend) 
+bys b_village_c : egen c_vill_attend = count(comply_attend) 
 
 recode c_readwrite c_timeinvillage c_equallearningbad c_trustelders c_anyradio  (-999 = .d)
 
@@ -233,6 +219,8 @@ gen churchattendance = b_s3q2_rel_attend // Not including because of high number
 	replace hiv_prior_list = 1 if s3q3_prior_hiv == 0
 	replace hiv_prior_list = 0 if s3q3_prior_hiv == -1
 	
+
+	
 	replace hiv_prior_list = 4 if s3q3_prior_hiv == 3 & s3q3_prior_fm == 3
 	replace hiv_prior_list = 3 if s3q3_prior_hiv == 2 & (s3q3_prior_fm == 3 | s3q3_prior_fm == 2)
 	replace hiv_prior_list = 2 if s3q3_prior_hiv == 1 & (s3q3_prior_fm == 3 | s3q3_prior_fm == 2 | s3q3_prior_fm == 1)
@@ -306,7 +294,7 @@ gen churchattendance = b_s3q2_rel_attend // Not including because of high number
 	replace fm_prior_list = 3 if s3q3_prior_fm == 2 & (s3q3_prior_hiv == 3 | s3q3_prior_hiv == 2)
 	replace fm_prior_list = 2 if s3q3_prior_fm == 1 & (s3q3_prior_hiv == 3 | s3q3_prior_hiv == 2 | s3q3_prior_hiv == 1)
 	replace fm_prior_list = 1 if s3q3_prior_fm == 0 & (s3q3_prior_hiv == 3 | s3q3_prior_hiv == 2 | s3q3_prior_hiv == 1 | s3q3_prior_hiv == 0)
-
+stop
 	lab var fm_prior_list "Priority of FM"
 	lab val fm_prior_list s3q3_prior_fm
 	
@@ -397,9 +385,9 @@ bys b_village_c : egen vill_fmdiff = mean(fm_diff)
 gen vill_bfm_dum = 1 if vill_bfm < .2
 replace vill_bfm_dum = 0 if vill_bfm_dum == .
 
-rename b_district_c district_c
-rename b_ward_c ward_c
-rename b_village_c village_c
+*rename b_district_c district_c
+*rename b_ward_c ward_c
+*rename b_village_c village_c
 
 *-------------------------------------------------------------------------------
 * Save

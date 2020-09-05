@@ -551,7 +551,7 @@ gen mig_remituse_dk_`num' = 1 if strpos(s3q2_ptix_contact, "dontknow")
 rename s10bq16_`num' mig_remituse_other_`num'
 }
 */
-drop s10*
+*drop s10*
 
 * Section 13 - Political Knowledge ---------------------------------------------
 lab define knowledge 0 "Don't Know" 1 "Know" -999 "Missing" 
