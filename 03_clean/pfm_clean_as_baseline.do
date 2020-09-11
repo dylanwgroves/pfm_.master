@@ -307,6 +307,7 @@ lab val s4q7_radstns_* yesnodkr
 egen s4q7_radstns_tot = rowtotal(s4q7_radstns_*)	
 
 rename s4q8 s4q8_radiocommunity	
+stop
 gen s4q8_radcomm_ever = 0 if s4q8_radiocommunity == 8
 replace s4q8_radcomm_ever = 1 if s4q8_radcomm_ever == .
 replace s4q8_radcomm_ever = 0 if s4q3_radio_any	 == 0
