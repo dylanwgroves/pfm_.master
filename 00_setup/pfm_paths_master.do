@@ -22,7 +22,28 @@ set maxvar 30000
  
 /* Part 1: Set Globals _________________________________________________________*/
 
-/* Dylan */ 
+	foreach user in  "X:/" "/Users/BeatriceMontano/" {
+					capture cd "`user'"
+					if _rc == 0 macro def path `user'
+				}
+	local dir `c(pwd)'
+
+	/* Maine */
+	global code "Documents/pfm_.master"
+	global data "Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
+	
+	/* Output */
+	global output "Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
+	global output_final "Dropbox/Apps/Overleaf"
+	
+	/* IPA source files */
+	global ipa_ne "Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
+	global ipa_as "Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
+	global ipa_endline "Box Sync/19_Community Media Endlines"
+				
+	
+	
+/* Dylan 
 if "`c(username)'" == "dylan" {
 	
 	/* Maine */
@@ -39,10 +60,12 @@ if "`c(username)'" == "dylan" {
 	global ipa_endline "X:\Box Sync\19_Community Media Endlines"
 	
 }
+*/ 
+/* Bea */
 
-/* Bea 
-if "`c(username)'" == "Bea"														// Bea to fill in
-*/
+
+
+
 
 
 /* Set Date _____________________________________________________________________*/
