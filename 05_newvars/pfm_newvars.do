@@ -80,11 +80,11 @@ _______________________________________________________________________________*
 	
 	gen id_resp_c = ne_id
 		replace id_resp_c = as_resp_c if sample_as == 1
-		lab var id_resp_c "Respondnet Code"
+		lab var id_resp_c "Respondent Code"
 	
 	gen id_resp_n = ne_resp_name if sample_ne == 1
 		replace id_resp_n = as_name if sample_as == 1							// SOME VILLAGES ARE MISSING
-		lab var id_resp_n "Respondnet Name"
+		lab var id_resp_n "Respondent Name"
 		
 	/* Unique IDs */
 	egen id_village_uid = concat(id_district_c id_ward_c id_village_c), punct("_")
