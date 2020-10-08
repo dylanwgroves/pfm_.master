@@ -12,7 +12,7 @@ ______________________________________________________________________________*/
 
 /* Stata Prep ___________________________________________________________________*/
 
-version 15 
+*version 15 
 clear all 
 clear matrix
 clear mata
@@ -22,24 +22,26 @@ set maxvar 30000
  
 /* Part 1: Set Globals _________________________________________________________*/
 
-	foreach user in  "X:/" "/Users/BeatriceMontano/" {
+	foreach user in  "X:" "/Users/BeatriceMontano" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
 	local dir `c(pwd)'
+	global user `dir'
+	display "${user}"
 
 	/* Maine */
-	global code "Documents/pfm_.master"
-	global data "Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
+	global code "${user}/Documents/pfm_.master"
+	global data "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
 	
 	/* Output */
-	global output "Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
-	global output_final "Dropbox/Apps/Overleaf"
+	global output "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
+	global output_final "${user}/Dropbox/Apps/Overleaf"
 	
 	/* IPA source files */
-	global ipa_ne "Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
-	global ipa_as "Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
-	global ipa_endline "Box Sync/19_Community Media Endlines"
+	global ipa_ne "${user}/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
+	global ipa_as "${user}/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
+	global ipa_endline "${user}/Box Sync/19_Community Media Endlines"
 				
 	
 	

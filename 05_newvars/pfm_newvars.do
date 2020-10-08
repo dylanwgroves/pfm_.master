@@ -94,7 +94,12 @@ drop ne_respid ne_real_treat
 		lab var id_resp_c "Respondent Code"
 	
 	gen id_resp_n = ne_resp_name if sample_ne == 1
-		replace id_resp_n = as_b_resp_name if sample_as == 1					// SOME VILLAGES ARE MISSING
+		replace id_resp_n = as_b_resp_name if sample_as == 1					
+		replace id_resp_c = as_resp_c if sample_as == 1
+		lab var id_resp_c "Respondent Code"
+	
+	gen id_resp_n = ne_resp_name if sample_ne == 1
+		replace id_resp_n = as_name if sample_as == 1							
 		lab var id_resp_n "Respondent Name"
 		
 	/* Unique IDs */
