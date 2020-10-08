@@ -350,7 +350,7 @@ destring randomdraw78or79, replace												// Changed Prices
 
 	gen s7q8_fm_t_outsidevill = 0 if txt2 == "ndani ya kijiji chao"
 	replace s7q8_fm_t_outsidevill = 1 if txt2 == "nje ya kijiji chao"
-	lab def outside 0 "Inside village" 1 "Inside village"
+	lab def outside 0 "Inside village" 1 "Outisde village"
 	lab val s7q8_fm_t_outsidevill outside 
 	lab var s7q8_fm_t_outsidevill "[Randomized] Suitor from outside / inside the village"
 

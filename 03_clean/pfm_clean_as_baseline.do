@@ -307,7 +307,7 @@ lab val s4q7_radstns_* yesnodkr
 egen s4q7_radstns_tot = rowtotal(s4q7_radstns_*)	
 
 rename s4q8 s4q8_radiocommunity	
-stop
+
 gen s4q8_radcomm_ever = 0 if s4q8_radiocommunity == 8
 replace s4q8_radcomm_ever = 1 if s4q8_radcomm_ever == .
 replace s4q8_radcomm_ever = 0 if s4q3_radio_any	 == 0
@@ -488,6 +488,11 @@ recode s13q2_screen (-999 = .d)
 rename s13q3 s13q3_livingconditions
 gen s13q3_worseconditions = 1 if s13q3_livingconditions	== 1 | 	s13q3_livingconditions == 2						
 rename s13q4 s13q4_otherspresent	
+
+* Fix Unique ID_________________________________________________________________*/
+replace resp_c = "98" if resp_name == "Julieth martin livinga"
+replace resp_c = "93" if resp_name == "Maria joachim Edward"
+replace resp_c = "88" if resp_name == "Hussein Rajabu Kiluwa"
 
 * Save -------------------------------------------------------------------------
 save "${data}/02_mid_data/pfm_as_baseline_clean.dta", replace

@@ -29,7 +29,7 @@ if _rc!=0 {
 else { 
 	di "Globals have already been set."
 }
-stop
+
 
 /* Part 1: Import ______________________________________________________________*/
 
@@ -52,7 +52,7 @@ stop
 	
 	/* Natural Experiment */
 	
-		do "${code}/01_import/pfm_import_ne_randomization.do" // Randomization
+		do "${code}/01_import/pfm_import_ne_baseline.do" // Randomization
 		do "${code}/01_import/pfm_import_ne_baseline.do" // Baseline
 		
 
@@ -72,27 +72,16 @@ experiment was generated using GenMatch											*/
 
 	/* Radio Distribution */
 		
-		do "${code}/02_import/pfm_import_rd_randomization_ne.do" // Randomization - Audio screening
-		do "${code}/02_import/pfm_import_rd_randomization_ne.do" // Randomizatoin - Natural experiment
-
-		do "${code}/02_import/pfm_import_rd_distribution_as.do" // Distribution - Audio Screening
-		do "${code}/02_import/pfm_import_rd_distribution_ne.do" // Distribution - Natural Experiment
+		do "${code}/02_randomization/pfm_randomization_rd_as.do" // Randomization - Audio screening
+		do "${code}/02_randomization/pfm_randomization_rd_ne.do" // Randomizatoin - Natural experiment
 		
 	/* Audio Screening */
 
-		do "${code}/02_import/pfm_import_as_sample.do" // Randomization
-		do "${code}/02_import/pfm_import_as_baseline.do" // Baseline
-		do "${code}/02_import/pfm_import_as_midline.do" // Midline
+		do "${code}/02_randomization/pfm_randomization_as.do" // Randomization
 	
 	/* Natural Experiment */
 	
-		do "${code}/02_import/pfm_import_ne_randomization.do" // Randomization
-		do "${code}/02_import/pfm_import_ne_baseline.do" // Baseline
-		
-
-	/* Village Master */
-	
-		do "${code}/02_import/pfm_import_villagemaster.do" // Tanzania census of all villages
+		* No Randomization for Natural Experiment // Baseline
 
 /*_______________________________________________________________________________*/
 
