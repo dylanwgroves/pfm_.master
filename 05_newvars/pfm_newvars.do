@@ -94,12 +94,7 @@ drop ne_respid ne_real_treat
 		lab var id_resp_c "Respondent Code"
 	
 	gen id_resp_n = ne_resp_name if sample_ne == 1
-		replace id_resp_n = as_b_resp_name if sample_as == 1					
-		replace id_resp_c = as_resp_c if sample_as == 1
-		lab var id_resp_c "Respondent Code"
-	
-	gen id_resp_n = ne_resp_name if sample_ne == 1
-		replace id_resp_n = as_name if sample_as == 1							
+		replace id_resp_n = as_b_resp_name if sample_as == 1					// SOME VILLAGES ARE MISSING
 		lab var id_resp_n "Respondent Name"
 		
 	/* Unique IDs */
@@ -122,60 +117,91 @@ willingness to marry. Differneces included:
 (2) In NE sample, amount offered was always less
 (3) In NE sample, there was a randomization error */
 
-* Personally Reject Early Marriage (Vignette)
-gen em_story_self = 1 if ne_s7q8_fm_okself == 0 & sample_ne == 1
-	replace em_story_self = 0 if ne_s7q8_fm_okself == 1 & sample_ne == 1 
-replace em_story_self = 1 if as_s4q1_fm_yesself == 1 & sample_as == 1			// These were coded in opposite directions in cleaning
-	replace em_story_self = 0 if as_s4q1_fm_yesself == 0 & sample_as == 1			
-	lab def em_story 	1 "No, a family should never marry their daughter under X circumstances" ///
-						0 "Yes, a family should marry their daughter under X circumstances"
-	lab val em_story_self em_story
-	lab var em_story_self "[Self] Early marriage ok under vignette circumstances?"
+tab as_s4q1_fm_yesself 
+tab as_s4q1_fm_yescomm
+* 0 = pro, 1 = against
 
-* Perceives Community would Reject Early Marriage (Vignette)
-gen em_story_comm = 1 if ne_s7q9_fm_okcomm == 0 & sample_ne == 1
-	replace em_story_comm = 0 if ne_s7q9_fm_okcomm == 1 & sample_ne == 1
-replace em_story_comm = 1 if as_s4q1_fm_yescomm == 1 & sample_as == 1
-	replace em_story_comm = 0 if as_s4q1_fm_yescomm == 0 & sample_as == 1
-	lab val em_story_comm em_story
-	lab var em_story_comm "[Community] Early marriage ok under vignette circumstances?"
+tab as_s4q1_fm_yescomm 
+tab ne_s7q9_fm_okcomm 
 
-gen em_story_t_age = ne_s7q8_fm_t_age if sample_ne == 1
-replace em_story_t_age = as_s4q1_fm_t_age if sample_as == 1
-	destring em_story_t_age, replace
-	lab var em_story_t_age "Age of daughter in vignette"
+as_s4q1_fm_yesself, col
+ne_s7q8_fm_okself , col
 
-gen em_story_t_outsider = ne_s7q8_fm_t_outsidevill if sample_ne == 1
-replace em_story_t_outsider = as_s4q1_fm_t_inout if sample_as == 1
-	lab def em_story_outside 1 "Outside village" 0 "Inside village"
-	lab val em_story_t_outside em_story_outside
-	lab var em_story_t_outsider "Prospective husband inside/outside of village"
+stop
 
-gen em_story_t_offer = ne_s7q8_fm_t_amnt if sample_ne == 1
-replace em_story_t_offer = as_s4q1_fm_t_amnt  if sample_as == 1
-	replace em_story_t_offer = subinstr(em_story_t_offer,",","",.)
-	destring em_story_t_offer, replace
-	lab var em_story_t_offer "Bride price offer"
+** Vignette 
+	* Personally Reject Early Marriage (Vignette)
+	gen em_story_self = 1 if ne_s7q8_fm_okself == 0 & sample_ne == 1
+		replace em_story_self = 0 if ne_s7q8_fm_okself == 1 & sample_ne == 1 
+	replace em_story_self = 1 if as_s4q1_fm_yesself == 1 & sample_as == 1			// These were coded in opposite directions in cleaning
+		replace em_story_self = 0 if as_s4q1_fm_yesself == 0 & sample_as == 1			
+		lab def em_story 	1 "No, a family should never marry their daughter under X circumstances" ///
+							0 "Yes, a family should marry their daughter under X circumstances"
+		lab val em_story_self em_story
+		lab var em_story_self "[Self] Early marriage ok under vignette circumstances?"
 
-gen em_story_t_son = ne_s7q8_fm_t_son if sample_ne == 1
-replace em_story_t_son = as_s4q1_fm_t_son if sample_as == 1
-	lab def em_story_son 1 "Son" 0 "Old man"
-	lab val em_story_t_son em_story_son
-	lab var em_story_t_son "Prospective husband father/son"
+	* Perceives Community would Reject Early Marriage (Vignette)
+	gen em_story_comm = 1 if ne_s7q9_fm_okcomm == 0 & sample_ne == 1
+		replace em_story_comm = 0 if ne_s7q9_fm_okcomm == 1 & sample_ne == 1
+	replace em_story_comm = 1 if as_s4q1_fm_yescomm == 1 & sample_as == 1
+		replace em_story_comm = 0 if as_s4q1_fm_yescomm == 0 & sample_as == 1
+		lab val em_story_comm em_story
+		lab var em_story_comm "[Community] Early marriage ok under vignette circumstances?"
 
-gen em_story_t_issue = ne_s7q8_fm_t_daughterissue if sample_ne == 1
-replace em_story_t_issue = 4 if ne_s7q8_fm_t_scen == 1							// If scenario is family money problems, daughter issue is not revealed even though SurveyCTO still randomly assigned to one of the daughter problems treatment groups
-replace em_story_t_issue = 1 if as_b_txt5_eng == "failing in school"
-replace em_story_t_issue = 2 if as_b_txt5_eng == "difficult to control at home"
-replace em_story_t_issue = 3 if as_b_txt5_eng == "at risk of getting pregnantt"
-replace em_story_t_issue = 4 if as_s4q1_fm_t_scen == 1								// If scenario is family money problems, daughter issue is not revealed even though SurveyCTO still randomly assigned to one of the daughter problems treatment groups
-	lab def em_story_issue 1 "Failing at school" 2 "Hard to control" 3 "Pregnancy risk" 4 "Family money problems"
-	lab val em_story_t_issue em_story_issue
-	lab var em_story_t_issue "Issue facing family"
+	* Vignette Treatments
+	gen em_story_t_age = ne_s7q8_fm_t_age if sample_ne == 1
+	replace em_story_t_age = as_s4q1_fm_t_age if sample_as == 1
+		destring em_story_t_age, replace
+		lab var em_story_t_age "Age of daughter in vignette"
+		
+	gen em_story_t_em = (em_story_t_age < 18)
+		lab def em 0 "Over 18 [Forced Marriage]" "Under 18 [Early Marriage]"
+		lab val em_story_t_em em
+		lab var em_story_t_em "Story about EARLY marriage or only FORCED marriage"
+
+	gen em_story_t_outsider = ne_s7q8_fm_t_outsidevill if sample_ne == 1
+	replace em_story_t_outsider = as_s4q1_fm_t_inout if sample_as == 1
+		lab def em_story_outside 1 "Outside village" 0 "Inside village"
+		lab val em_story_t_outside em_story_outside
+		lab var em_story_t_outsider "Prospective husband inside/outside of village"
+
+	gen em_story_t_offer = ne_s7q8_fm_t_amnt if sample_ne == 1
+	replace em_story_t_offer = as_s4q1_fm_t_amnt  if sample_as == 1
+		replace em_story_t_offer = subinstr(em_story_t_offer,",","",.)
+		destring em_story_t_offer, replace
+		lab var em_story_t_offer "Bride price offer"
+
+	gen em_story_t_son = ne_s7q8_fm_t_son if sample_ne == 1
+	replace em_story_t_son = as_s4q1_fm_t_son if sample_as == 1
+		lab def em_story_son 1 "Son" 0 "Old man"
+		lab val em_story_t_son em_story_son
+		lab var em_story_t_son "Prospective husband father/son"
+
+	gen em_story_t_issue = ne_s7q8_fm_t_daughterissue if sample_ne == 1
+	replace em_story_t_issue = 4 if ne_s7q8_fm_t_scen == 1							// If scenario is family money problems, daughter issue is not revealed even though SurveyCTO still randomly assigned to one of the daughter problems treatment groups
+	replace em_story_t_issue = 1 if as_b_txt5_eng == "failing in school"
+	replace em_story_t_issue = 2 if as_b_txt5_eng == "difficult to control at home"
+	replace em_story_t_issue = 3 if as_b_txt5_eng == "at risk of getting pregnantt"
+	replace em_story_t_issue = 4 if as_s4q1_fm_t_scen == 1								// If scenario is family money problems, daughter issue is not revealed even though SurveyCTO still randomly assigned to one of the daughter problems treatment groups
+		lab def em_story_issue 1 "Failing at school" 2 "Hard to control" 3 "Pregnancy risk" 4 "Family money problems"
+		lab val em_story_t_issue em_story_issue
+		lab var em_story_t_issue "Issue facing family"
+
+
+/* Forced Marriage ______________________________________________________________*/		
+
+
+recode as_s10q2_fm_accept (0=1 "Should not accept") (1=0 "Should accept"), gen(fm_girlreject)
+	lab var fm_girlreject "[REVERSED] An 18 year old girl should accept the husband her parents choose for her"
 	
+rename as_s5q2_gh_marry fm_girlpick 
+	replace fm_girlpick = 1 if ne_s7q2_gh_dadpickhusband == 0 
+	replace fm_girlpick = 0 if ne_s7q2_gh_dadpickhusband == 1
+	lab def fm_girlpick 0 "Dad should pick" 1 "Girl should pick"
+	lab val fm_girlpick fm_girlpick
 	
-tab em_story_self sample_ne if em_story_t_age < 18, col
-tab em_story_comm sample_ne if em_story_t_age < 18, col
+
+
 
 /* Drop ________________________________________________________________________*/
 
