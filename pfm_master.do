@@ -10,7 +10,7 @@ ________________________________________________________________________________
 
 
 /* Stata Prep __________________________________________________________________*/
-  version 15 
+  *version 15 
   clear all 
   clear matrix
   clear mata
@@ -20,10 +20,18 @@ ________________________________________________________________________________
  
 /* Part 0: Set Globals _________________________________________________________*/
 
+	foreach user in  "X:" "/Users/BeatriceMontano" {
+					capture cd "`user'"
+					if _rc == 0 macro def path `user'
+				}
+	local dir `c(pwd)'
+	global user `dir'
+	display "${user}"
+
 cap assert "$`{globals_set}'" == "yes"
 if _rc!=0 {  
 	* Set the path below to lead to the globals dofile. 
-	do "X:\Documents/pfm_.master/00_setup/pfm_paths_master.do"	
+	do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"	
 	* Now open the globals dofile, and set paths as needed 
 	}
 else { 
