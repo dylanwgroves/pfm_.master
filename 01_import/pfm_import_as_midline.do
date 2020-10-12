@@ -14,21 +14,38 @@ ________________________________________________________________________________
 	clear matrix
 	clear mata
 	set more off
-	version 15 
-	set maxvar 30000
+	set seed 1956
 
 /* Import  _____________________________________________________________________*/
 
-	use "${ipa_as}/05_data/04_precheck/panganifm2_Followup_clean", clear
+	import delimited "X:\Box Sync\19_Community Media Endlines\04_Research Design\04 Randomization & Sampling\02_uzikwasa_survey\pfm_uzikwasasurvey_sample_v2.csv", clear 
 
 
-/* Export  _____________________________________________________________________*/
+/* Randomize ___________________________________________________________________*/
 
-	/* PII */
-	save "${data}\01_raw_data\03_surveys\pfm_as_midline_pii.dta", replace
+sort distance
+gen random1 = runiform()
+gen random2 = runiform()
 
-	/* No PII */
-	drop head_name resp_name cases_label pre_label pre_phone* pre_phone2 pre_resp_name pre_hhh_name
-	save "${data}\01_raw_data\03_surveys\pfm_as_midline_nopii.dta", replace
+sort block random1 random2
+bys block : gen rank = _n
+
+sort block random2 random1
+bys ward_name: gen rank_ward = _n
+
+** Randomly select by ward
+gen ward_sample = 0
+replace ward_sample = 1 if rank_ward == 1
+
+** Generate Sampled Variables
+gen uzikwasa_sample = 0
+replace uzikwasa_sample = 1 if block == 4 & rank <= 3
+replace uzikwasa_sample = 1 if block == 3 & rank <= 4
+replace uzikwasa_sample = 1 if block == 2 & rank == 1	// Only one in the city
+replace uzikwasa_sample = 1 if block == 1 & rank <= 5
 
 
+tab uzikwasa_sample select, m
+stop
+keep if uzikwasa_sample == 1
+stop

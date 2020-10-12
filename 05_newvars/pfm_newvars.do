@@ -117,18 +117,6 @@ willingness to marry. Differneces included:
 (2) In NE sample, amount offered was always less
 (3) In NE sample, there was a randomization error */
 
-tab as_s4q1_fm_yesself 
-tab as_s4q1_fm_yescomm
-* 0 = pro, 1 = against
-
-tab as_s4q1_fm_yescomm 
-tab ne_s7q9_fm_okcomm 
-
-as_s4q1_fm_yesself, col
-ne_s7q8_fm_okself , col
-
-stop
-
 ** Vignette 
 	* Personally Reject Early Marriage (Vignette)
 	gen em_story_self = 1 if ne_s7q8_fm_okself == 0 & sample_ne == 1
@@ -155,7 +143,7 @@ stop
 		lab var em_story_t_age "Age of daughter in vignette"
 		
 	gen em_story_t_em = (em_story_t_age < 18)
-		lab def em 0 "Over 18 [Forced Marriage]" "Under 18 [Early Marriage]"
+		lab def em 0 "Over 18 [Forced Marriage]" 1 "Under 18 [Early Marriage]"
 		lab val em_story_t_em em
 		lab var em_story_t_em "Story about EARLY marriage or only FORCED marriage"
 
@@ -186,6 +174,12 @@ stop
 		lab def em_story_issue 1 "Failing at school" 2 "Hard to control" 3 "Pregnancy risk" 4 "Family money problems"
 		lab val em_story_t_issue em_story_issue
 		lab var em_story_t_issue "Issue facing family"
+stop
+
+
+tab em_story_self if em_story_t_em == 1 
+tab em_story_comm if em_story_t_em == 0
+
 
 
 /* Forced Marriage ______________________________________________________________*/		
@@ -193,7 +187,7 @@ stop
 
 recode as_s10q2_fm_accept (0=1 "Should not accept") (1=0 "Should accept"), gen(fm_girlreject)
 	lab var fm_girlreject "[REVERSED] An 18 year old girl should accept the husband her parents choose for her"
-	
+	stop
 rename as_s5q2_gh_marry fm_girlpick 
 	replace fm_girlpick = 1 if ne_s7q2_gh_dadpickhusband == 0 
 	replace fm_girlpick = 0 if ne_s7q2_gh_dadpickhusband == 1
