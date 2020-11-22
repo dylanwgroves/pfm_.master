@@ -62,6 +62,12 @@ ________________________________________________________________________________
 	rename neighbour_locationlongitude neighbor_longitude
 		replace neighbor_longitude = neighbour2_locationlongitude if neighbor_longitude == .
 
+	/* Radio Delivered */
+	gen radio_delivered = .
+		replace radio_delivered = 	(resp_consent == 1 | ///
+									alt_consent == 1 | ///
+									neighbor_name != "")
+	
 	** Pangani
 	rename panganifm_freq1 pfm_yes
 	lab def pfm 1 "Yes" 0 "No"
@@ -74,8 +80,11 @@ ________________________________________________________________________________
 /*Export ______________________________________________________________________________*/
 
 	* Keep
-	keep survey* village* resp_* alt_* neighbor_* pfm_*
+	keep survey* village* resp_* alt_* neighbor_* pfm_*  radio_*
 
+	* Label as Radio Distribution
+	rename * rd_*
+	
 	* Export
 	save "${data}\02_mid_data\pfm_clean_rd_distribution_as.dta", replace
 

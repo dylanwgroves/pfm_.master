@@ -31,7 +31,7 @@ set seed 1956
 
 	* (1) Generate Random Number
 	gen random_1 = runiform()				// Called random_2 because random_1 was used for randomly selecting villages out of wards
-	gen random_2 = runiform()
+	gen random_2 = runiform()	
 
 	* (2) Generate Median
 	bys village_c : egen r_median_1 = median(random_1)
@@ -54,6 +54,7 @@ set seed 1956
 
 /* Save ________________________________________________________________________*/
 
+stop
 save "${data}/02_mid_data/pfm_randomized_rd_ne.dta", replace
 
 *export delimited using "X:\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis\2 - Final Data\5_Radio Distribution\pfm_ri_sb.csv", replace

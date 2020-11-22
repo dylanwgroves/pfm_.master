@@ -82,7 +82,7 @@ experiment was generated using GenMatch											*/
 		
 		do "${code}/02_randomization/pfm_randomization_rd_as.do" // Randomization - Audio screening
 		do "${code}/02_randomization/pfm_randomization_rd_ne.do" // Randomizatoin - Natural experiment
-		
+
 	/* Audio Screening */
 
 		do "${code}/02_randomization/pfm_randomization_as.do" // Randomization
@@ -147,7 +147,7 @@ experiment was generated using GenMatch											*/
 * Tasks: Clean, and generate variables 
 * Note: Prelimenary data collection and PII removal occurs in Box Folders
 
-			do "${code}/05_newvars/pfm_newvars.do" 	// Merge Audio Screening Baseline and Endline
+		do "${code}/05_newvars/pfm_newvars.do" 	// Merge Audio Screening Baseline and Endline
 
 			
 /*_______________________________________________________________________________*/

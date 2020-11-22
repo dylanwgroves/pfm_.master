@@ -19,8 +19,14 @@ ________________________________________________________________________________
 
 /* Import  _____________________________________________________________________*/
 
-	import delimited "${ipa_ne}/2 - Final Data/genmatch_sample_2018.08.01.csv", encoding(ISO-8859-1)
+	import delimited "${ipa_ne}/2 - Final Data/genmatch_sample_2018.08.01.csv", encoding(ISO-8859-1) clear
+	stop
+	tempfile sb
+	save `sb'
+	import delimited "${ipa_ne}/2 - Final Data/genmatch_sample_2018.08.02.csv", encoding(ISO-8859-1) clear
+	merge 1:1 objectid using `sb', force
 	
+	stop
 	
 /* Basic Cleaning ______________________________________________________________*/
 

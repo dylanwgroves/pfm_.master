@@ -45,7 +45,7 @@ set maxvar 30000
 				
 	
 	
-/* Dylan 
+*Dylan 
 if "`c(username)'" == "dylan" {
 	
 	/* Maine */
@@ -62,7 +62,7 @@ if "`c(username)'" == "dylan" {
 	global ipa_endline "X:\Box Sync\19_Community Media Endlines"
 	
 }
-*/ 
+
 /* Bea */
 
 

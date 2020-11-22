@@ -461,14 +461,14 @@ rename contgov_q9_3c s9q3c_leaderlisten
 
 /* Section 10 Teacher Absenteeism --------------------------------------------------------*/
 * DROPPING FOR NOW BECAUSE IRRELEVANT
-drop fire_teach_q10_1a pta_q10_2a fire_teach_q10_1b pta_q10_2b fire_teach_q10_1c pta_q10_2c fire_teach_q10_1d pta_q10_2d teachers_q10_3
+*fire_teach_q10_1a pta_q10_2a fire_teach_q10_1b pta_q10_2b fire_teach_q10_1c pta_q10_2c fire_teach_q10_1d pta_q10_2d teachers_q10_3
 
 /* Section 11 Police ----------------------------------------------------------*/
 * DROPPING FOR NOW BECAUSE IRRELEVANT
-drop robbed_police_q11_1 audio_sec12
+*robbed_police_q11_1 audio_sec12
 
 /* Section 12: Abortion --------------------------------------------------------*/
-drop involved_q12_1 involved_comm_q12_2 mother_health_q12_3a married_q12_3b raped_q12_3c turnback_q12_4
+*involved_q12_1 involved_comm_q12_2 mother_health_q12_3a married_q12_3b raped_q12_3c turnback_q12_4
 
 /* Section 13: Religion --------------------------------------------------------*/
 rename religion_q13_1 s13q1_religion
@@ -480,7 +480,7 @@ gen s13q1_christian = 1 if 		s13q1_religion == 2 | s13q1_religion == 4 | ///
 								s13q1_religion == 7 | s13q1_religion == 8 | ///
 								s13q1_religion == 9 | s13q1_religion == 10 | ///
 								s13q1_religion_other == "Pentecost"
-replace s13q1_christian = 0 if s13q1_religion == .
+replace s13q1_christian = 0 if s13q1_christian == .
 lab var s13q1_christian "Christian or Muslim"
 lab def religion 0 "Muslim" 1 "Christian"
 lab val s13q1_christian religion
@@ -489,7 +489,7 @@ rename religion_times_q13_2 s3q2_rel_attend
 
 /* Section 14: Witchcraft and Police ------------------------------------------*/
 * DROPPING FOR NOW BECAUSE NOT INCLUDED
-drop witches_q14_1a witches_q14_1b randomdraw9 truck_q14_2a truck_q14_2b truck_beat1 truck_police1 randomdraw10 group_punish_q14_3a group_punish_q14_3b
+*witches_q14_1a witches_q14_1b randomdraw9 truck_q14_2a truck_q14_2b truck_beat1 truck_police1 randomdraw10 group_punish_q14_3a group_punish_q14_3b
 
 
 /* Section 15: Housing --------------------------------------------------------*/

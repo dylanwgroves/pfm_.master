@@ -63,6 +63,7 @@ _______________________________________________________________________________*
 	
 		/* Radio Distribution */
 		use "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", clear
+		gen resp_id = rd_resp_id
 		sort resp_id 
 		save `temp_rd_dist'
 		

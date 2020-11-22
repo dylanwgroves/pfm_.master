@@ -65,8 +65,8 @@ _______________________________________________________________________________*
 
 		/* Radio Distribution */
 		use "${data}/02_mid_data/pfm_clean_rd_distribution_ne.dta", clear	
-		drop resp_name
-		destring respid, replace
+		drop rd_resp_name
+		destring rd_respid, gen(respid)
 		sort respid																	// Only has the no "_" version of respid
 		save `temp_rd_dist', replace
 	

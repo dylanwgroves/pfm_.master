@@ -22,7 +22,6 @@ set maxvar 30000
 
 	use "${data}/01_raw_data/pfm_pii_rd_distribution_ne.dta", clear
 
-
 /* Cleaning ____________________________________________________________________*/
 
 	/* Basics */
@@ -62,14 +61,22 @@ set maxvar 30000
 	lab def pfm 1 "Yes, clear" 2 "Yes, but difficult" 3 "Not clear"
 	lab val pfm_yes pfm
 	
+		/* Radio Delivered */
+	gen radio_delivered = .
+		replace radio_delivered = 	(resp_delivered == 1 | ///
+									alt_deliver == 1)
+	
 	** Create Master Dummy 
-	gen rd_dist_ne = 1
+	gen dist_ne = 1
 
 
 /* Export _______________________________________________________________________*/
 
 	* Keep
-	keep survey* village* respid resp_* alt_* neighbor_* pfm_* rd_dist_ne
+	keep survey* village* respid resp_* alt_* neighbor_* pfm_* dist_ne radio_*
+	
+	* Label as Radio Distribution
+	rename * rd_*
 
 	* Export
 	save "${data}\02_mid_data\pfm_clean_rd_distribution_ne.dta", replace

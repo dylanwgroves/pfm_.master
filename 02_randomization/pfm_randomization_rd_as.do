@@ -169,7 +169,7 @@ rename radiorandomization_treat rd_treat
 /* 
 Two villages had randomizations conducted on-site by the field facilitator because
 new respondents were added to the list on the day of distribution. This followed
-the same matched-pair coinflip randomization as previously.
+the same matched-pair coinflip randomization as described above. 
 */
 
 replace rd_treat = "Treat" if resp_id == "3-181-4-0097"

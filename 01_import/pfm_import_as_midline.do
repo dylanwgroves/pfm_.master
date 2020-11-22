@@ -45,7 +45,3 @@ replace uzikwasa_sample = 1 if block == 2 & rank == 1	// Only one in the city
 replace uzikwasa_sample = 1 if block == 1 & rank <= 5
 
 
-tab uzikwasa_sample select, m
-stop
-keep if uzikwasa_sample == 1
-stop
