@@ -60,7 +60,7 @@ else {
 	
 	/* Natural Experiment */
 	
-		do "${code}/01_import/pfm_import_ne_baseline.do" // Randomization
+		do "${code}/01_import/pfm_import_ne_sample.do" // Sample
 		do "${code}/01_import/pfm_import_ne_baseline.do" // Baseline
 		
 
@@ -138,7 +138,6 @@ experiment was generated using GenMatch											*/
 		do "${code}/04_merge/pfm_append.do" // Baseline
 
 /*_______________________________________________________________________________*/
-
 
 
 /* Part 4: New Vars ____________________________________________________________*/

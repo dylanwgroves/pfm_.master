@@ -57,7 +57,7 @@ _______________________________________________________________________________*
 		destring respid, replace
 		sort objectid																// Has both version of respid and resp_id
 		save `temp_rd_rand', replace
-		
+
 		/* Radio RI */
 		use "${data}/02_mid_data/pfm_ri_rd_ne.dta", clear
 		sort resp_id 
@@ -78,7 +78,7 @@ _______________________________________________________________________________*
 			drop if merge_base==1
 		merge n:1 objectid using `temp_rand', gen(merge_base_rand)					// Village randomization
 		save `temp_base_rand', replace
-		
+
 		** Radio Randomization and Distribution
 		use `temp_rd_rand', clear													// Radio randomization
 		merge 1:1 respid using `temp_rd_dist', gen(merge_rd)						// Radio distribution

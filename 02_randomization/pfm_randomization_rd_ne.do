@@ -54,7 +54,6 @@ set seed 1956
 
 /* Save ________________________________________________________________________*/
 
-stop
 save "${data}/02_mid_data/pfm_randomized_rd_ne.dta", replace
 
 *export delimited using "X:\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis\2 - Final Data\5_Radio Distribution\pfm_ri_sb.csv", replace
