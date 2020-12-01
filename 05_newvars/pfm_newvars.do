@@ -24,14 +24,13 @@ _______________________________________________________________________________*
 
 /* Run Globals (if necessary ____________________________________________________*/
 
-	*do "X:\Documents\pfm_.master\00_setup\pfm_paths_master.do"
+	do "X:\Documents\pfm_.master\00_setup\pfm_paths_master.do"
 
 	
 /* Import Data _________________________________________________________________*/
 
 	use "${data}/03_final_data/pfm_appended.dta", clear
 
-	
 /* Drop ________________________________________________________________________*/
 
 	drop ne_respid
@@ -277,6 +276,17 @@ rename as_s5q2_gh_marry fm_girlpick
 	lab def fm_girlpick 0 "Dad should pick" 1 "Girl should pick"
 	lab val fm_girlpick fm_girlpick
 	
+/* Media Consumption ___________________________________________________________*/		
+
+	clonevar radio_listen  = as_b_s4q2_radio 
+		replace radio_listen = ne_s4q2_radio if sample_ne == 1
+	
+	gen radio_any = as_b_s4q3_radio_any
+		replace radio_any = 1 if as_b_s4q2_radio > 0
+		replace radio_any = 1 if ne_s4q2_radio > 0
+		replace radio_any = 0 if ne_s4q2_radio == 0
+		
+	
 /* Assetts _____________________________________________________________________*/		
 
 	gen radio_own  = .
@@ -307,22 +317,36 @@ rename as_s5q2_gh_marry fm_girlpick
 	sort id_village_uid id_resp_uid
 	order id_* sample_* treat_*
 	*drop resp_n 
-	
 
 /* Export ________________________________________________________________________*/
 
 *replace id_resp_n = ""
 save "${data}/03_final_data/pfm_all.dta", replace
+save "X:\Box Sync\19_Community Media Endlines\07_Questionnaires & Data\06_NE\05_data_encrypted\02_survey\03_clean\pfm_all.dta", replace
 
+
+/* Export Cases for Audio Screening Study */
+keep if sample_as == 1
+drop ne_*
+
+order id_resp_n id_* sample_* treat_* as_resp_* as_b_cases_* resp_female resp_age resp_muslim as_rd_block as_rd_block as_pca1 as_b_s2q5_maritalstatus
+
+sort id_ward_uid id_village_uid
+
+export delimited using "${data}\03_final_data\pfm_as_cases.csv", replace
 
 stop
 
 
+keep id_resp_n id_* sample_* treat_* resp_* cases_* ne_resp_phone1 ne_resp_phone2 as_b_cases_phone1 as_b_cases_phone2 ne_head_name ne_alt_name ne_alt_relation ne_neighbor_name ne_neighbor_phone ne_resp_name ne_resp_phone1 ne_resp_phone2
+
+
+/* Export Cases for Natural Experiment Study */
 order id_resp_n id_* sample_* treat_* resp_* cases_* ne_resp_phone1 ne_resp_phone2 as_b_cases_phone1 as_b_cases_phone2 ne_head_name ne_alt_name ne_alt_relation ne_neighbor_name ne_neighbor_phone ne_resp_name ne_resp_phone1 ne_resp_phone2
 
 keep id_resp_n id_* sample_* treat_* resp_* cases_* ne_resp_phone1 ne_resp_phone2 as_b_cases_phone1 as_b_cases_phone2 ne_head_name ne_alt_name ne_alt_relation ne_neighbor_name ne_neighbor_phone ne_resp_name ne_resp_phone1 ne_resp_phone2
 
-sort id_ward_uid id_village_uid 
+ 
 
 
 
