@@ -8,11 +8,21 @@
 _______________________________________________________________________________*/
 
 
+
+
 /* Introduction _______________________________________________________________*/
 
 	clear all
 	
-	
+/* Notes _______________________________________________________________________
+
+	THIS IS WHERE NEED TO GO BACK TO MAKE SURE THAT WE ARE NOT APPENDING
+	VARIABLES WITH DIFFERENT VALUES TO ONE ANOTHER , WHICH COULD FUCK UP 
+	THE LABELLING AND/OR VALUES
+
+*/
+
+
 /* Import Data ________________________________________________________________*/
 
 	use "${data}/03_final_data/pfm_ne_merged.dta", clear

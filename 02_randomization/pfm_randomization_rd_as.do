@@ -112,8 +112,8 @@ set seed `vill_num'
 tempfile `vill_num'
 
 * Do Principal Components Analysis ---------------------------------------------
-pca s6q*
-predict pca1, score
+qui pca s6q*
+qui predict pca1, score
 
 * Generate Random Numbers ------------------------------------------------------
 gen radiorandomization_villrandom = runiform()
@@ -146,6 +146,8 @@ if  ${first} == 1 {
 if  ${first} != 1 {
 	append using "${data}/02_mid_data/pfm_rd_randomization_mid.dta"
 	save "${data}/02_mid_data/pfm_rd_randomization_mid.dta", replace
+	
+	sleep 300
 }
 
 * Restore ----------------------------------------------------------------------

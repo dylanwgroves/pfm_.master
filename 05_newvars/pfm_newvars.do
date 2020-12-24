@@ -1,4 +1,4 @@
-/*______________________________________________________________________________
+	/*______________________________________________________________________________
 
 	Project: Pangani FM
 	File: Creates New Variables for Merged / Appended Dataset
@@ -49,6 +49,7 @@ _______________________________________________________________________________*
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def muslim 0 "Christian" 1 "Muslim"
 	lab def female 0 "Male" 1 "Female"
+	lab def married 0 "Not Married" 1 "Married"
 
 	
 /* Define Samples ______________________________________________________________*/
@@ -111,28 +112,6 @@ _______________________________________________________________________________*
 	label var id_ward_n "Ward Name"
 	label var id_village_n "Village Name"
 	label var id_village_c "Village Code"
-	
-	gen id_resp_c = ne_id
-		replace id_resp_c = as_b_resp_c if sample_as == 1
-		lab var id_resp_c "Respondent Code"
-	
-	gen id_resp_n = ne_resp_name if sample_ne == 1
-		replace id_resp_n = as_b_resp_name if sample_as == 1			
-		lab var id_resp_n "Respondent Name"
-
-	/* Unique IDs */
-	egen id_ward_uid = concat(id_district_c id_ward_c), punct("_")
-		lab var id_ward_uid "Ward Unique ID"
-		
-	egen id_village_uid = concat(id_district_c id_ward_c id_village_c), punct("_")
-		lab var id_village_uid "Village Unique ID"
-		
-	egen id_resp_uid = concat(id_village_uid id_resp_c), punct("_")				
-		lab var id_resp_uid "Respondent Unique ID"
-		
-	gen id_objectid = ne_objectid if sample_ne == 1
-		replace id_objectid = as_objectid if sample_as == 1
-		lab var id_objectid "(TZ Census) Object ID"
 		
 		
 /* Survey Information __________________________________________________________*/
@@ -148,24 +127,37 @@ _______________________________________________________________________________*
 
 	/* Gender */
 	gen resp_female = ne_s2q1_gender if sample_ne == 1
-		replace resp_female = as_b_s2q1_gender if sample_as == 2
+		replace resp_female = as_b_s2q1_gender if sample_as == 1
 		recode resp_female (1=0)(2=1)
 		lab val resp_female female
 		lab var resp_female "Respondent Female?"
-		
+
 	/* Age */
 	gen resp_age = ne_s2q3_age if sample_ne == 1
 		destring as_b_age, replace
-		replace resp_age = as_b_age if sample_as == 2
+		replace resp_age = as_b_age if sample_as == 1
 		lab var resp_age "Respondent Age"
 		
 	/* Religion */
 	gen resp_muslim = ne_s13q1_christian if sample_ne == 1
 		recode resp_muslim (1 = 0) (0 = 1)
-		replace resp_muslim = as_b_s3q1_religion_muslim if sample_as == 2
+		replace resp_muslim = as_b_s3q1_religion_muslim if sample_as == 1
 		lab val resp_muslim muslim
 		lab var resp_muslim "Respondent Muslim?"
-		
+
+	/* Married */
+	gen resp_married = 1 if (ne_s2q5_maritalstatus == 1 | ne_s2q5_maritalstatus == 2) ///
+							& sample_ne == 1
+		replace resp_married = 0 if (ne_s2q5_maritalstatus > 2 & ne_s2q5_maritalstatus < 7) ///
+							& sample_ne == 1
+							
+	replace resp_married = 1 if (as_b_s2q5_maritalstatus == 1 | as_b_s2q5_maritalstatus == 2) ///
+								& sample_as == 1
+		replace resp_married = 0 if (as_b_s2q5_maritalstatus > 2 & as_b_s2q5_maritalstatus < 7) ///
+									& sample_as == 1
+		lab val resp_married married
+		lab var resp_married "Respondent Married or Living as Married?"
+
 
 /* Compliance __________________________________________________________________*/
 
@@ -264,6 +256,7 @@ willingness to marry. Differneces included:
 		replace em_story_comm = 0 if as_s4q1_fm_yescomm == 0 & sample_as == 1
 		lab val em_story_comm em_story
 		lab var em_story_comm "[Community] Early marriage ok under vignette circumstances?"
+	
 		
 /* Forced Marriage ______________________________________________________________*/		
 
@@ -308,7 +301,17 @@ rename as_s5q2_gh_marry fm_girlpick
 		lab val radio_wouldaccept yesno
 		lab var radio_wouldaccept "If you were to get a radio, would you listen to it?"
 		
-	
+/* Early Marriage ______________________________________________________________*/		
+		
+/* Make Village Averages */	
+
+	bys id_village_n : egen sb_cases_emreject = sum(em_story_self) if em_story_t_age < 18
+		bys id_village_n : egen cases_emreject = max(sb_cases_emreject)
+	bys id_village_n : egen sb_cases_emreject_count = count(em_story_self) if em_story_t_age < 18
+		bys id_village_n : egen cases_emreject_count = max(sb_cases_emreject_count)
+	gen cases_emreject_pct = cases_emreject / cases_emreject_count
+	drop sb_*
+stop
 
 /* Drop ________________________________________________________________________*/
 
@@ -329,9 +332,13 @@ save "X:\Box Sync\19_Community Media Endlines\07_Questionnaires & Data\06_NE\05_
 keep if sample_as == 1
 drop ne_*
 
-order id_resp_n id_* sample_* treat_* as_resp_* as_b_cases_* resp_female resp_age resp_muslim as_rd_block as_rd_block as_pca1 as_b_s2q5_maritalstatus
-
+order id_resp_n id_* sample_* treat_* as_resp_* as_b_cases_* cases_emreject cases_emreject_count resp_female resp_married resp_age resp_muslim as_rd_block as_rd_block as_pca1 as_b_s2q5_maritalstatus
 sort id_ward_uid id_village_uid
+keep id_resp_n id_* sample_* treat_* as_resp_* as_b_cases_* cases_emreject cases_emreject_count resp_female resp_married resp_age resp_muslim as_rd_block as_rd_block as_pca1 as_b_s2q5_maritalstatus
+
+
+* Append Pilot *
+append using "X:\Box Sync\19_Community Media Endlines\07_Questionnaires & Data\06_NE\05_data_encrypted\02_survey\03_clean\pilot_pfm_as.dta"
 
 export delimited using "${data}\03_final_data\pfm_as_cases.csv", replace
 
@@ -345,10 +352,6 @@ keep id_resp_n id_* sample_* treat_* resp_* cases_* ne_resp_phone1 ne_resp_phone
 order id_resp_n id_* sample_* treat_* resp_* cases_* ne_resp_phone1 ne_resp_phone2 as_b_cases_phone1 as_b_cases_phone2 ne_head_name ne_alt_name ne_alt_relation ne_neighbor_name ne_neighbor_phone ne_resp_name ne_resp_phone1 ne_resp_phone2
 
 keep id_resp_n id_* sample_* treat_* resp_* cases_* ne_resp_phone1 ne_resp_phone2 as_b_cases_phone1 as_b_cases_phone2 ne_head_name ne_alt_name ne_alt_relation ne_neighbor_name ne_neighbor_phone ne_resp_name ne_resp_phone1 ne_resp_phone2
-
- 
-
-
 
 export delimited using "${data}\03_final_data\pfm_cases.csv", replace
 
