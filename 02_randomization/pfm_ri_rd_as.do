@@ -27,12 +27,14 @@ tempfile master
 use "${data}/02_mid_data/pfm_rd_randomization_as.dta", clear
 keep resp_id resp_name ward_name village_id ward_code s2q1_gender rd_block rd_treat
 
-
-/* Import ______________________________________________________________________*/
+/* Set Locals __________________________________________________________________*/
 
 lab def treat 0 "Control" 1 "Treat"
 
-forvalues x = 1/100 {
+
+/* Run Randomization ___________________________________________________________*/
+
+forvalues x = 1/10000 {
 
 	* Set seed
 	set seed `x'

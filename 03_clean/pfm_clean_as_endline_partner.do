@@ -40,6 +40,8 @@ ________________________________________________________________________________
 	lab def correct	0 "Incorrect" 1 "Correct"
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
+	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+
 
 	
 /* Survey Info _________________________________________________________________*/
@@ -129,25 +131,31 @@ ________________________________________________________________________________
 	rename s3q17				resp_religiousschool
 		replace resp_religiousschool = s3q18 if resp_christian == 1
 
-	rename s3q19_tribe			resp_tribe											// Need to input "other"
+	rename s3q19_tribe			resp_tribe										// Need to input "other"
 
-	rename s3q20_tz_tribe		resp_tzortribe
+	gen svy_date = 				startdate
+
 
 	
 /* General Values ______________________________________________________________*/
 
-rename s5q1 			values_conformity
-	lab def values_conformity 0 "Always do what you think is right" 1 "Pay attention to others"
-	lab val values_conformity values_conformity
+	rename s5q1 			values_conformity
+		lab def values_conformity 0 "Always do what you think is right" 1 "Pay attention to others"
+		lab val values_conformity values_conformity
 
-rename s5q4				values_dontquestion
-	lab def values_dontquestion 0 "Question leaders" 1 "Respect authority"
-	lab val values_dontquestion values_dontquestion
+	rename s5q4				values_dontquestion
+		lab def values_dontquestion 0 "Question leaders" 1 "Respect authority"
+		lab val values_dontquestion values_dontquestion
+		
+	rename s5q6				values_urbangood
+		recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
+		lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
+		lab val values_urbangood values_urbangood
 	
-rename s5q6				values_urbangood
-	recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
-	lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
-	lab val values_urbangood values_urbangood
+		
+	rename s3q20_tz_tribe		values_tzortribe
+		gen values_tzortribe_dum = (values_tzortribe == 1 | values_tzortribe == 2)
+		replace values_tzortribe_dum = . if values_tzortribe == -888 | values_tzortribe == .
 	
 	recode values_* (-999 = .d)(-888 = .r)
 	
@@ -168,118 +176,128 @@ rename s5q9				efficacy_speakout
 
 /* Prejudice ___________________________________________________________________*/
 
-** People you would live near
+	** People you would live near
 
-	/* Create Values */
-	gen prej_yesneighbor_aids = .		 
-	gen prej_yesneighbor_homo = .
-	gen prej_yesneighbor_alcoholic = .
-	gen prej_yesneighbor_unmarried = .
+		/* Create Values */
+		gen prej_yesneighbor_aids = .		 
+		gen prej_yesneighbor_homo = .
+		gen prej_yesneighbor_alcoholic = .
+		gen prej_yesneighbor_unmarried = .
 
-	forval j = 1/3 {	
-		replace prej_yesneighbor_homo = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mashoga"
-		replace prej_yesneighbor_aids = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mtu mwenye virus vya ukimwi"
-		replace prej_yesneighbor_alcoholic = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Walevi"
-		replace prej_yesneighbor_unmarried = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Watu wanaoishi pamoja lakini hawajaoana"
-		}
 		
-	foreach var of varlist prej_yesneighbor_* {
-		lab var `var' "Would accept X group to be your neighbor"
-		recode `var' (1=0)(0=1)
-		recode `var' (1=0)(0=1) if (svy_enum==5 | svy_enum==13 | svy_enum==10 | ///
-		svy_enum==23 | svy_enum==24) & (startdate== td(07,12,2020) | startdate== td(08,12,2020))
-		lab val `var' yesno
-		recode `var' (-999 = .d)(-888 = .r)
-	}	
-
-	egen prej_yesneighbor_index = rowmean(prej_yesneighbor_aids prej_yesneighbor_homo prej_yesneighbor_alcoholic prej_yesneighbor_unmarried)
-	lab var prej_yesneighbor_index "Mean of all questions about acceptable neighbors"
-
-** People your kid can marry
-forval i = 1/4 {
-	gen prej_kidmarry`i' = .
-		forval j = 1/4 {	
-			replace prej_kidmarry`i' = s3q21_r_`j' if s3q21_sel_val_r_`j' == "`i'"			// Need to change this back to "2"
-		}
-	lab var prej_kidmarry`i' "Would accept X group to marry your child"
-	lab val prej_kidmarry`i' yesno
-}
-	rename prej_kidmarry1 		prej_kidmarry_nottribe				// Not sure this is coded right
-	rename prej_kidmarry2		prej_kidmarry_notrelig
-	rename prej_kidmarry3		prej_kidmarry_nottz
-	rename prej_kidmarry4		prej_kidmarry_notrural	
-
-
-	foreach var of varlist prej_kidmarry_* {
-		cap recode `var' (-999 = .d)(-888 = .r)
-	}	
-	
-	egen prej_kidmarry_index = rowmean(prej_kidmarry_nottribe prej_kidmarry_notrelig prej_kidmarry_nottz prej_kidmarry_notrural)
-	lab var prej_kidmarry_index "Mean of all questions about who child can marry"
-
-*Feeling thermometer
-	forval i = 1/7 {
-		gen prej_thermo`i' = .
-			forval j = 1/7 {	
-				replace prej_thermo`i' = s32a_g_r_`j'*5 if s32_ranked_list_r_`j' == "`i'"			// Need to change this back to "2"
-				replace prej_thermo`i' = . if prej_thermo`i' < 0
+		/* Willing to be married */
+		forval j = 1/3 {	
+			replace prej_yesneighbor_homo = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mashoga"
+			replace prej_yesneighbor_aids = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mtu mwenye virus vya ukimwi"
+			replace prej_yesneighbor_alcoholic = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Walevi"
+			replace prej_yesneighbor_unmarried = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Watu wanaoishi pamoja lakini hawajaoana"
 			}
-		lab var prej_thermo`i' "How do you feel towards X"
-	}
-		rename prej_thermo1 		prej_thermo_city			
-		rename prej_thermo2			prej_thermo_chinese
-		rename prej_thermo3			prej_thermo_muslims
-		rename prej_thermo4			prej_thermo_christians	
-		rename prej_thermo5			prej_thermo_sambaa
-			replace prej_thermo_sambaa = s32_b if tribe_txt == "Wasambaa" & prej_thermo_sambaa == .
-		rename prej_thermo6			prej_thermo_digo
-			replace prej_thermo_digo = s32_b if tribe_txt == "Wadigo" & prej_thermo_sambaa == .
-		rename prej_thermo7			prej_thermo_kenyan
-
-		foreach var of varlist prej_thermo_* {
-			cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
+			
+		foreach var of varlist prej_yesneighbor_* {
+			lab var `var' "Would accept X group to be your neighbor"
+			recode `var' (1=0)(0=1)
+			recode `var' (1=0)(0=1) if (svy_enum==5 | svy_enum==13 | svy_enum==10 | ///
+			svy_enum==23 | svy_enum==24) & (startdate== td(07,12,2020) | startdate== td(08,12,2020))
+			lab val `var' yesno
+			recode `var' (-999 = .d)(-888 = .r)
 		}	
+
+		egen prej_yesneighbor_index = rowmean(prej_yesneighbor_aids prej_yesneighbor_homo prej_yesneighbor_alcoholic prej_yesneighbor_unmarried)
+		lab var prej_yesneighbor_index "Mean of all questions about acceptable neighbors"
+
+	/* Let your kids marry */
+	forval i = 1/4 {
+		gen prej_kidmarry`i' = .
+			forval j = 1/4 {	
+				replace prej_kidmarry`i' = s3q21_r_`j' if s3q21_sel_val_r_`j' == "`i'"			// Need to change this back to "2"
+			}
+		lab var prej_kidmarry`i' "Would accept X group to marry your child"
+		lab val prej_kidmarry`i' yesno
+	}
+		rename prej_kidmarry1 		prej_kidmarry_nottribe				// Not sure this is coded right
+		rename prej_kidmarry2		prej_kidmarry_notrelig
+		rename prej_kidmarry3		prej_kidmarry_nottz
+		rename prej_kidmarry4		prej_kidmarry_notrural	
+
+
+		foreach var of varlist prej_kidmarry_* {
+			cap recode `var' (-999 = .d)(-888 = .r)
+		}	
+		
+		egen prej_kidmarry_index = rowmean(prej_kidmarry_nottribe prej_kidmarry_notrelig prej_kidmarry_nottz prej_kidmarry_notrural)
+		lab var prej_kidmarry_index "Mean of all questions about who child can marry"
+
+	/* Feeling Thermometer */
+		forval i = 1/7 {
+			gen prej_thermo`i' = .
+				forval j = 1/7 {	
+					replace prej_thermo`i' = s32a_g_r_`j'*5 if s32_ranked_list_r_`j' == "`i'"			// Need to change this back to "2"
+					replace prej_thermo`i' = . if prej_thermo`i' < 0
+				}
+			lab var prej_thermo`i' "How do you feel towards X"
+		}
+			rename prej_thermo1 		prej_thermo_city			
+			rename prej_thermo2			prej_thermo_chinese
+			rename prej_thermo3			prej_thermo_muslims
+			rename prej_thermo4			prej_thermo_christians	
+			rename prej_thermo5			prej_thermo_sambaa
+				replace prej_thermo_sambaa = s32_b if tribe_txt == "Wasambaa" & prej_thermo_sambaa == .
+			rename prej_thermo6			prej_thermo_digo
+				replace prej_thermo_digo = s32_b if tribe_txt == "Wadigo" & prej_thermo_sambaa == .
+			rename prej_thermo7			prej_thermo_kenyan
+
+			foreach var of varlist prej_thermo_* {
+				cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
+			}	
+			
+		/* Generate Out-Group feeling Thermometer */
+		gen prej_thermo_out_rel = prej_thermo_muslims if resp_muslim == 0
+			replace prej_thermo_out_rel = prej_thermo_christians if resp_muslim == 1
+		
+		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38
+			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
+
 
 
 /* Political Prefences __________________________________________________________*/
 
-forval i = 1/9 {
-	gen ptixpref_rank_`i' = .
-	replace ptixpref_rank_`i' = 1 if s14q2a == `i'
-	replace ptixpref_rank_`i' = 2 if s14q2b == `i'
-	replace ptixpref_rank_`i' = 3 if s14q2c == `i'
-	replace ptixpref_rank_`i' = 4 if s14q2d == `i'
-	replace ptixpref_rank_`i' = 5 if s14q2e == `i'
-	replace ptixpref_rank_`i' = 6 if s14q2f == `i'
-	replace ptixpref_rank_`i' = 7 if s14q2g == `i'
-	replace ptixpref_rank_`i' = 8 if s14q2h == `i'
-	replace ptixpref_rank_`i' = 9 if s14q2i == `i'
-}
+	forval i = 1/9 {
+		gen ptixpref_rank_`i' = .
+		replace ptixpref_rank_`i' = 1 if s14q2a == `i'
+		replace ptixpref_rank_`i' = 2 if s14q2b == `i'
+		replace ptixpref_rank_`i' = 3 if s14q2c == `i'
+		replace ptixpref_rank_`i' = 4 if s14q2d == `i'
+		replace ptixpref_rank_`i' = 5 if s14q2e == `i'
+		replace ptixpref_rank_`i' = 6 if s14q2f == `i'
+		replace ptixpref_rank_`i' = 7 if s14q2g == `i'
+		replace ptixpref_rank_`i' = 8 if s14q2h == `i'
+		replace ptixpref_rank_`i' = 9 if s14q2i == `i'
+	}
 
-	rename ptixpref_rank_1		ptixpref_rank_ag
-	rename ptixpref_rank_2 		ptixpref_rank_crime
-	rename ptixpref_rank_3		ptixpref_rank_efm
-	rename ptixpref_rank_4		ptixpref_rank_edu
-	rename ptixpref_rank_5		ptixpref_rank_justice
-	rename ptixpref_rank_6		ptixpref_rank_electric
-	rename ptixpref_rank_7		ptixpref_rank_sanit
-	rename ptixpref_rank_8		ptixpref_rank_roads
-	rename ptixpref_rank_9		ptixpref_rank_health
+		rename ptixpref_rank_1		ptixpref_rank_ag
+		rename ptixpref_rank_2 		ptixpref_rank_crime
+		rename ptixpref_rank_3		ptixpref_rank_efm
+		rename ptixpref_rank_4		ptixpref_rank_edu
+		rename ptixpref_rank_5		ptixpref_rank_justice
+		rename ptixpref_rank_6		ptixpref_rank_electric
+		rename ptixpref_rank_7		ptixpref_rank_sanit
+		rename ptixpref_rank_8		ptixpref_rank_roads
+		rename ptixpref_rank_9		ptixpref_rank_health
 
-rename s14q2_oth		ptixpref_other
+	rename s14q2_oth		ptixpref_other
 
-rename s14q2_partner	ptixpref_partner_rank
- 
-rename s14q3  ptixpref_local_approve				
-	recode ptixpref_local_approve (1 = 0) (0 = 1)
-	lab def gov_approval 0 "Don't Approve" 1 "Approve"
-	lab val ptixpref_local_approve gov_approval
+	rename s14q2_partner	ptixpref_partner_rank
+	 
+	rename s14q3  ptixpref_local_approve				
+		recode ptixpref_local_approve (1 = 0) (0 = 1)
+		lab def gov_approval 0 "Don't Approve" 1 "Approve"
+		lab val ptixpref_local_approve gov_approval
 
-rename s14q4  ptixpref_responsibility				
-	
-foreach var of varlist ptixpref_* {
-	cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
-}
+	rename s14q4  ptixpref_responsibility				
+		
+	foreach var of varlist ptixpref_* {
+		cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
+	}
 
 
 /* Election ____________________________________________________________________
@@ -288,17 +306,17 @@ NEED TO CODE THIS TONIGHT
 
 */
 
-rename s3q4a_1		em_elect
-	replace em_elect = "1" if em_elect == "of"
-	destring em_elect, replace
-	replace s3q4a_2 = "1" if s3q4a_2 == "of"
-	destring s3q4a_2, replace
-	recode s3q4a_2 (2=1)(1=2)
-	replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
+	rename s3q4a_1		em_elect
+		replace em_elect = "1" if em_elect == "of"
+		destring em_elect, replace
+		replace s3q4a_2 = "1" if s3q4a_2 == "of"
+		destring s3q4a_2, replace
+		recode s3q4a_2 (2=1)(1=2)
+		replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
 
-rename s3q4b_1		hiv_elect
-	recode s3q4b_2	(2=1)(1=2)
-	replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
+	rename s3q4b_1		hiv_elect
+		recode s3q4b_2	(2=1)(1=2)
+		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
 
 /* Gender Equality _____________________________________________________________
 
@@ -338,21 +356,22 @@ rename s3q4b_1		hiv_elect
 
 	egen ge_index = rowmean(ge_school ge_work ge_leadership ge_business)
 
-** Household Responsibility
-lab def ge_hhlabor 1 "Mother" 2 "Father" 3 "Both"
-
-forval i = 1/3 {
-	gen ge_hhlabor`i' = .
-		forval j = 1/3 {	
-			replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"		// Need to change this back to "2"
-		}
-	lab var ge_hhlabor`i' "How is ideally responsible for X?"
-	lab val ge_hhlabor`i' ge_hhlabor
-}
-	rename ge_hhlabor1 		ge_hhlabor_chores									// Not sure this is coded right
-	rename ge_hhlabor2		ge_hhlabor_kids
-	rename ge_hhlabor3		ge_hhlabor_money
+	/* Household Responsibility */
 	
+	lab def ge_hhlabor 1 "Mother" 2 "Father" 3 "Both"
+
+	forval i = 1/3 {
+		gen ge_hhlabor`i' = .
+			forval j = 1/3 {	
+				replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"		// Need to change this back to "2"
+			}
+		lab var ge_hhlabor`i' "How is ideally responsible for X?"
+		lab val ge_hhlabor`i' ge_hhlabor
+	}
+		rename ge_hhlabor1 		ge_hhlabor_chores									// Not sure this is coded right
+		rename ge_hhlabor2		ge_hhlabor_kids
+		rename ge_hhlabor3		ge_hhlabor_money
+		
 
 /* Forced Marriage _____________________________________________________________*/
 
@@ -382,15 +401,18 @@ forval i = 1/3 {
 
 /* Political Participation ______________________________________________________*/
 
-	** Generate Interest
+	/* Generate Interest */
 	rename s15q1	ptixpart_interest
+		recode ptixpart_interest (1=3)(2=2)(3=1)(4=0)
+		lab val ptixpart_interest interest
+		
 
-	** Participation Activities														
+	/* Participation Activities	 */													
 	rename s15q2a	ptixpart_vote
 	rename s15q2b	ptixpart_villmeet
 	rename s15q2c	ptixpart_collact
 		
-	cap rename s15q7						ptixpart_contact_satisfied
+	cap rename s15q7 ptixpart_contact_satisfied
 
 
 /* Political Knowledge _________________________________________________________*/
@@ -417,7 +439,7 @@ forval i = 1/3 {
 	*/
 	rename s13q2 	ptixknow_local_dc 
 
-	* National Politics
+	/* National Politics */
 	rename s13q3a	 ptixknow_natl_pm 
 		recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
 
@@ -426,7 +448,7 @@ forval i = 1/3 {
 
 	lab val ptixknow_natl_* correct
 
-	* Foreign Affairs
+	/* Foreign Affairs */
 	rename s13q4new ptixknow_fopo_kenyatta 
 		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
 		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
@@ -497,6 +519,12 @@ forval i = 1/3 {
 	rename s17q5		em_norm_reject
 		recode em_norm_reject (2=1)(1=0)(3=0)
 		lab val em_norm_reject reject
+		lab var em_norm_reject "Community Rejects Early Marraige"
+		
+	clonevar em_norm_reject_dum = em_norm_reject
+		recode em_norm_reject_dum (2=0)(1=1)(0=0)
+		lab val em_norm_reject_dum reject
+		lab var em_norm_reject_dum "Norm percpetion - reject early marriage"
 
 	rename s17q5b_new	em_norm_reject_bean
 

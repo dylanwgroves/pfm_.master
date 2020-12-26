@@ -86,7 +86,9 @@ experiment was generated using GenMatch											*/
 	/* Radio Distribution */
 		
 		do "${code}/02_randomization/pfm_randomization_rd_as.do" 				// Randomization - Audio screening
-		do "${code}/02_randomization/pfm_randomization_rd_ne.do" 				// Randomizatoin - Natural experiment
+		do "${code}/02_randomization/pfm_randomization_rd_ne.do" 				// Randomization - Natural experiment
+		*do "${code}/02_randomization/pfm_ri_rd_as.do"
+		*do "${code}/02_randomization/pfm_ri_rd_ne.do"
 
 	/* Audio Screening */
 
@@ -134,18 +136,18 @@ Tasks: Clean, and generate variables
  Note: Prelimenary data collection and PII removal occurs in Box Folders */
  
  
-	/* Main Files */
+		/* Main Files */
 
-		do "${code}/04_merge/pfm_merge_ne.do" 									// Natural Experiment
-		do "${code}/04_merge/pfm_merge_as.do" 									// Audio Screening
-
-
-	/* Append Together */
-	
-		do "${code}/04_merge/pfm_append.do" 									// Append Natural Experiment and Audio Screening
+			do "${code}/04_merge/pfm_merge_ne.do" 									// Natural Experiment
+			do "${code}/04_merge/pfm_merge_as.do" 									// Audio Screening
 
 
+		/* Append Together */
 		
+			do "${code}/04_merge/pfm_append.do" 									// Append Natural Experiment and Audio Screening
+
+
+			
 
 /* Part 4: New Vars ____________________________________________________________
 

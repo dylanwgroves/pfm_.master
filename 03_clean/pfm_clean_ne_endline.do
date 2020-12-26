@@ -39,6 +39,8 @@ ________________________________________________________________________________
 	lab def correct	0 "Incorrect" 1 "Correct"
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
+	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+
 
 /* Survey Info _________________________________________________________________*/
 
@@ -72,6 +74,7 @@ ________________________________________________________________________________
 	rename district_pull	id_district_n
 	rename ward_pull		id_ward_n
 	rename village_pull		id_village_n
+	gen svy_date = 		 	startdate		
 
 /* Consent _____________________________________________________________________*/
 
@@ -144,7 +147,6 @@ ________________________________________________________________________________
 
 	rename s3q19_tribe			resp_tribe											// Need to input "other"
 
-	rename s3q20_tz_tribe		resp_tzortribe
 
 	
 /* General Values ______________________________________________________________*/
@@ -168,6 +170,10 @@ ________________________________________________________________________________
 		recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
 		lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
 		lab val values_urbangood values_urbangood
+		
+	rename s3q20_tz_tribe		values_tzortribe
+		gen values_tzortribe_dum = (values_tzortribe == 1 | values_tzortribe == 2)
+		replace values_tzortribe_dum = . if values_tzortribe == -888 | values_tzortribe == .
 
 	** Gender difference in support for urbanization
 	rename gender_txt		treat_values_urbangood_gender
@@ -392,11 +398,11 @@ ________________________________________________________________________________
 
 /* Political Participation ______________________________________________________*/
 
-	** Generate Interest
-	rename s15q1	ptixpart_interest_old
-		recode ptixpart_interest_old (1=4 "Very interested")(2=3 "Somewhat interest")(3=2 "Not very intrested")(4=1 "Not at all interestd"), gen(ptixpart_interest) label(ptixpart_interest)
-
-
+	/* Generate Interest */
+	rename s15q1	ptixpart_interest
+		recode ptixpart_interest (1=3)(2=2)(3=1)(4=0)
+		lab val ptixpart_interest interest
+	
 	** Participation Activities														
 	forval i = 1/12 {
 		gen ptixpart_activ_`i' = .
@@ -531,9 +537,10 @@ ________________________________________________________________________________
 		replace em_reject = 0 if em_allow == 1 | em_allow == 3
 
 	rename s17q9		em_norm_reject
+		recode em_norm_reject (2=1)(1=0)(3=0)
+		lab val em_norm_reject reject
 		lab var em_norm_reject "Community Rejects Early Marraige"
 		
-
 	clonevar em_norm_reject_dum = em_norm_reject
 		recode em_norm_reject_dum (2=0)(1=1)(0=0)
 		lab val em_norm_reject_dum reject

@@ -33,9 +33,11 @@ tempfile temp_as
 /* Import Data _________________________________________________________________*/
 
 	use "${data}/03_final_data/pfm_ne_merged.dta", clear
+		rename ne_rd_treat_* rd_treat_*
 		save `temp_ne', replace
-		
+
 	use "${data}/03_final_data/pfm_as_merged.dta", clear
+		rename as_rd_treat_* rd_treat_*
 		save `temp_as'
 		
 
@@ -47,7 +49,7 @@ tempfile temp_as
 */
 	
 	use `temp_as'
-	append using `temp_ne', force
+	qui append using `temp_ne', force
 	save "${data}/03_final_data/pfm_appended_prefix.dta", replace
 
 	
@@ -60,7 +62,7 @@ tempfile temp_as
 	use `temp_ne', clear
 		rename ne_* *
 		save `temp_ne', replace
-	
+
 	use `temp_as', clear
 		rename as_* *
 		rename treat treat_as
@@ -68,7 +70,7 @@ tempfile temp_as
 
 	append using `temp_ne', force
 	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
-	
+
 	
 
 

@@ -16,33 +16,36 @@ ________________________________________________________________________________
 
 
 
-/* Introduction ________________________________________________________________*/
+/* Load Data ___________________________________________________________________*/
 
-use "${data}\01_raw_data\pfm_as_villagesample.dta", clear
+	use "${data}\01_raw_data\pfm_as_villagesample.dta", clear
 
-* Stable Sort
-sort vill_id
+	
+/* Randomize ___________________________________________________________________*/
 
-forval num = 1/10000 {
+	* Stable Sort
+	sort vill_id
 
-* Set Seed
-set seed `num'
+	forval num = 1/10000 {
 
-* Randomly Select Villages
-* We are randomly selecting one village within each ward
+	* Set Seed
+	set seed `num'
 
-* (1) Generate Random Number
-gen random_2 = runiform()
+	* Randomly Select Villages
+	* We are randomly selecting one village within each ward
 
-* (2) Identify Largest Random Number in Each Ward
-bys district_c ward_c: egen r2_median = median(random_2)
-gen treat_`num' = 1 if random_2 > r2_median
-replace treat_`num' = 0 if random_2 < r2_median
+	* (1) Generate Random Number
+	gen random_2 = runiform()
 
-drop random_2 r2_median
-}
+	* (2) Identify Largest Random Number in Each Ward
+	bys district_c ward_c: egen r2_median = median(random_2)
+	gen treat_`num' = 1 if random_2 > r2_median
+	replace treat_`num' = 0 if random_2 < r2_median
 
-drop vill_id
+	drop random_2 r2_median
+	}
+
+	drop vill_id
 
 
 /* Save ________________________________________________________________________*/

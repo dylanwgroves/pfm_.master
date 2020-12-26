@@ -42,20 +42,19 @@ use "${data}\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
 	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 	
-/* Drop */
+/* Drop ________________________________________________________________________*/
+
 	drop deviceid subscriberid simid devicephonenum starttime endtime skipto* idstring time_*
 
-	
-/* Identifiers _________________________________________________________________*/
+/* Survey Information __________________________________________________________*/
 
+	/* Identifier */
 	egen resp_id = concat(villstring id), punct(_)
 	gen village_c = village
 	gen ward_c = ward
 	gen district_c = district
 
-
-/* Survey Information __________________________________________________________*/
-
+	/* Survey Information */
 	rename audio_consent svy_consent_audio
 	rename consent svy_consent
 	rename enum_string svy_enum_string
@@ -73,6 +72,7 @@ use "${data}\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
 		recode resp_female (2=1)(1=0)
 		lab val resp_female yesno
 	rename day_q2_2 resp_howudoin
+	
 	gen resp_goodday = resp_howudoin
 	recode resp_goodday (3=0)(2=1)(1=0)
 	lab var resp_goodday "Particularly good day today?"

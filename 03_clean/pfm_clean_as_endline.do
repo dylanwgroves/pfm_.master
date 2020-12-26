@@ -40,6 +40,13 @@ ________________________________________________________________________________
 	lab def correct	0 "Incorrect" 1 "Correct"
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
+	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+	
+	
+/* Converting don't know/refuse/other to extended missing values _______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 	
 /* Survey Info _________________________________________________________________*/
@@ -130,41 +137,46 @@ ________________________________________________________________________________
 		replace resp_religiousschool = s3q18 if resp_christian == 1
 
 	rename s3q19_tribe			resp_tribe											// Need to input "other"
-
-	rename s3q20_tz_tribe		resp_tzortribe
+	
+	gen svy_date = 				startdate
 
 	
 /* General Values ______________________________________________________________*/
 
-rename s5q1 			values_conformity
-	lab def values_conformity 0 "Always do what you think is right" 1 "Pay attention to others"
-	lab val values_conformity values_conformity
+	rename s5q1 			values_conformity
+		lab def values_conformity 0 "Always do what you think is right" 1 "Pay attention to others"
+		lab val values_conformity values_conformity
 
-rename s5q4				values_dontquestion
+	rename s5q4				values_dontquestion
+			
+		lab def values_dontquestion 0 "Question leaders" 1 "Respect authority"
+		lab val values_dontquestion values_dontquestion
 		
-	lab def values_dontquestion 0 "Question leaders" 1 "Respect authority"
-	lab val values_dontquestion values_dontquestion
-	
-rename s5q6				values_urbangood
-	recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
-	lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
-	lab val values_urbangood values_urbangood
-	
-	foreach var of varlist values_* {
-		recode `var' (-999 = .d) (-888 = .r)
-	}
+	rename s5q6				values_urbangood
+		recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
+		lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
+		lab val values_urbangood values_urbangood
+		
+	rename s3q20_tz_tribe		values_tzortribe
+		gen values_tzortribe_dum = (values_tzortribe == 1 | values_tzortribe == 2)
+		replace values_tzortribe_dum = . if values_tzortribe == -888 | values_tzortribe == .
+
+	/* Recode */
+	recode values_* (-999 = .d) (-888 = .r)
+
 	
 
 /* Efficacy ____________________________________________________________________*/
 
-rename s5q8				efficacy_understand
-	lab def efficacy_understand 0 "Politics too complicated" 1 "Understand politics"
-	lab val efficacy_understand efficacy_understand
+	rename s5q8				efficacy_understand
+		lab def efficacy_understand 0 "Politics too complicated" 1 "Understand politics"
+		lab val efficacy_understand efficacy_understand
+		
+	rename s5q9				efficacy_speakout
+		lab def efficacy_speakout 0 "Dont have a say" 1 "Comfy speaking out"
+		lab val efficacy_speakout efficacy_speakout
 	
-rename s5q9				efficacy_speakout
-	lab def efficacy_speakout 0 "Dont have a say" 1 "Comfy speaking out"
-	lab val efficacy_speakout efficacy_speakout
-	
+	/* Recode */
 	recode efficacy_* (-999 = .d) (-888 = .r)
 
 
@@ -197,7 +209,7 @@ rename s5q9				efficacy_speakout
 	egen prej_yesneighbor_index = rowmean(prej_yesneighbor_aids prej_yesneighbor_homo prej_yesneighbor_alcoholic prej_yesneighbor_unmarried)
 	lab var prej_yesneighbor_index "Mean of all questions about acceptable neighbors"
 
-** People your kid can marry
+	/* Kids Marrying */
 	forval i = 1/4 {
 		gen prej_kidmarry`i' = .
 			forval j = 1/4 {	
@@ -212,14 +224,14 @@ rename s5q9				efficacy_speakout
 		rename prej_kidmarry4		prej_kidmarry_notrural	
 
 
-		foreach var of varlist prej_kidmarry_* {
-			cap recode `var' (-999 = .d)(-888 = .r)
-		}	
+		/* Recode */
+			cap recode pre_kidmarry_* (-999 = .d)(-888 = .r)
+
 		
 		egen prej_kidmarry_index = rowmean(prej_kidmarry_nottribe prej_kidmarry_notrelig prej_kidmarry_nottz prej_kidmarry_notrural)
 		lab var prej_kidmarry_index "Mean of all questions about who child can marry"
 
-*Feeling thermometer
+	/* Feeling Thermometer */
 	forval i = 1/7 {
 		gen prej_thermo`i' = .
 			forval j = 1/7 {	
@@ -238,65 +250,69 @@ rename s5q9				efficacy_speakout
 			replace prej_thermo_digo = s32_b if tribe_txt == "Wadigo" & prej_thermo_sambaa == .
 		rename prej_thermo7			prej_thermo_kenyan
 
-		foreach var of varlist prej_thermo_* {
-			cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
-		}	
+		/* Recode */
+			cap recode prej_thermo_* (-999 = .d)(-888 = .r)(-4995 = .d)
+			
+		/* Generate Out-Group feeling Thermometer */
+		gen prej_thermo_out_rel = prej_thermo_muslims if resp_muslim == 0
+			replace prej_thermo_out_rel = prej_thermo_christians if resp_muslim == 1
+		
+		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38
+			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
+
 
 
 /* Political Prefences __________________________________________________________*/
 
-forval i = 1/9 {
-	gen ptixpref_rank_`i' = .
-	replace ptixpref_rank_`i' = 1 if s14q2a == `i'
-	replace ptixpref_rank_`i' = 2 if s14q2b == `i'
-	replace ptixpref_rank_`i' = 3 if s14q2c == `i'
-	replace ptixpref_rank_`i' = 4 if s14q2d == `i'
-	replace ptixpref_rank_`i' = 5 if s14q2e == `i'
-	replace ptixpref_rank_`i' = 6 if s14q2f == `i'
-	replace ptixpref_rank_`i' = 7 if s14q2g == `i'
-	replace ptixpref_rank_`i' = 8 if s14q2h == `i'
-	replace ptixpref_rank_`i' = 9 if s14q2i == `i'
-}
+	forval i = 1/9 {
+		gen ptixpref_rank_`i' = .
+		replace ptixpref_rank_`i' = 1 if s14q2a == `i'
+		replace ptixpref_rank_`i' = 2 if s14q2b == `i'
+		replace ptixpref_rank_`i' = 3 if s14q2c == `i'
+		replace ptixpref_rank_`i' = 4 if s14q2d == `i'
+		replace ptixpref_rank_`i' = 5 if s14q2e == `i'
+		replace ptixpref_rank_`i' = 6 if s14q2f == `i'
+		replace ptixpref_rank_`i' = 7 if s14q2g == `i'
+		replace ptixpref_rank_`i' = 8 if s14q2h == `i'
+		replace ptixpref_rank_`i' = 9 if s14q2i == `i'
+	}
 
-	rename ptixpref_rank_1		ptixpref_rank_ag
-	rename ptixpref_rank_2 		ptixpref_rank_crime
-	rename ptixpref_rank_3		ptixpref_rank_efm
-	rename ptixpref_rank_4		ptixpref_rank_edu
-	rename ptixpref_rank_5		ptixpref_rank_justice
-	rename ptixpref_rank_6		ptixpref_rank_electric
-	rename ptixpref_rank_7		ptixpref_rank_sanit
-	rename ptixpref_rank_8		ptixpref_rank_roads
-	rename ptixpref_rank_9		ptixpref_rank_health
+		rename ptixpref_rank_1		ptixpref_rank_ag
+		rename ptixpref_rank_2 		ptixpref_rank_crime
+		rename ptixpref_rank_3		ptixpref_rank_efm
+		rename ptixpref_rank_4		ptixpref_rank_edu
+		rename ptixpref_rank_5		ptixpref_rank_justice
+		rename ptixpref_rank_6		ptixpref_rank_electric
+		rename ptixpref_rank_7		ptixpref_rank_sanit
+		rename ptixpref_rank_8		ptixpref_rank_roads
+		rename ptixpref_rank_9		ptixpref_rank_health
 
-rename s14q2_oth		ptixpref_other
+	rename s14q2_oth		ptixpref_other
 
-rename s14q2_partner	ptixpref_partner_rank
- 
-rename s14q3  ptixpref_local_approve				
-	recode ptixpref_local_approve (1 = 0) (0 = 1)
-	lab def gov_approval 0 "Don't Approve" 1 "Approve"
-	lab val ptixpref_local_approve gov_approval
+	rename s14q2_partner	ptixpref_partner_rank
+	 
+	rename s14q3  ptixpref_local_approve				
+		recode ptixpref_local_approve (1 = 0) (0 = 1)
+		lab def gov_approval 0 "Don't Approve" 1 "Approve"
+		lab val ptixpref_local_approve gov_approval
 
-rename s14q4  ptixpref_responsibility				
-	
-foreach var of varlist ptixpref_* {
-	cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
-}
+	rename s14q4  ptixpref_responsibility				
+		
+	foreach var of varlist ptixpref_* {
+		cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
+	}
 
 
-/* Election ____________________________________________________________________
+/* Election ____________________________________________________________________*/
 
-NEED TO CODE THIS TONIGHT
 
-*/
+	rename s3q4a_1		em_elect
+		recode s3q4a_2 (2=1)(1=2)
+		replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
 
-rename s3q4a_1		em_elect
-	recode s3q4a_2 (2=1)(1=2)
-	replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
-
-rename s3q4b_1		hiv_elect
-	recode s3q4b_2	(2=1)(1=2)
-	replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
+	rename s3q4b_1		hiv_elect
+		recode s3q4b_2	(2=1)(1=2)
+		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
 
 /* Gender Equality _____________________________________________________________
 
@@ -312,7 +328,6 @@ We are coding that higher is always "more gender equality"
 		recode `var' (-999 = .d)(-888 = .r)
 	}
 
-
 	rename s6q1			ge_school	
 		recode ge_school (1=0)(2=1) 	
 	rename s6q2			ge_work
@@ -322,7 +337,6 @@ We are coding that higher is always "more gender equality"
 	rename s6q4			ge_business
 		recode ge_business (1=1)(2=0)
 		
-
 	lab val ge_school agree				
 	lab val ge_work agree	
 	lab val ge_leadership agree			
@@ -339,21 +353,21 @@ We are coding that higher is always "more gender equality"
 
 
 
-** Household Responsibility
-lab def ge_hhlabor 1 "Mother" 2 "Father" 3 "Both"
+	** Household Responsibility
+	lab def ge_hhlabor 1 "Mother" 2 "Father" 3 "Both"
 
-forval i = 1/3 {
-	gen ge_hhlabor`i' = .
-		forval j = 1/3 {	
-			replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"		// Need to change this back to "2"
-		}
-	lab var ge_hhlabor`i' "How is ideally responsible for X?"
-	lab val ge_hhlabor`i' ge_hhlabor
-}
-	rename ge_hhlabor1 		ge_hhlabor_chores									// Not sure this is coded right
-	rename ge_hhlabor2		ge_hhlabor_kids
-	rename ge_hhlabor3		ge_hhlabor_money
-	
+	forval i = 1/3 {
+		gen ge_hhlabor`i' = .
+			forval j = 1/3 {	
+				replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"		// Need to change this back to "2"
+			}
+		lab var ge_hhlabor`i' "How is ideally responsible for X?"
+		lab val ge_hhlabor`i' ge_hhlabor
+	}
+		rename ge_hhlabor1 		ge_hhlabor_chores									// Not sure this is coded right
+		rename ge_hhlabor2		ge_hhlabor_kids
+		rename ge_hhlabor3		ge_hhlabor_money
+		
 
 /* Forced Marriage _____________________________________________________________*/
 
@@ -383,55 +397,58 @@ forval i = 1/3 {
 
 /* Political Participation ______________________________________________________*/
 
-	** Generate Interest
+	/* Generate Interest */
 	rename s15q1	ptixpart_interest
+		recode ptixpart_interest (1=3)(2=2)(3=1)(4=0)
+		lab val ptixpart_interest interest
+		
 
-	** Participation Activities														
+	/* Participation Activities	 */													
 	rename s15q2a	ptixpart_vote
 	rename s15q2b	ptixpart_villmeet
 	rename s15q2c	ptixpart_collact
 		
-	cap rename s15q7						ptixpart_contact_satisfied
+	cap rename s15q7	ptixpart_contact_satisfied
 	
 
 /* Political Knowledge _________________________________________________________*/
 
-* Popular Culture
-gen ptixknow_pop_music = .
-	replace ptixknow_pop_music = 1 if 	(s13q1a == 4 | s13q1a == 3)
-	replace ptixknow_pop_music = 0 if 	(s13q1a == 5 | s13q1a == -999)
-	replace ptixknow_pop_music = 0 if 	(s13q1a == 1 | s13q1a == 2) 		
-	lab val ptixknow_pop_music correct
+	/* Popular Culture */
+	gen ptixknow_pop_music = .
+		replace ptixknow_pop_music = 1 if 	(s13q1a == 4 | s13q1a == 3)
+		replace ptixknow_pop_music = 0 if 	(s13q1a == 5 | s13q1a == -999)
+		replace ptixknow_pop_music = 0 if 	(s13q1a == 1 | s13q1a == 2) 		
+		lab val ptixknow_pop_music correct
 
-gen ptixknow_pop_sport = .
-	replace ptixknow_pop_sport = 1 if 	(s13q1b == 1)
-	replace ptixknow_pop_sport = 0 if 	(s13q1b == 5 | s13q1b == -999)
-	replace ptixknow_pop_sport = 0 if 	(s13q1b == 3 | s13q1b == 4 | s13q1b == 2) 		
-	lab val ptixknow_pop_sport correct	
+	gen ptixknow_pop_sport = .
+		replace ptixknow_pop_sport = 1 if 	(s13q1b == 1)
+		replace ptixknow_pop_sport = 0 if 	(s13q1b == 5 | s13q1b == -999)
+		replace ptixknow_pop_sport = 0 if 	(s13q1b == 3 | s13q1b == 4 | s13q1b == 2) 		
+		lab val ptixknow_pop_sport correct	
 
-rename s13q2 	ptixknow_local_dc 
+	rename s13q2 	ptixknow_local_dc 
 
-* National Politics
-rename s13q3a	 ptixknow_natl_pm 
-	recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
+	/* National Politics */
+	rename s13q3a	 ptixknow_natl_pm 
+		recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
 
-rename s13q3b	ptixknow_natl_vp
-	recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
+	rename s13q3b	ptixknow_natl_vp
+		recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
 
-lab val ptixknow_natl_* correct
+	lab val ptixknow_natl_* correct
 
-* Foreign Affairs
-rename s13q4new ptixknow_fopo_kenyatta 
-	recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
-	lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
-	
-rename s13q5		ptixknow_em_aware
+	/* Foreign Affiars */
+	rename s13q4new ptixknow_fopo_kenyatta 
+		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
+		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
+		
+	rename s13q5		ptixknow_em_aware
 
-rename s13q6		ptixknow_sourcetrust
-	
-foreach var of varlist ptixknow_* {
-	cap recode `var' (-999 = 0)(-222 = 0)
-}
+	rename s13q6		ptixknow_sourcetrust
+		
+	foreach var of varlist ptixknow_* {
+		cap recode `var' (-999 = 0)(-222 = 0)
+	}
 
 
 /* Women's Political Participation _____________________________________________
@@ -439,29 +456,29 @@ foreach var of varlist ptixknow_* {
 	Note: This is also an experiment
 	
 */
-
-rename s21_txt_treat treat_wpp
-
-rename s21q1	wpp_attitude
-
-	gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
-	replace wpp_attitude_dum = 0 if wpp_attitude == 0
-	lab var wpp_attitude_dum "Who should lead? Equal women or more women"
-	lab def wpp_attitude_dum 0 "Men" 1 "Equal or more women"
-	lab val wpp_attitude_dum wpp_attitude_dum
 	
-rename s21q2	wpp_norm
+	rename s21_txt_treat treat_wpp
 
-	gen wpp_norm_dum = 1 if wpp_norm == 1 | wpp_norm == 2
-	replace wpp_norm_dum = 0 if wpp_norm == 0
-	lab var wpp_norm_dum "Who should lead? Equal women or more women"
-	
-rename s21q3		wpp_behavior
-cap rename s21q4	wpp_partner
+	rename s21q1	wpp_attitude
 
-foreach var of varlist wpp_* {
-	recode `var' (-888 = .r) (-999 = .d) (-222 = .d)
-}
+		gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
+		replace wpp_attitude_dum = 0 if wpp_attitude == 0
+		lab var wpp_attitude_dum "Who should lead? Equal women or more women"
+		lab def wpp_attitude_dum 0 "Men" 1 "Equal or more women"
+		lab val wpp_attitude_dum wpp_attitude_dum
+		
+	rename s21q2	wpp_norm
+
+		gen wpp_norm_dum = 1 if wpp_norm == 1 | wpp_norm == 2
+		replace wpp_norm_dum = 0 if wpp_norm == 0
+		lab var wpp_norm_dum "Who should lead? Equal women or more women"
+		
+	rename s21q3		wpp_behavior
+	cap rename s21q4	wpp_partner
+
+	foreach var of varlist wpp_* {
+		recode `var' (-888 = .r) (-999 = .d) (-222 = .d)
+	}
 
 
 /* Early Marriage ______________________________________________________________*/
@@ -478,10 +495,16 @@ foreach var of varlist wpp_* {
 	gen em_reject = 1 if em_allow == 2
 		replace em_reject = 0 if em_allow == 1 | em_allow == 3
 		lab val em_reject reject
-		
+
 	rename s17q5		em_norm_reject
 		recode em_norm_reject (2=1)(1=0)(3=0)
 		lab val em_norm_reject reject
+		lab var em_norm_reject "Community Rejects Early Marraige"
+		
+	clonevar em_norm_reject_dum = em_norm_reject
+		recode em_norm_reject_dum (2=0)(1=1)(0=0)
+		lab val em_norm_reject_dum reject
+		lab var em_norm_reject_dum "Norm percpetion - reject early marriage"
 
 	rename s17q5b_new	em_norm_reject_bean
 
@@ -812,53 +835,53 @@ foreach var of varlist wpp_* {
 
 /* Community Sampling __________________________________________________________	
 
-rename s33q1_r		comsample_name1
+	rename s33q1_r		comsample_name1
 
-rename s33q2_r		comsample_who1
+	rename s33q2_r		comsample_who1
 
-rename s33q3_a		comsample_name2
-rename s33q3_a_r	comsample_who2
-stop
+	rename s33q3_a		comsample_name2
+	rename s33q3_a_r	comsample_who2
+	stop
 
-replace comsample_name2 = s33q3_b if 	comsample_who1 == 1 ///
-										comsample_who1 == 2 ///
-										comsample_who1 == 3 ///
-										comsample_who1 == 4 ///
-										comsample_who1 == 5
+	replace comsample_name2 = s33q3_b if 	comsample_who1 == 1 ///
+											comsample_who1 == 2 ///
+											comsample_who1 == 3 ///
+											comsample_who1 == 4 ///
+											comsample_who1 == 5
 
-replace comsample_who2 = s33q3_b_r if 	comsample_who1 == 1 ///
-										comsample_who1 == 2 ///
-										comsample_who1 == 3 ///
-										comsample_who1 == 4 ///
-										comsample_who1 == 5
-*/
+	replace comsample_who2 = s33q3_b_r if 	comsample_who1 == 1 ///
+											comsample_who1 == 2 ///
+											comsample_who1 == 3 ///
+											comsample_who1 == 4 ///
+											comsample_who1 == 5
+	*/
 
 
 /* Children Sampling ___________________________________________________________*/
 
-rename s7q1			kidsample_kidnum
+	rename s7q1			kidsample_kidnum
 
-forval i = 1/12 {
-	rename s7q5_first_name_r_`i'	kidssample_namefirst_`i'
-	rename s7q5_second_name_r_`i'	kidssample_namesecond_`i'
-	rename s7q5_third_name_r_`i'	kidssample_namethird_`i'
-	
-	rename s7q6_old_r_`i'			kidssample_age_`i'
-	rename s7q7_gender_r_`i'		kidssample_gender_`i'
-}
+	forval i = 1/12 {
+		rename s7q5_first_name_r_`i'	kidssample_namefirst_`i'
+		rename s7q5_second_name_r_`i'	kidssample_namesecond_`i'
+		rename s7q5_third_name_r_`i'	kidssample_namethird_`i'
+		
+		rename s7q6_old_r_`i'			kidssample_age_`i'
+		rename s7q7_gender_r_`i'		kidssample_gender_`i'
+	}
 
-rename s7q9			kidssample_consent
+	rename s7q9			kidssample_consent
 	
 
 /* Conclusion __________________________________________________________________*/
 
-rename s20q1				svy_followupok
+	rename s20q1				svy_followupok
 
-rename s20q2latitude		svy_gps_lat
-rename s20q2longitude		svy_gps_long		
+	rename s20q2latitude		svy_gps_lat
+	rename s20q2longitude		svy_gps_long		
 
-rename s20q3				svy_others
-rename s20q4_sm				svy_others_who
+	rename s20q3				svy_others
+	rename s20q4_sm				svy_others_who
 
 
 
