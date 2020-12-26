@@ -14,6 +14,13 @@ _______________________________________________________________________________*
 
 	clear all
 	
+/* Locals and Tempfiles ________________________________________________________*/
+
+tempfile temp_ne
+tempfile temp_as
+
+
+	
 /* Notes _______________________________________________________________________
 
 	THIS IS WHERE NEED TO GO BACK TO MAKE SURE THAT WE ARE NOT APPENDING
@@ -23,14 +30,45 @@ _______________________________________________________________________________*
 */
 
 
-/* Import Data ________________________________________________________________*/
+/* Import Data _________________________________________________________________*/
 
 	use "${data}/03_final_data/pfm_ne_merged.dta", clear
-	append using "${data}/03_final_data/pfm_as_merged.dta"
+		save `temp_ne', replace
 		
-/* Save ______________________________________________________________________*/
+	use "${data}/03_final_data/pfm_as_merged.dta", clear
+		save `temp_as'
+		
 
-	save "${data}/03_final_data/pfm_appended.dta", replace
+/* Export with Prefix __________________________________________________________
 
+	This is useful when we want to easy select only variables asked in one of the
+	surveys. 
+	
+*/
+	
+	use `temp_as'
+	append using `temp_ne', force
+	save "${data}/03_final_data/pfm_appended_prefix.dta", replace
+
+	
+/* Export without Prefixes _____________________________________________________
+
+	This is iseful when we want to combien surveys for some reason
+	
+*/
+
+	use `temp_ne', clear
+		rename ne_* *
+		save `temp_ne', replace
+	
+	use `temp_as', clear
+		rename as_* *
+		rename treat treat_as
+		save `temp_as', replace
+
+	append using `temp_ne', force
+	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
+	
+	
 
 

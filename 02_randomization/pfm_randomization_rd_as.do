@@ -208,7 +208,12 @@ egen rd_block = concat(village_id radiorandomization_pair), punct(_)
 order resp_id rd_block rd_treat pca1 radiorandomization_resprandom village_id
 sort district_c* ward_c* village_id s2q1_gender rd_block rd_treat
 
+/* Encode rd_treat _____________________________________________________________*/
 
+rename rd_treat rd_treat_str
+	gen rd_treat = 1 if rd_treat_str == "Treat"
+	replace rd_treat = 0 if rd_treat_str == "Control"
+	
 /* Export ______________________________________________________________________*/
 
 save "${data}/02_mid_data/pfm_rd_randomization_as.dta", replace

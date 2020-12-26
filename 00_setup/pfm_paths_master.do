@@ -66,7 +66,11 @@ ______________________________________________________________________________*/
 		/* Audio Screening */
 		global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
 		global as_tables	"${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Audio Screening (endline)\03 Tables and Figures"
-			
+		
+		/* Radio Distribution */
+		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
+		global rd_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Radio Distribution\03 Tables and Figures"
+	
 /*		
 	
 	/* Dylan */

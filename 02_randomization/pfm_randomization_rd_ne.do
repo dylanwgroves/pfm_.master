@@ -48,6 +48,9 @@ set seed 1956
 		* -1 respondents to treatment
 		replace rd_treat = 0 if random_1 >= r_median_1 & village_c == 14932
 		replace rd_treat = 0 if random_1 >= r_median_1 & village_c == 15395
+		
+	tostring village_c, gen(rd_block)
+	
 
 	* (4) Drop Using Variblaes
 	drop random_2 r_median_2 uid

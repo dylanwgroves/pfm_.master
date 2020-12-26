@@ -302,47 +302,41 @@ rename s3q4b_1		hiv_elect
 
 /* Gender Equality _____________________________________________________________
 
-NOTE: unfortunately surveycto coded this where disagree is highest (5) and 
-agree is lowest (1). some survey questions were also coded in reverse order, so
-have to pay special attention. 
-
-We are coding that higher is always "more gender equality"
+	We are coding that higher is always "more gender equality"
 
 */
 
-rename s3q12				ge_kids_idealnum
-rename s2q21				ge_kids_idealage
+	rename s3q12				ge_kids_idealnum
+	rename s2q21				ge_kids_idealage
 
-foreach var of varlist ge_kids_idealnum ge_kids_idealage {
+	foreach var of varlist ge_kids_idealnum ge_kids_idealage {
 
-	recode `var' (-999 = .d)(-888 = .r)
-}
+		recode `var' (-999 = .d)(-888 = .r)
+	}
 
 
-rename s6q1			ge_school	
-	recode ge_school (1=0)(2=1) 	
-rename s6q2			ge_work
-	recode ge_work (1=0)(2=1)
-rename s6q3			ge_leadership
-	recode ge_leadership (1=1)(2=0)		
-rename s6q4			ge_business
-	recode ge_business (1=1)(2=0)
-	
+	rename s6q1			ge_school	
+		recode ge_school (1=0)(2=1) 	
+	rename s6q2			ge_work
+		recode ge_work (1=0)(2=1)
+	rename s6q3			ge_leadership
+		recode ge_leadership (1=1)(2=0)		
+	rename s6q4			ge_business
+		recode ge_business (1=1)(2=0)
 
-lab val ge_school agree				
-lab val ge_work agree	
-lab val ge_leadership agree			
-lab val ge_business agree	
+	lab val ge_school agree				
+	lab val ge_work agree	
+	lab val ge_leadership agree			
+	lab val ge_business agree	
 
-lab var ge_school "[REVERSED] It is more important that a boy goes to school than a girl"
-lab var ge_work "[REVERSED] When jobs are scarce, men should have more right to a job than women"
-lab var ge_leadership "In general, women make equally good village leaders as men"
-lab var ge_business "In general, women are just as able to run a successful business as men"
-	
-foreach var of varlist ge_* {
-	recode `var' (-999 = .d) (-888 = .r)
-}
+	lab var ge_school "[REVERSED] It is more important that a boy goes to school than a girl"
+	lab var ge_work "[REVERSED] When jobs are scarce, men should have more right to a job than women"
+	lab var ge_leadership "In general, women make equally good village leaders as men"
+	lab var ge_business "In general, women are just as able to run a successful business as men"
+		
+	recode ge_* (-999 = .d) (-888 = .r)
 
+	egen ge_index = rowmean(ge_school ge_work ge_leadership ge_business)
 
 ** Household Responsibility
 lab def ge_hhlabor 1 "Mother" 2 "Father" 3 "Both"
@@ -362,201 +356,207 @@ forval i = 1/3 {
 
 /* Forced Marriage _____________________________________________________________*/
 
-rename s8q5			fm_reject
-	recode fm_reject (1=0)(2=1)(-999 = .d)(-888 = .r)
-	lab var fm_reject "[REVERSED] A woman should not have a say in who she marries"
-	lab val fm_reject agree
-	
-gen fm_reject_long = .
-	replace fm_reject_long = 0 if s8q5a == 2
-	replace fm_reject_long = 1 if s8q5a == 1
-	replace fm_reject_long = 2 if s8q5b == 1
-	replace fm_reject_long = 3 if s8q5b == 2
-	lab def fm_reject_long 	0 "Strong Agree" ///
-							1 "Agree" ///
-							2 "Disagree" ///
-							3 "Strongly Disagree"
-	lab val fm_reject_long fm_reject_long
-	lab var fm_reject_long "[REVERSED, LONG] A woman shoudl not have a say in who she marries"
+	rename s8q5			fm_reject
+		recode fm_reject (1=0)(2=1)(-999 = .d)(-888 = .r)
+		lab var fm_reject "[REVERSED] A woman should not have a say in who she marries"
+		lab val fm_reject agree
+		
+	gen fm_reject_long = .
+		replace fm_reject_long = 0 if s8q5a == 2
+		replace fm_reject_long = 1 if s8q5a == 1
+		replace fm_reject_long = 2 if s8q5b == 1
+		replace fm_reject_long = 3 if s8q5b == 2
+		lab def fm_reject_long 	0 "Strong Agree" ///
+								1 "Agree" ///
+								2 "Disagree" ///
+								3 "Strongly Disagree"
+		lab val fm_reject_long fm_reject_long
+		lab var fm_reject_long "[REVERSED, LONG] A woman shoudl not have a say in who she marries"
 
-rename s8q5_partner	fm_partner
+	rename s8q5_partner	fm_partner_reject
+		lab val fm_partner_reject reject
 
+	rename s8q5_comm	fm_norm_reject
+		lab val fm_norm_reject reject
 					
 
 /* Political Participation ______________________________________________________*/
 
-** Generate Interest
-rename s15q1	ptixpart_interest
+	** Generate Interest
+	rename s15q1	ptixpart_interest
 
-** Participation Activities														
-rename s15q2a	ptixpart_vote
-rename s15q2b	ptixpart_villmeet
-rename s15q2c	ptixpart_collact
-	
-cap rename s15q7						ptixpart_contact_satisfied
+	** Participation Activities														
+	rename s15q2a	ptixpart_vote
+	rename s15q2b	ptixpart_villmeet
+	rename s15q2c	ptixpart_collact
+		
+	cap rename s15q7						ptixpart_contact_satisfied
 
 
 /* Political Knowledge _________________________________________________________*/
 
-* Popular Culture
-/*
-gen ptixknow_pop_music = .
-	replace ptixknow_pop_music = 1 if (s13q1 == 4 | s13q1 == 3) & s13q1_rand_cl == "1"
-	replace ptixknow_pop_music = 1 if (s13q2 == 4 | s13q2 == 3) & s13q2_rand_cl == "1"
-	replace ptixknow_pop_music = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "1"
-	replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
-	replace ptixknow_pop_music = 0 if (s13q1 == 1 | s13q1 == 2) & s13q1_rand_cl == "1"	
-	replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
-	lab val ptixknow_pop_music correct
+	* Popular Culture
+	/*
+	gen ptixknow_pop_music = .
+		replace ptixknow_pop_music = 1 if (s13q1 == 4 | s13q1 == 3) & s13q1_rand_cl == "1"
+		replace ptixknow_pop_music = 1 if (s13q2 == 4 | s13q2 == 3) & s13q2_rand_cl == "1"
+		replace ptixknow_pop_music = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "1"
+		replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
+		replace ptixknow_pop_music = 0 if (s13q1 == 1 | s13q1 == 2) & s13q1_rand_cl == "1"	
+		replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
+		lab val ptixknow_pop_music correct
 
-gen ptixknow_pop_sport = .
-	replace ptixknow_pop_sport = 1 if (s13q1 == 1) & s13q1_rand_cl == "2"
-	replace ptixknow_pop_sport = 1 if (s13q2 == 1) & s13q2_rand_cl == "2"
-	replace ptixknow_pop_sport = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "2"
-	replace ptixknow_pop_sport = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "2"
-	replace ptixknow_pop_sport = 0 if (s13q1b == 3 | s13q1b == 4 | s13q1b == 2) & s13q1_rand_cl == "2"		
-	replace ptixknow_pop_sport = 0 if (s13q2 == 3 | s13q2 == 4 | s13q2 == 2) & s13q2_rand_cl == "2"		
-	lab val ptixknow_pop_sport correct	
-*/
-rename s13q2 	ptixknow_local_dc 
+	gen ptixknow_pop_sport = .
+		replace ptixknow_pop_sport = 1 if (s13q1 == 1) & s13q1_rand_cl == "2"
+		replace ptixknow_pop_sport = 1 if (s13q2 == 1) & s13q2_rand_cl == "2"
+		replace ptixknow_pop_sport = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "2"
+		replace ptixknow_pop_sport = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "2"
+		replace ptixknow_pop_sport = 0 if (s13q1b == 3 | s13q1b == 4 | s13q1b == 2) & s13q1_rand_cl == "2"		
+		replace ptixknow_pop_sport = 0 if (s13q2 == 3 | s13q2 == 4 | s13q2 == 2) & s13q2_rand_cl == "2"		
+		lab val ptixknow_pop_sport correct	
+	*/
+	rename s13q2 	ptixknow_local_dc 
 
-* National Politics
-rename s13q3a	 ptixknow_natl_pm 
-	recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
+	* National Politics
+	rename s13q3a	 ptixknow_natl_pm 
+		recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
 
-rename s13q3b	ptixknow_natl_vp
-	recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
+	rename s13q3b	ptixknow_natl_vp
+		recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
 
-lab val ptixknow_natl_* correct
+	lab val ptixknow_natl_* correct
 
-* Foreign Affairs
-rename s13q4new ptixknow_fopo_kenyatta 
-	recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
-	lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
+	* Foreign Affairs
+	rename s13q4new ptixknow_fopo_kenyatta 
+		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
+		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
 
-rename s13q5		ptixknow_em_aware
-	cap replace ptixknow_em_aware = s17q1_intro if s17_txt_treat == "treat_both" | s17_txt_treat == "treat_court"
-	replace ptixknow_em_aware = "0" if ptixknow_em_aware == "-999"
-	replace ptixknow_em_aware = "0" if ptixknow_em_aware == "Hapana"
-	replace ptixknow_em_aware = "0" if ptixknow_em_aware == "Hapana hajui"
-	replace ptixknow_em_aware = "1" if ptixknow_em_aware == "Ndio" | ptixknow_em_aware == "Ndiyo"
-	replace ptixknow_em_aware = "1" if ptixknow_em_aware == "Ndiyo, nafahamu"
-	replace ptixknow_em_aware = "0" if ptixknow_em_aware != "0" & ptixknow_em_aware != "1" 
-	destring ptixknow_em_aware, replace
+	rename s13q5		ptixknow_em_aware
+		cap replace ptixknow_em_aware = s17q1_intro if s17_txt_treat == "treat_both" | s17_txt_treat == "treat_court"
+		replace ptixknow_em_aware = "0" if ptixknow_em_aware == "-999"
+		replace ptixknow_em_aware = "0" if ptixknow_em_aware == "Hapana"
+		replace ptixknow_em_aware = "0" if ptixknow_em_aware == "Hapana hajui"
+		replace ptixknow_em_aware = "1" if ptixknow_em_aware == "Ndio" | ptixknow_em_aware == "Ndiyo"
+		replace ptixknow_em_aware = "1" if ptixknow_em_aware == "Ndiyo, nafahamu"
+		replace ptixknow_em_aware = "0" if ptixknow_em_aware != "0" & ptixknow_em_aware != "1" 
+		destring ptixknow_em_aware, replace
 
-rename s13q6		ptixknow_sourcetrust
-	
-foreach var of varlist ptixknow_* {
-	cap recode `var' (-999 = 0)(-222 = 0)
-}
+	rename s13q6		ptixknow_sourcetrust
+		
+	foreach var of varlist ptixknow_* {
+		cap recode `var' (-999 = 0)(-222 = 0)
+	}
 
 
 /* Women's Political Participation _____________________________________________
 
-	Note: This is also an experiment
-	
-*/
+		Note: This is also an experiment
+		
+	*/
 
-rename s21_txt_treat treat_wpp
+	rename s21_txt_treat treat_wpp
 
-rename s21q1	wpp_attitude
+	rename s21q1	wpp_attitude
 
-	gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
-	replace wpp_attitude_dum = 0 if wpp_attitude == 0
-	lab var wpp_attitude_dum "Who should lead? Equal women or more women"
-	lab def wpp_attitude_dum 0 "Men" 1 "Equal or more women"
-	lab val wpp_attitude_dum wpp_attitude_dum
-	
-rename s21q2	wpp_norm
+		gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
+		replace wpp_attitude_dum = 0 if wpp_attitude == 0
+		lab var wpp_attitude_dum "Who should lead? Equal women or more women"
+		lab def wpp_attitude_dum 0 "Men" 1 "Equal or more women"
+		lab val wpp_attitude_dum wpp_attitude_dum
+		
+	rename s21q2	wpp_norm
 
-	gen wpp_norm_dum = 1 if wpp_norm == 1 | wpp_norm == 2
-	replace wpp_norm_dum = 0 if wpp_norm == 0
-	lab var wpp_norm_dum "Who should lead? Equal women or more women"
-	
-rename s21q3		wpp_behavior
-cap rename s21q4	wpp_partner
+		gen wpp_norm_dum = 1 if wpp_norm == 1 | wpp_norm == 2
+		replace wpp_norm_dum = 0 if wpp_norm == 0
+		lab var wpp_norm_dum "Who should lead? Equal women or more women"
+		
+	rename s21q3		wpp_behavior
+	cap rename s21q4	wpp_partner
 
-foreach var of varlist wpp_* {
-	recode `var' (-888 = .r) (-999 = .d) (-222 = .d)
-}
+	foreach var of varlist wpp_* {
+		recode `var' (-888 = .r) (-999 = .d) (-222 = .d)
+	}
 
 
 /* Early Marriage ______________________________________________________________*/
 
-rename s17q1	em_bestage
-	recode em_bestage (-888 = .r) (-999 = .d)
+	rename s17q1	em_bestage
+		recode em_bestage (-888 = .r) (-999 = .d)
 
-gen em_past18 = (em_bestage >= 18)
-	replace em_past18 = . if em_bestage == .
-	lab var em_past18 "[After 18] What do you think is the best age for a girl to get married"
+	gen em_past18 = (em_bestage >= 18)
+		replace em_past18 = . if em_bestage == .
+		lab var em_past18 "[After 18] What do you think is the best age for a girl to get married"
 	
-rename s17q4 	em_allow
-
-gen em_reject = 1 if em_allow == 2
-	replace em_reject = 0 if em_allow == 1 | em_allow == 3
+	rename s17q4 	em_allow
+		
+	gen em_reject = 1 if em_allow == 2
+		replace em_reject = 0 if em_allow == 1 | em_allow == 3
+		lab val em_reject reject
+		
 	
-rename s17q5		em_norm
-	gen em_norm_reject = 1 if em_norm == 2
-	replace em_norm_reject = 0 if em_norm == 1 | em_norm == 3
+	rename s17q5		em_norm_reject
+		recode em_norm_reject (2=1)(1=0)(3=0)
+		lab val em_norm_reject reject
+
+	rename s17q5b_new	em_norm_reject_bean
+
+	rename s17q5c		em_hearddiscussed
+
+	rename s17q5d		em_herddiscussed_often
+		
+	rename s17_txt_treat		treat_court
+
+	gen treat_court_dum = 1 if treat_court == "treat_court" | treat_court == "treat_both"
+		replace treat_court_dum = 0 if treat_court == "control"
+
+	rename s17q8a		em_reject_religion
+	rename s17q8b		em_reject_noschool
+	rename s17q8c		em_reject_pregnant
+	rename s17q8d		em_reject_money
+	rename s17q8e		em_reject_needhusband
+
+	foreach var of varlist em_reject_* {
+		recode `var' (3=0)(1=1)(2=2)
+		lab val `var' reject_cat
+		gen `var'_dum = (`var' == 2)
+		lab val `var'_dum yesno
+	}
+
 	
-cap rename s17q5b_new	em_norm_bean
-
-rename s17q5c		em_hearddiscussed
-
-rename s17q5d		em_herddiscussed_often
+	egen em_reject_index = 	rowmean(em_reject_religion_dum ///
+									em_reject_noschool_dum ///
+									em_reject_pregnant_dum ///
+									em_reject_money_dum ///
+									em_reject_needhusband_dum)
 	
-rename s17_txt_treat		treat_court
+	gen em_reject_all = (em_reject_index == 1)
 
-gen treat_court_dum = 1 if treat_court == "treat_court" | treat_court == "treat_both"
-	replace treat_court_dum = 0 if treat_court == "control"
+	rename s17q7		em_record_any
 
-rename s17q8a		em_reject_religion
-rename s17q8b		em_reject_noschool
-rename s17q8c		em_reject_pregnant
-rename s17q8d		em_reject_money
-rename s17q8e		em_reject_needhusband
+	rename s17q9 		em_record_reject
+		replace em_record_reject = 0 if em_record_any == 0
 
-foreach var of varlist em_reject_* {
-	recode `var' (3=0)(1=1)(2=2)
-	lab val `var' reject_cat
-	gen `var'_dum = (`var' == 2)
-	lab val `var'_dum yesno
-}
+	gen em_record_accept = 1 if em_record_reject == 0 & em_record_any == 1
+		replace em_record_accept = 0 if em_record_any == 0
+		
+	rename s17q10		em_record_name	
+		replace em_record_name = 0 if em_record_any == 0
+		
+	rename s17q11		em_record_shareptix		
+		replace em_record_shareptix = 0 if em_record_any == 0 & record_rand_draw == "gov"
 
-egen em_reject_index = 	rowmean(em_reject_religion_dum ///
-								em_reject_noschool_dum ///
-								em_reject_pregnant_dum ///
-								em_reject_money_dum ///
-								em_reject_needhusband_dum)
-								
-gen em_reject_all = (em_reject_index == 1)
-
-rename s17q7		em_record_any
-
-rename s17q9 		em_record_reject
-	replace em_record_reject = 0 if em_record_any == 0
-
-gen em_record_accept = 1 if em_record_reject == 0 & em_record_any == 1
-	replace em_record_accept = 0 if em_record_any == 0
-	
-rename s17q10		em_record_name	
-	replace em_record_name = 0 if em_record_any == 0
-	
-rename s17q11		em_record_shareptix		
-	replace em_record_shareptix = 0 if em_record_any == 0 & record_rand_draw == "gov"
-
-rename s17q12		em_record_sharepfm
-	replace em_record_sharepfm = 0 if em_record_any == 0 & record_rand_draw == "pfm"
-	
-gen em_record_shareany = em_record_sharepfm 
-	replace em_record_shareany = em_record_shareptix if em_record_sharepfm == .
-	
-rename s17q13		em_report 
-rename s17q14		em_report_norm		
-	
-foreach var of varlist em_reject_* em_record_* em_report* {
-	recode `var' (-999 = .d) (-888 = .r)
-}	
+	rename s17q12		em_record_sharepfm
+		replace em_record_sharepfm = 0 if em_record_any == 0 & record_rand_draw == "pfm"
+		
+	gen em_record_shareany = em_record_sharepfm 
+		replace em_record_shareany = em_record_shareptix if em_record_sharepfm == .
+		
+	rename s17q13		em_report 
+	rename s17q14		em_report_norm		
+		
+	foreach var of varlist em_reject_* em_record_* em_report* {
+		recode `var' (-999 = .d) (-888 = .r)
+	}	
 
 
 	
@@ -590,38 +590,40 @@ foreach var of varlist healthknow_* {
 
 /* HIV Attitudes _______________________________________________________________*/
 
-rename s_hiv_stigma1		hiv_stigma_fired
+	rename s_hiv_stigma1		hiv_stigma_fired
 
-rename s_hiv_stigma1_norm	hiv_stigma_fired_norm
+	rename s_hiv_stigma1_norm	hiv_stigma_fired_norm
 
-rename s_hiv_stigma2		hiv_stigma_bus
+	rename s_hiv_stigma2		hiv_stigma_bus
 
 
 /* HIV Disclosure _______________________________________________________________*/
 
-rename s_hiv_secret			hiv_disclose_secrete
+	rename s_hiv_secret			hiv_disclose_secrete
 
-rename s_disclose_family_a	hiv_disclose_fam
-rename s_disclose_family_b	hiv_disclose_friend
-rename s_disclose_family_c	hiv_disclose_cowork
+	rename s_disclose_family_a	hiv_disclose_fam
+	rename s_disclose_family_b	hiv_disclose_friend
+	rename s_disclose_family_c	hiv_disclose_cowork
 
 
 
 /* Intimate Partner Violence __________________________________________________*/
 
-* Reject IPV																
-rename s9q1a		ipv_rej_disobey
-rename s9q1b		ipv_rej_hithard
-	recode ipv_rej_hithard (2=1)(1=0)
-rename s9q1c		ipv_rej_persists
+	* Reject IPV																
+	rename s9q1a		ipv_rej_disobey
+	rename s9q1b		ipv_rej_hithard
+		recode ipv_rej_hithard (2=1)(1=0)
+	rename s9q1c		ipv_rej_persists
 
-rename s9q2 			ipv_norm_rej
-	recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
-	
-rename s9q3		ipv_report
-	lab var ipv_report "Report IPV to police?"
-	
-recode ipv_* (-999 = .d)(-888 = .r)
+	rename s9q2 			ipv_norm_rej
+		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
+		
+	rename s9q3		ipv_report
+		lab var ipv_report "Report IPV to police?"
+		lab val ipv_report report
+		
+	recode ipv_* (-999 = .d)(-888 = .r)
+
 
 
 						
@@ -629,124 +631,124 @@ recode ipv_* (-999 = .d)(-888 = .r)
 
 /* Relationships ________________________________________________________________*/
 
-rename s12q1_1		couples_hhlabor_water
-rename s12q1_2		couples_hhlabor_laundry
-rename s12q1_3		couples_hhlabor_kids
-rename s12q1_4		couples_hhlabor_money
+	rename s12q1_1		couples_hhlabor_water
+	rename s12q1_2		couples_hhlabor_laundry
+	rename s12q1_3		couples_hhlabor_kids
+	rename s12q1_4		couples_hhlabor_money
 
-rename s12q12_1		couples_hhdecision_health
-rename s12q12_2		couples_hhdecision_school
-rename s12q12_3		couples_hhdecision_hhfix
+	rename s12q12_1		couples_hhdecision_health
+	rename s12q12_2		couples_hhdecision_school
+	rename s12q12_3		couples_hhdecision_hhfix
 
-rename s12q13_1		couples_talk_news
-rename s12q13_2		couples_talk_kids
-rename s12q13_9		couples_talk_none
+	rename s12q13_1		couples_talk_news
+	rename s12q13_2		couples_talk_kids
+	rename s12q13_9		couples_talk_none
 
-rename s12q14		couples_autonomy
+	rename s12q14		couples_autonomy
 
 
 
 /* Parenting ___________________________________________________________________*/
 
-rename s11q0		parent_hhkids
+	rename s11q0		parent_hhkids
 
-rename s11q1		parent_currentevents
+	rename s11q1		parent_currentevents
 
-rename s11q3		parent_question
-	recode parent_question (2=1) (1=0)
-	lab def parent_question 0 "Agree" 1 "Disagree"
-	lab val parent_question parent_question
-	lab var parent_question "Agree (0) or Disagree (1): Parents should not allow children to question their decisions"
-	
-rename s11q4a		parent_control_activities
-rename s11q4b		parent_control_punish
-rename s11q4c		parent_responsive_praise
-rename s11q4d		parent_responsive_school
-
-rename s11q5_1		parent_talk_news
-rename s11q5_2		parent_talk_school
-rename s11q5_3		parent_talk_community
-rename s11q5_4		parent_talk_entertainment
-rename s11q5_0		parent_talk_none
-
-	
-/* Media Consumption ___________________________________________________________*/
-rename s4q2_listen_radio	radio_listen							
-	lab def s4q2_listen_radio 0 "Never", modify
-	lab val radio s4q2_listen_radio
-	
-rename s4q2b_listen_radio_time	radio_listen_hrs
-	replace radio_listen_hrs = 0 if radio_listen == 0
-	recode radio_listen_hrs (888 = .r)
-	
-rename s4q3_radio_3month	radio_ever
-	replace radio_ever = 1 if 	radio_listen == 1 | ///
-								radio_listen == 2 | ///
-								radio_listen == 3 | ///
-								radio_listen == 4 | ///
-								radio_listen == 5
-	recode radio_ever (-999 = .d) (-888 = .r)
-
-* Favorite Radio Program Types
-rename s4q5_programs_sm				radio_type	
-	rename s4q5_programs_sm_1		radio_type_music
-	rename s4q5_programs_sm_2		radio_type_sports
-	rename s4q5_programs_sm_3		radio_type_news
-	rename s4q5_programs_sm_4		radio_type_rltnship
-	rename s4q5_programs_sm_5		radio_type_social
-	rename s4q5_programs_sm_6		radio_type_relig
-lab val radio_type_* yesnolisten
-
-foreach var of varlist radio_type_* {
-	replace `var' = 0 if radio_ever == 0
-}
-
-* Favorite Radio Stations
-rename s4q6_listen_sm				radio_stations
-	rename s4q6_listen_sm_1			radio_stations_voa
-	rename s4q6_listen_sm_2			radio_stations_tbc
-	rename s4q6_listen_sm_3			radio_stations_efm
-	rename s4q6_listen_sm_4			radio_stations_breeze
-	rename s4q6_listen_sm_5			radio_stations_pfm
-	rename s4q6_listen_sm_6			radio_stations_clouds
-	rename s4q6_listen_sm_7			radio_stations_rmaria
-	rename s4q6_listen_sm_8			radio_stations_rone
-	rename s4q6_listen_sm_9			radio_stations_huruma
-	rename s4q6_listen_sm_10		radio_stations_mwambao
-	rename s4q6_listen_sm_11		radio_stations_wasafi
-	rename s4q6_listen_sm_12		radio_stations_nuru
-	rename s4q6_listen_sm_13		radio_stations_uhuru
-	rename s4q6_listen_sm_14		radio_stations_bbc
-	rename s4q6_listen_sm_15		radio_stations_sya
-	rename s4q6_listen_sm_16		radio_stations_tk
-	rename s4q6_listen_sm_17		radio_stations_kenya
-	rename s4q6_listen_sm_18		radio_stations_imani
-	rename s4q6_listen_sm_19		radio_stations_freeafrica
-	rename s4q6_listen_sm_20		radio_stations_abood
-	rename s4q6_listen_sm_21		radio_stations_uhurudar
-	rename s4q6_listen_sm_22		radio_stations_upendo
-	rename s4q6_listen_sm_23		radio_stations_kiss
-	rename s4q6_listen_sm_24		radio_stations_times
-lab val radio_stations_* yesnolisten
-	
-	foreach var of varlist radio_stations_* {
+	rename s11q3		parent_question
+		recode parent_question (2=1) (1=0)
+		lab def parent_question 0 "Agree" 1 "Disagree"
+		lab val parent_question parent_question
+		lab var parent_question "Agree (0) or Disagree (1): Parents should not allow children to question their decisions"
 		
+	rename s11q4a		parent_control_activities
+	rename s11q4b		parent_control_punish
+	rename s11q4c		parent_responsive_praise
+	rename s11q4d		parent_responsive_school
+
+	rename s11q5_1		parent_talk_news
+	rename s11q5_2		parent_talk_school
+	rename s11q5_3		parent_talk_community
+	rename s11q5_4		parent_talk_entertainment
+	rename s11q5_0		parent_talk_none
+
+		
+	/* Media Consumption ___________________________________________________________*/
+	rename s4q2_listen_radio	radio_listen							
+		lab def s4q2_listen_radio 0 "Never", modify
+		lab val radio s4q2_listen_radio
+		
+	rename s4q2b_listen_radio_time	radio_listen_hrs
+		replace radio_listen_hrs = 0 if radio_listen == 0
+		recode radio_listen_hrs (888 = .r)
+		
+	rename s4q3_radio_3month	radio_ever
+		replace radio_ever = 1 if 	radio_listen == 1 | ///
+									radio_listen == 2 | ///
+									radio_listen == 3 | ///
+									radio_listen == 4 | ///
+									radio_listen == 5
+		recode radio_ever (-999 = .d) (-888 = .r)
+
+	* Favorite Radio Program Types
+	rename s4q5_programs_sm				radio_type	
+		rename s4q5_programs_sm_1		radio_type_music
+		rename s4q5_programs_sm_2		radio_type_sports
+		rename s4q5_programs_sm_3		radio_type_news
+		rename s4q5_programs_sm_4		radio_type_rltnship
+		rename s4q5_programs_sm_5		radio_type_social
+		rename s4q5_programs_sm_6		radio_type_relig
+	lab val radio_type_* yesnolisten
+
+	foreach var of varlist radio_type_* {
 		replace `var' = 0 if radio_ever == 0
 	}
-	
-** Uhuru / Pangani FM	
-rename s4q14				radio_uhuru
-rename s4q15				radio_pfm_call
-	replace radio_uhuru = 1 if radio_stations_uhuru == 1
-	replace radio_uhuru = 0 if radio_ever == 0
 
-** Group Listening
-rename s4q7					radio_group
-rename s4q8					radio_group_who
+	* Favorite Radio Stations
+	rename s4q6_listen_sm				radio_stations
+		rename s4q6_listen_sm_1			radio_stations_voa
+		rename s4q6_listen_sm_2			radio_stations_tbc
+		rename s4q6_listen_sm_3			radio_stations_efm
+		rename s4q6_listen_sm_4			radio_stations_breeze
+		rename s4q6_listen_sm_5			radio_stations_pfm
+		rename s4q6_listen_sm_6			radio_stations_clouds
+		rename s4q6_listen_sm_7			radio_stations_rmaria
+		rename s4q6_listen_sm_8			radio_stations_rone
+		rename s4q6_listen_sm_9			radio_stations_huruma
+		rename s4q6_listen_sm_10		radio_stations_mwambao
+		rename s4q6_listen_sm_11		radio_stations_wasafi
+		rename s4q6_listen_sm_12		radio_stations_nuru
+		rename s4q6_listen_sm_13		radio_stations_uhuru
+		rename s4q6_listen_sm_14		radio_stations_bbc
+		rename s4q6_listen_sm_15		radio_stations_sya
+		rename s4q6_listen_sm_16		radio_stations_tk
+		rename s4q6_listen_sm_17		radio_stations_kenya
+		rename s4q6_listen_sm_18		radio_stations_imani
+		rename s4q6_listen_sm_19		radio_stations_freeafrica
+		rename s4q6_listen_sm_20		radio_stations_abood
+		rename s4q6_listen_sm_21		radio_stations_uhurudar
+		rename s4q6_listen_sm_22		radio_stations_upendo
+		rename s4q6_listen_sm_23		radio_stations_kiss
+		rename s4q6_listen_sm_24		radio_stations_times
+	lab val radio_stations_* yesnolisten
+		
+		foreach var of varlist radio_stations_* {
+			
+			replace `var' = 0 if radio_ever == 0
+		}
+		
+	** Uhuru / Pangani FM	
+	rename s4q14				radio_uhuru
+	rename s4q15				radio_pfm_call
+		replace radio_uhuru = 1 if radio_stations_uhuru == 1
+		replace radio_uhuru = 0 if radio_ever == 0
 
-** Reports
-rename s4q12_ward_leader		radio_locleader
-rename s4q13_ntl_leader			radio_natleader								
+	** Group Listening
+	rename s4q7					radio_group
+	rename s4q8					radio_group_who
+
+	** Reports
+	rename s4q12_ward_leader		radio_locleader
+	rename s4q13_ntl_leader			radio_natleader								
 
 
 /* Assetts _____________________________________________________________________*/

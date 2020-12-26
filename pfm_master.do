@@ -61,15 +61,14 @@ ________________________________________________________________________________
 		do "${code}/01_import/pfm_import_as_baseline.do" 						// Baseline
 		do "${code}/01_import/pfm_import_as_midline.do" 						// Midline
 		do "${code}/01_import/pfm_import_as_endline.do" 						// Endline
+		do "${code}/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
 
-	
 	/* Natural Experiment */
 	
 		do "${code}/01_import/pfm_import_ne_sample.do" 							// Sample
 		do "${code}/01_import/pfm_import_ne_baseline.do" 						// Baseline
 		do "${code}/01_import/pfm_import_ne_endline.do" 						// Endline
 
-		
 
 	/* Village Master */
 	
@@ -117,7 +116,8 @@ Tasks: Clean, and generate variables
 
 		do "${code}/03_clean/pfm_clean_as_baseline.do" 							// Baseline
 		do "${code}/03_clean/pfm_clean_as_midline.do" 							// Midline
-		do "${code}/03_clean/pfm_clean_as_midline.do" 							// Endline
+		do "${code}/03_clean/pfm_clean_as_endline.do" 							// Endline
+		do "${code}/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
 
 	
 	/* Natural Experiment */

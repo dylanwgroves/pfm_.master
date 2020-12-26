@@ -73,7 +73,6 @@ ________________________________________________________________________________
 			duplicates drop id_resp_uid, force
 		save `temp_end_partner'
 
-		
 		/* Village Randomization */
 		use "${data}/02_mid_data/pfm_randomized_as.dta", clear
 		save `temp_rand'
@@ -87,7 +86,7 @@ ________________________________________________________________________________
 		/* Radio Distribution */
 		use "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", clear
 		gen resp_id = rd_resp_id
-		sort resp_id 
+		sort resp_id
 		save `temp_rd_dist'
 		
 		/* Radio Randomization */

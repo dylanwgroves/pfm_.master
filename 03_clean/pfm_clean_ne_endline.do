@@ -42,7 +42,7 @@ ________________________________________________________________________________
 
 /* Survey Info _________________________________________________________________*/
 
-	gen ne_endline = 1
+	gen endline_ne = 1
 	
 	destring duration, gen(svy_duration)
 		replace svy_duration = svy_duration / 60
@@ -608,7 +608,6 @@ ________________________________________________________________________________
 
 	foreach var of varlist healthknow_* {
 		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
-		tab `var'
 	}
 
 

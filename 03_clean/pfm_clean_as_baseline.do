@@ -16,7 +16,7 @@ _______________________________________________________________________________*
 	set more off
 
 	
-/* Import Data _________________________________________________________________*/
+/* Load Data _________________________________________________________________*/
 
 	use "${data}/01_raw_data/03_surveys/pfm_pii_as_baseline.dta", clear
 
@@ -52,13 +52,14 @@ _______________________________________________________________________________*
 	bysort s1q5 fo: egen survey_num_fovl = count(key)
 
 	
-/* Section 1: Background ________________________________________________________*/
+/* Background ________________________________________________________*/
 	
 	gen team = fo
 	recode team (3 = 1) (4 = 0) (5 = 0) (9 = 1)(11 = 0)(12 = 1)(13 = 0)(14 = 1)(15 =0)(20 = 1)
 
 	
-/* Section 1: Background ________________________________________________________*/
+/* Survey Information __________________________________________________________*/
+
 	rename s1q1 s1q1_date
 	rename s1q3 district_c
 	rename district_name district_n
@@ -74,12 +75,16 @@ _______________________________________________________________________________*
 	rename s1q7 s1q10_visits
 
 	
-* Section 2: Respondent Information ____________________________________________*/
-	rename s2q1 resp_gender															
+* 	Respondent Information ____________________________________________*/
+
+	rename s2q1 resp_female
+		recode resp_female (2=1)(1=0)
+		lab val resp_female yesno
 
 	rename s2q2 resp_howudoin
 
 	gen resp_goodday =  resp_howudoin
+	
 	recode resp_goodday (3=0)(2=1)(1=0)
 	lab var resp_goodday "Particularly good day today?"
 	lab val resp_goodday yesnodkr
