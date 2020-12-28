@@ -258,7 +258,6 @@ rename s5q9				efficacy_speakout
 			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
 
 
-
 /* Political Prefences __________________________________________________________*/
 
 	forval i = 1/9 {
@@ -580,6 +579,9 @@ NEED TO CODE THIS TONIGHT
 		replace em_record_shareany = em_record_shareptix if em_record_sharepfm == .
 		
 	rename s17q13		em_report 
+		recode em_report (2=0)(1=1)
+		lab val em_report report
+	
 	rename s17q14		em_report_norm		
 		
 	foreach var of varlist em_reject_* em_record_* em_report* {
@@ -590,30 +592,35 @@ NEED TO CODE THIS TONIGHT
 	
 /* Health Knowledge ____________________________________________________________*/
 
-rename s23q1		healthknow_tradmed
-rename s23q2		healthknow_vaccines
-rename s23q3		healthknow_vaccines_imp
-	replace healthknow_vaccines_imp = 0 if healthknow_vaccines == 0
-rename s23q4		healthknow_witchcraft
 
-foreach var of varlist healthknow_* {
-	cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
-	tab `var'
-}
+	rename s23q1		healthknow_notradmed
+		recode healthknow_notradmed (0=1)(1=0)									// Check on translation
+		lab var healthknow_notradmed "[Reversed] Prayer and traditional medicine can help cure disease"
+	rename s23q2		healthknow_vaccines
+	rename s23q3		healthknow_vaccines_imp
+		replace healthknow_vaccines_imp = 0 if healthknow_vaccines == 0
+	rename s23q4		healthknow_nowitchcraft
+		recode healthknow_nowitchcraft (0=1)(1=0)
+		lab var healthknow_nowitchcraft "[Reversed] Believe in witchcraft?"
+
+	foreach var of varlist healthknow_* {
+		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
+	}
+
 
 /* HIV Knowledge ____________________________________________________________*/
 
-rename s_hiv_livelong		hivknow_arv_survive
+	rename s_hiv_livelong		hivknow_arv_survive
 
-rename s_hiv_nospread		hivknow_arv_nospread
+	rename s_hiv_nospread		hivknow_arv_nospread
 
-rename s_hiv_antiretroviral	hivknow_arv_any
+	rename s_hiv_antiretroviral	hivknow_arv_any
 
-rename s_hiv_transmitted	hivknow_transmit
+	rename s_hiv_transmitted	hivknow_transmit
 
-foreach var of varlist healthknow_* {
-	cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
-}
+	foreach var of varlist healthknow_* {
+		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
+	}
 
 
 /* HIV Attitudes _______________________________________________________________*/
@@ -647,10 +654,12 @@ foreach var of varlist healthknow_* {
 		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
 		
 	rename s9q3		ipv_report
+		recode ipv_report (2=0)(1=1)
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
 	recode ipv_* (-999 = .d)(-888 = .r)
+
 
 
 

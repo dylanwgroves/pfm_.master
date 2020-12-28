@@ -218,7 +218,7 @@ ________________________________________________________________________________
 		lab var prej_kidmarry`i' "Would accept X group to marry your child"
 		lab val prej_kidmarry`i' yesno
 	}
-		rename prej_kidmarry1 		prej_kidmarry_nottribe				// Not sure this is coded right
+		rename prej_kidmarry1 		prej_kidmarry_nottribe						// Not sure this is coded right
 		rename prej_kidmarry2		prej_kidmarry_notrelig
 		rename prej_kidmarry3		prej_kidmarry_nottz
 		rename prej_kidmarry4		prej_kidmarry_notrural	
@@ -259,8 +259,6 @@ ________________________________________________________________________________
 		
 		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38
 			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
-
-
 
 /* Political Prefences __________________________________________________________*/
 
@@ -314,6 +312,7 @@ ________________________________________________________________________________
 		recode s3q4b_2	(2=1)(1=2)
 		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
 
+		
 /* Gender Equality _____________________________________________________________
 
 We are coding that higher is always "more gender equality"
@@ -562,6 +561,9 @@ We are coding that higher is always "more gender equality"
 		replace em_record_shareany = 0 if em_record_reject != 1
 		
 	rename s17q13		em_report 
+		recode em_report (2=0)(1=1)
+		lab val em_report report
+		
 	rename s17q14		em_report_norm	
 	
 	foreach var of varlist em_reject_* em_record_* em_report*  {
@@ -633,8 +635,9 @@ We are coding that higher is always "more gender equality"
 
 	rename s9q2 			ipv_norm_rej
 		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
-		
+
 	rename s9q3		ipv_report
+		recode ipv_report (2=0)(1=1)
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
