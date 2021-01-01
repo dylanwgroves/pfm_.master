@@ -266,15 +266,15 @@ ________________________________________________________________________________
 
 	forval i = 1/9 {
 		gen ptixpref_rank_`i' = .
-		replace ptixpref_rank_`i' = 1 if s14q2a == `i'
-		replace ptixpref_rank_`i' = 2 if s14q2b == `i'
-		replace ptixpref_rank_`i' = 3 if s14q2c == `i'
-		replace ptixpref_rank_`i' = 4 if s14q2d == `i'
+		replace ptixpref_rank_`i' = 9 if s14q2a == `i'
+		replace ptixpref_rank_`i' = 8 if s14q2b == `i'
+		replace ptixpref_rank_`i' = 7 if s14q2c == `i'
+		replace ptixpref_rank_`i' = 6 if s14q2d == `i'
 		replace ptixpref_rank_`i' = 5 if s14q2e == `i'
-		replace ptixpref_rank_`i' = 6 if s14q2f == `i'
-		replace ptixpref_rank_`i' = 7 if s14q2g == `i'
-		replace ptixpref_rank_`i' = 8 if s14q2h == `i'
-		replace ptixpref_rank_`i' = 9 if s14q2i == `i'
+		replace ptixpref_rank_`i' = 4 if s14q2f == `i'
+		replace ptixpref_rank_`i' = 3 if s14q2g == `i'
+		replace ptixpref_rank_`i' = 2 if s14q2h == `i'
+		replace ptixpref_rank_`i' = 1 if s14q2i == `i'
 	}
 
 		rename ptixpref_rank_1		ptixpref_rank_ag
@@ -546,7 +546,10 @@ ________________________________________________________________________________
 		lab val em_norm_reject_dum reject
 		lab var em_norm_reject_dum "Norm percpetion - reject early marriage"
 		
-	rename em_txt_treat		treat_em_pi
+	gen treat_pi = 1 if em_txt_treat == "treat"
+		replace treat_pi = 0 if em_txt_treat == "control"
+		lab val treat_pi treatment
+		lab var treat_pi "Pluralistic Ignorance Treatment"
 
 	rename s17q6			em_expected
 

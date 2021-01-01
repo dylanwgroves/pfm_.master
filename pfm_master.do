@@ -17,8 +17,6 @@ ________________________________________________________________________________
   clear mata		
   set more off 
  
- 
- 
 
 /* Part 0: Set Globals _________________________________________________________*/
 
@@ -127,8 +125,6 @@ Tasks: Clean, and generate variables
 		do "${code}/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
 		do "${code}/03_clean/pfm_clean_ne_endline.do" 							// Endline
 
-	
-	
 	
 /* Part 3: Merge _______________________________________________________________*/
 

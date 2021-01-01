@@ -41,6 +41,9 @@ ________________________________________________________________________________
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
 	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+	lab def em_elect 0 "Vote Against EM Candidate" 1 "Vote For EM Candidate"
+	lab def hiv_elect 0 "Vote Against HIV Candidate" 1 "Vote for HIV Candidate"
+	lab def treatment 0 "Control" 1 "Treatment" 
 	
 	
 /* Converting don't know/refuse/other to extended missing values _______________*/
@@ -218,7 +221,7 @@ ________________________________________________________________________________
 		lab var prej_kidmarry`i' "Would accept X group to marry your child"
 		lab val prej_kidmarry`i' yesno
 	}
-		rename prej_kidmarry1 		prej_kidmarry_nottribe						// Not sure this is coded right
+		rename prej_kidmarry1 		prej_kidmarry_nottribe						
 		rename prej_kidmarry2		prej_kidmarry_notrelig
 		rename prej_kidmarry3		prej_kidmarry_nottz
 		rename prej_kidmarry4		prej_kidmarry_notrural	
@@ -264,15 +267,15 @@ ________________________________________________________________________________
 
 	forval i = 1/9 {
 		gen ptixpref_rank_`i' = .
-		replace ptixpref_rank_`i' = 1 if s14q2a == `i'
-		replace ptixpref_rank_`i' = 2 if s14q2b == `i'
-		replace ptixpref_rank_`i' = 3 if s14q2c == `i'
-		replace ptixpref_rank_`i' = 4 if s14q2d == `i'
+		replace ptixpref_rank_`i' = 9 if s14q2a == `i'
+		replace ptixpref_rank_`i' = 8 if s14q2b == `i'
+		replace ptixpref_rank_`i' = 7 if s14q2c == `i'
+		replace ptixpref_rank_`i' = 6 if s14q2d == `i'
 		replace ptixpref_rank_`i' = 5 if s14q2e == `i'
-		replace ptixpref_rank_`i' = 6 if s14q2f == `i'
-		replace ptixpref_rank_`i' = 7 if s14q2g == `i'
-		replace ptixpref_rank_`i' = 8 if s14q2h == `i'
-		replace ptixpref_rank_`i' = 9 if s14q2i == `i'
+		replace ptixpref_rank_`i' = 4 if s14q2f == `i'
+		replace ptixpref_rank_`i' = 3 if s14q2g == `i'
+		replace ptixpref_rank_`i' = 2 if s14q2h == `i'
+		replace ptixpref_rank_`i' = 1 if s14q2i == `i'
 	}
 
 		rename ptixpref_rank_1		ptixpref_rank_ag
@@ -284,15 +287,51 @@ ________________________________________________________________________________
 		rename ptixpref_rank_7		ptixpref_rank_sanit
 		rename ptixpref_rank_8		ptixpref_rank_roads
 		rename ptixpref_rank_9		ptixpref_rank_health
-
+		
 	rename s14q2_oth		ptixpref_other
+		
+	/* HIV Ranking */
+	gen ptixpref_hiv = ptixpref_rank_health
+		replace ptixpref_hiv = ptixpref_hiv + 1 if ptixpref_rank_efm > ptixpref_rank_health
+		lab var ptixpref_hiv "Rank of HIV/Health, Adjusted for EFM"
+		
+	gen ptixpref_hiv_first = (ptixpref_hiv == 9)
+		lab var ptixpref_hiv_first "Ranked HIV First"
+	
+	gen ptixpref_hiv_topthree = (ptixpref_hiv == 9 | ///
+								ptixpref_hiv == 8  | ///
+								ptixpref_hiv == 7)
+		lab var ptixpref_hiv_topthree "Ranked HIV Top Three"
+								
+	gen ptixpref_hiv_notlast = (ptixpref_hiv != 2)
+		lab var ptixpref_hiv_notlast "Did not rank HIV last"
 
+	/* EFM Ranking */	
+	gen ptixpref_efm = ptixpref_rank_efm
+		replace ptixpref_efm = ptixpref_efm + 1 if ptixpref_rank_health > ptixpref_rank_efm
+		lab var ptixpref_efm "Rank of EFM, Adjusted for HIV"
+		
+	gen ptixpref_efm_first = (ptixpref_efm == 9)
+		lab var ptixpref_efm_first "Ranked EFM First"
+	
+	gen ptixpref_efm_topthree = (ptixpref_efm == 9 | ///
+								ptixpref_efm == 8  | ///
+								ptixpref_efm == 7)
+	lab var ptixpref_efm_topthree "Ranked EFM Top Three Preferences"
+								
+	gen ptixpref_efm_notlast = (ptixpref_efm != 2)
+		lab var ptixpref_efm_notlast "Did not rank EFM Last"
+
+	/* Partner Rank */
 	rename s14q2_partner	ptixpref_partner_rank
-	 
+		gen ptixpref_partner_hiv = (ptixpref_partner_rank == 9)
+		gen ptixpref_partner_efm = (ptixpref_partner_rank == 3)
+		
 	rename s14q3  ptixpref_local_approve				
 		recode ptixpref_local_approve (1 = 0) (0 = 1)
 		lab def gov_approval 0 "Don't Approve" 1 "Approve"
 		lab val ptixpref_local_approve gov_approval
+		
 
 	rename s14q4  ptixpref_responsibility				
 		
@@ -303,14 +342,20 @@ ________________________________________________________________________________
 
 /* Election ____________________________________________________________________*/
 
-
 	rename s3q4a_1		em_elect
-		recode s3q4a_2 (2=1)(1=2)
+		recode em_elect (2=0)(1=1)
+		lab val em_elect em_elect 
+		
+		recode s3q4a_2 (2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
 		replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
 
 	rename s3q4b_1		hiv_elect
-		recode s3q4b_2	(2=1)(1=2)
+		recode hiv_elect (2=0)(1=1)
+		lab val hiv_elect hiv_elect
+		
+		recode s3q4b_2	(2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
 		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
+
 
 		
 /* Gender Equality _____________________________________________________________
@@ -358,15 +403,24 @@ We are coding that higher is always "more gender equality"
 	forval i = 1/3 {
 		gen ge_hhlabor`i' = .
 			forval j = 1/3 {	
-				replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"		// Need to change this back to "2"
+				replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"	// Need to change this back to "2"
 			}
 		lab var ge_hhlabor`i' "How is ideally responsible for X?"
 		lab val ge_hhlabor`i' ge_hhlabor
 	}
-		rename ge_hhlabor1 		ge_hhlabor_chores									// Not sure this is coded right
+		rename ge_hhlabor1 		ge_hhlabor_chores								// Not sure this is coded right
 		rename ge_hhlabor2		ge_hhlabor_kids
 		rename ge_hhlabor3		ge_hhlabor_money
 		
+		foreach var of varlist ge_hhlabor_chores ge_hhlabor_kids {				// create dummy = 1 if shoudl share labor
+			gen `var'_dum = 1 if `var' == 3	| `var' == 2
+				replace `var'_dum = 0 if `var' == 1
+		}
+		
+		foreach var of varlist ge_hhlabor_money {								// create dummy = 1 if shoudl share labor
+			gen `var'_dum = 1 if `var' == 3	| `var' == 1
+				replace `var'_dum = 0 if `var' == 2
+		}
 
 /* Forced Marriage _____________________________________________________________*/
 
@@ -511,7 +565,10 @@ We are coding that higher is always "more gender equality"
 
 	rename s17q5d		em_herddiscussed_often
 		
-	rename em_txt_treat		treat_em_pi
+	gen treat_pi = 1 if em_txt_treat == "treat"
+		replace treat_pi = 0 if em_txt_treat == "control"
+		lab val treat_pi treatment
+		lab var treat_pi "Pluralistic Ignorance Treatment"
 
 	destring emcount_pull_10, gen(b_em_comreject_pct)
 
@@ -567,7 +624,7 @@ We are coding that higher is always "more gender equality"
 	rename s17q14		em_report_norm	
 	
 	foreach var of varlist em_reject_* em_record_* em_report*  {
-		recode `var' (-999 = .d) (-888 = .r)
+		recode `var' (-999 = .d)(-888 = .r)(-222 = .o)
 	}
 
 	
@@ -587,42 +644,53 @@ We are coding that higher is always "more gender equality"
 		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
 	}
 
-/* HIV Knowledge ____________________________________________________________*/
+/* HIV Knowledge _______________________________________________________________*/
 
-	rename s_hiv_livelong		hivknow_arv_survive
+	gen hivknow_arv_survive = .
+		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "1") 
+		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "2") 	
+		replace hivknow_arv_survive = 0 if s_hiv_livelong != "" & hivknow_arv_survive != 1 
 
-	rename s_hiv_nospread		hivknow_arv_nospread
+	gen hivknow_arv_nospread = .
+		replace hivknow_arv_nospread = 1 if strpos(s_hiv_nospread, "1")
+		replace hivknow_arv_nospread = 0 if s_hiv_nospread != "" & hivknow_arv_nospread != 1
 
-	rename s_hiv_antiretroviral	hivknow_arv_any	
+	recode  s_hiv_transmitted (1=0 "Yes")(0=1 "No"), gen(hivknow_transmit)
+		lab var hivknow_transmit "[Reversed] Can HIV be spread to other people?"
+		
+	cap recode hivknow_* (-999 = 0)(-222 = 0)(-888 = .r)
 
-	rename s_hiv_transmitted	hivknow_transmit
-
-		cap recode healthknow_* (-999 = 0)(-222 = 0)(-888 = .r)
+	egen hivknow_index = rowmean(hivknow_arv_survive hivknow_arv_nospread hivknow_transmit)
 
 
 
-/* HIV Attitudes _______________________________________________________________*/
+/* HIV Stigma _______________________________________________________________*/
 
-	rename s_hiv_stigma1		hiv_stigma_fired
+	rename s_hiv_stigma1 		hivstigma_nofired	
 
-	rename s_hiv_stigma1_norm	hiv_stigma_fired_norm
 
-	rename s_hiv_stigma2		hiv_stigma_bus
+	rename s_hiv_stigma1_norm	hivstigma_nofired_norm
 
-		recode hiv_stigma_* (-999 = .d)(-888 = .r)
+	rename s_hiv_stigma2		hivstigma_yesbus
+	
+	recode hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
+
+	egen hivstigma_index = rowmean(hivstigma_fired hivstigma_bus)
 
 
 /* HIV Disclosure _______________________________________________________________*/
 
-	rename s_hiv_secret			hiv_disclose_secrete
+	rename s_hiv_secret			hivdisclose_nosecret
+		recode hivdisclose_nosecret (0=1)(1=0)
+		lab var hivdisclose_nosecret "[Reverse] Prefer family member keep HIV secret?"
 
-	rename s_disclose_family_a	hiv_disclose_fam
-	rename s_disclose_family_b	hiv_disclose_friend
-	rename s_disclose_family_c	hiv_disclose_cowork
+	rename s_disclose_family_a	hivdisclose_fam
+	rename s_disclose_family_b	hivdisclose_friend
+	rename s_disclose_family_c	hivdisclose_cowork
+	
+	recode hivdisclose_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-
-		recode hiv_disclose_* (-999 = .d)(-888 = .r)
-
+	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
 
 
 /* Intimate Partner Violence __________________________________________________*/
@@ -641,7 +709,7 @@ We are coding that higher is always "more gender equality"
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
-	recode ipv_* (-999 = .d)(-888 = .r)
+	recode ipv_* (-999 = .d)(-888 = .r)(-222 = .o)
 
 
 
@@ -704,7 +772,7 @@ We are coding that higher is always "more gender equality"
 									radio_listen == 3 | ///
 									radio_listen == 4 | ///
 									radio_listen == 5
-		recode radio_ever (-999 = .d) (-888 = .r)
+		recode radio_ever (-999 = .d)(-888 = .r)(-222 = .o)
 
 	* Favorite Radio Program Types
 	rename s4q5_programs_sm				radio_type	
@@ -778,7 +846,7 @@ We are coding that higher is always "more gender equality"
 	rename s16q5		assets_rooftype
 
 		foreach var of varlist assets_* {
-			recode `var' (-888 = .r)(-999 = .d)
+			recode `var' (-999 = .d)(-888 = .r)(-222 = .o)
 	}
 
 /* Psychology _________________________________________________________________*/

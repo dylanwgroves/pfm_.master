@@ -51,12 +51,15 @@ ______________________________________________________________________________*/
 		global output_final "${user}/Dropbox/Apps/Overleaf"
 		
 		/* IPA source files */
-		global ipa_ne "${user}\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis"
-		global ipa_ne_endline "${user}\Box Sync\19_Community Media Endlines\07_Questionnaires & Data\06_NE\05_data_encrypted\02_survey\03_clean"
-		global ipa_as "${user}\Box Sync\17_PanganiFM_2\07&08 Questionnaires & Data\03 Baseline\04_Data Quantitative\02 Main Survey Data"
-		global ipa_as_endline "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
-		global ipa_endline "${user}\Box Sync\19_Community Media Endlines"
+			/* Natural Experiment */
+			global ipa_ne "${user}\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis"
+			global ipa_ne_endline "${user}\Box Sync\19_Community Media Endlines\07_Questionnaires & Data\06_NE\05_data_encrypted\02_survey\03_clean"
 		
+			/* Audio Screening */
+			global ipa_as "${user}\Box Sync\17_PanganiFM_2\07&08 Questionnaires & Data\03 Baseline\04_Data Quantitative\02 Main Survey Data"
+			global ipa_as_endline "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
+		
+			global ipa_endline "${user}\Box Sync\19_Community Media Endlines"
 		
 		/* Natural Experiment */
 		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
@@ -64,9 +67,14 @@ ______________________________________________________________________________*/
 		
 		
 		/* Audio Screening */
-		global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
-		global as_tables	"${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Audio Screening (endline)\03 Tables and Figures"
+			/* FM */
+			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
+			global as_tables	"${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Audio Screening (endline)\03 Tables and Figures"
 		
+			/* HIV Results */
+			global data_hiv "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/01 Data"
+			global hiv_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Audio Screening (hiv)\03 Tables and Figures"
+
 		/* Radio Distribution */
 		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
 		global rd_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Radio Distribution\03 Tables and Figures"

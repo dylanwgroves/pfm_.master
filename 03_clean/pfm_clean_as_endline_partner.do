@@ -231,7 +231,7 @@ rename s5q9				efficacy_speakout
 		forval i = 1/7 {
 			gen prej_thermo`i' = .
 				forval j = 1/7 {	
-					replace prej_thermo`i' = s32a_g_r_`j'*5 if s32_ranked_list_r_`j' == "`i'"			// Need to change this back to "2"
+					replace prej_thermo`i' = s32a_g_r_`j'*5 if s32_ranked_list_r_`j' == "`i'"			
 					replace prej_thermo`i' = . if prej_thermo`i' < 0
 				}
 			lab var prej_thermo`i' "How do you feel towards X"
@@ -257,20 +257,20 @@ rename s5q9				efficacy_speakout
 		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38
 			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
 
-
+			
 /* Political Prefences __________________________________________________________*/
 
 	forval i = 1/9 {
 		gen ptixpref_rank_`i' = .
-		replace ptixpref_rank_`i' = 1 if s14q2a == `i'
-		replace ptixpref_rank_`i' = 2 if s14q2b == `i'
-		replace ptixpref_rank_`i' = 3 if s14q2c == `i'
-		replace ptixpref_rank_`i' = 4 if s14q2d == `i'
+		replace ptixpref_rank_`i' = 9 if s14q2a == `i'
+		replace ptixpref_rank_`i' = 8 if s14q2b == `i'
+		replace ptixpref_rank_`i' = 7 if s14q2c == `i'
+		replace ptixpref_rank_`i' = 6 if s14q2d == `i'
 		replace ptixpref_rank_`i' = 5 if s14q2e == `i'
-		replace ptixpref_rank_`i' = 6 if s14q2f == `i'
-		replace ptixpref_rank_`i' = 7 if s14q2g == `i'
-		replace ptixpref_rank_`i' = 8 if s14q2h == `i'
-		replace ptixpref_rank_`i' = 9 if s14q2i == `i'
+		replace ptixpref_rank_`i' = 4 if s14q2f == `i'
+		replace ptixpref_rank_`i' = 3 if s14q2g == `i'
+		replace ptixpref_rank_`i' = 2 if s14q2h == `i'
+		replace ptixpref_rank_`i' = 1 if s14q2i == `i'
 	}
 
 		rename ptixpref_rank_1		ptixpref_rank_ag
@@ -284,9 +284,38 @@ rename s5q9				efficacy_speakout
 		rename ptixpref_rank_9		ptixpref_rank_health
 
 	rename s14q2_oth		ptixpref_other
+		
+	/* HIV Ranking */
+	gen ptixpref_hiv = ptixpref_rank_health
+		replace ptixpref_hiv = ptixpref_hiv + 1 if ptixpref_rank_efm > ptixpref_rank_health
+		lab var ptixpref_hiv "Rank of HIV/Health, Adjusted for EFM"
+		
+	gen ptixpref_hiv_first = (ptixpref_hiv == 9)
+	
+	gen ptixpref_hiv_topthree = (ptixpref_hiv == 9 | ///
+								ptixpref_hiv == 8  | ///
+								ptixpref_hiv == 7)
+								
+	gen ptixpref_hiv_notlast = (ptixpref_hiv != 2)
 
+	/* EFM Ranking */	
+	gen ptixpref_efm = ptixpref_rank_efm
+		replace ptixpref_efm = ptixpref_efm + 1 if ptixpref_rank_health > ptixpref_rank_efm
+		lab var ptixpref_efm "Rank of EFM, Adjusted for HIV"
+		
+	gen ptixpref_efm_first = (ptixpref_efm == 9)
+	
+	gen ptixpref_efm_topthree = (ptixpref_efm == 9 | ///
+								ptixpref_efm == 8  | ///
+								ptixpref_efm == 7)
+								
+	gen ptixpref_efm_notlast = (ptixpref_efm != 2)
+	
+	/* Partner Rank */
 	rename s14q2_partner	ptixpref_partner_rank
-	 
+		gen ptixpref_partner_hiv = (ptixpref_partner_rank == 9)
+		gen ptixpref_partner_efm = (ptixpref_partner_rank == 3)
+		
 	rename s14q3  ptixpref_local_approve				
 		recode ptixpref_local_approve (1 = 0) (0 = 1)
 		lab def gov_approval 0 "Don't Approve" 1 "Approve"
@@ -299,23 +328,30 @@ rename s5q9				efficacy_speakout
 	}
 
 
+
+
 /* Election ____________________________________________________________________
 
-NEED TO CODE THIS TONIGHT
-
 */
+	foreach var of varlist s3q4a_1 s3q4a_2 {					// Error from early surveys
+		replace `var' = "" if `var' == "of"
+		destring `var', replace
+	}
 
 	rename s3q4a_1		em_elect
-		replace em_elect = "1" if em_elect == "of"
-		destring em_elect, replace
-		replace s3q4a_2 = "1" if s3q4a_2 == "of"
-		destring s3q4a_2, replace
-		recode s3q4a_2 (2=1)(1=2)
+		recode em_elect (2=0)(1=1)
+		lab val em_elect em_elect 
+		
+		recode s3q4a_2 (2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
 		replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
 
 	rename s3q4b_1		hiv_elect
-		recode s3q4b_2	(2=1)(1=2)
+		recode hiv_elect (2=0)(1=1)
+		lab val hiv_elect hiv_elect
+		
+		recode s3q4b_2	(2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
 		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
+
 
 /* Gender Equality _____________________________________________________________
 
@@ -514,11 +550,10 @@ NEED TO CODE THIS TONIGHT
 		replace em_reject = 0 if em_allow == 1 | em_allow == 3
 		lab val em_reject reject
 		
-	
 	rename s17q5		em_norm_reject
 		recode em_norm_reject (2=1)(1=0)(3=0)
 		lab val em_norm_reject reject
-		lab var em_norm_reject "Community Rejects Early Marraige"
+		lab var em_norm_reject "Community Rejects Early Marriage"
 		
 	clonevar em_norm_reject_dum = em_norm_reject
 		recode em_norm_reject_dum (2=0)(1=1)(0=0)
@@ -588,10 +623,8 @@ NEED TO CODE THIS TONIGHT
 		recode `var' (-999 = .d) (-888 = .r)
 	}	
 
-
 	
 /* Health Knowledge ____________________________________________________________*/
-
 
 	rename s23q1		healthknow_notradmed
 		recode healthknow_notradmed (0=1)(1=0)									// Check on translation
@@ -608,38 +641,53 @@ NEED TO CODE THIS TONIGHT
 	}
 
 
-/* HIV Knowledge ____________________________________________________________*/
-
-	rename s_hiv_livelong		hivknow_arv_survive
-
-	rename s_hiv_nospread		hivknow_arv_nospread
-
-	rename s_hiv_antiretroviral	hivknow_arv_any
-
-	rename s_hiv_transmitted	hivknow_transmit
-
-	foreach var of varlist healthknow_* {
-		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
-	}
+/* HIV Knowledge _______________________________________________________________*/
 
 
-/* HIV Attitudes _______________________________________________________________*/
+	gen hivknow_arv_survive = .
+		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "1") 
+		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "2") 	
+		replace hivknow_arv_survive = 0 if s_hiv_livelong != "" & hivknow_arv_survive != 1 
 
-	rename s_hiv_stigma1		hiv_stigma_fired
+	gen hivknow_arv_nospread = .
+		replace hivknow_arv_nospread = 1 if strpos(s_hiv_nospread, "1")
+		replace hivknow_arv_nospread = 0 if s_hiv_nospread != "" & hivknow_arv_nospread != 1
 
-	rename s_hiv_stigma1_norm	hiv_stigma_fired_norm
+	recode  s_hiv_transmitted (1=0 "Yes")(0=1 "No"), gen(hivknow_transmit)
+		lab var hivknow_transmit "[Reversed] Can HIV be spread to other people?"
+		
+	cap recode hivknow_* (-999 = 0)(-222 = 0)(-888 = .r)
 
-	rename s_hiv_stigma2		hiv_stigma_bus
+	egen hivknow_index = rowmean(hivknow_arv_survive hivknow_arv_nospread hivknow_transmit)
+
+
+/* HIV Stigma _______________________________________________________________*/
+
+	rename s_hiv_stigma1 		hivstigma_nofired	
+
+
+	rename s_hiv_stigma1_norm	hivstigma_nofired_norm
+
+	rename s_hiv_stigma2		hivstigma_yesbus
+	
+	recode hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
+
+	egen hivstigma_index = rowmean(hivstigma_fired hivstigma_bus)
 
 
 /* HIV Disclosure _______________________________________________________________*/
 
-	rename s_hiv_secret			hiv_disclose_secrete
+	rename s_hiv_secret			hivdisclose_nosecret
+		recode hivdisclose_nosecret (0=1)(1=0)
+		lab var hivdisclose_nosecret "[Reverse] Prefer family member keep HIV secret?"
 
-	rename s_disclose_family_a	hiv_disclose_fam
-	rename s_disclose_family_b	hiv_disclose_friend
-	rename s_disclose_family_c	hiv_disclose_cowork
+	rename s_disclose_family_a	hivdisclose_fam
+	rename s_disclose_family_b	hivdisclose_friend
+	rename s_disclose_family_c	hivdisclose_cowork
+	
+	recode hivdisclose_* (-999 = .d)(-888 = .r)(-222 = .o)
 
+	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
 
 
 /* Intimate Partner Violence __________________________________________________*/
@@ -658,12 +706,7 @@ NEED TO CODE THIS TONIGHT
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
-	recode ipv_* (-999 = .d)(-888 = .r)
-
-
-
-
-						
+	recode ipv_* (-999 = .d)(-888 = .r)				
 
 
 /* Relationships ________________________________________________________________*/
@@ -709,7 +752,8 @@ NEED TO CODE THIS TONIGHT
 	rename s11q5_0		parent_talk_none
 
 		
-	/* Media Consumption ___________________________________________________________*/
+/* Media Consumption ___________________________________________________________*/
+
 	rename s4q2_listen_radio	radio_listen							
 		lab def s4q2_listen_radio 0 "Never", modify
 		lab val radio s4q2_listen_radio
@@ -790,77 +834,77 @@ NEED TO CODE THIS TONIGHT
 
 /* Assetts _____________________________________________________________________*/
 
-rename s16q1		assets_radio
-rename s16q2		assets_radio_num
-	replace assets_radio_num = 0 if assets_radio == 0
-rename s16q3		assets_radio_self
+	rename s16q1		assets_radio
+	rename s16q2		assets_radio_num
+		replace assets_radio_num = 0 if assets_radio == 0
+	rename s16q3		assets_radio_self
 
-	foreach var of varlist assets_* {
-		recode `var' (-888 = .r)(-999 = .d)
-	}
+		foreach var of varlist assets_* {
+			recode `var' (-888 = .r)(-999 = .d)
+		}
 
 /* Psychology _________________________________________________________________*/
 
-rename s19q1		psych_thinkhard
-		lab def thinkhard 1 "Dont like to think" 2 "Like to think"
-		lab val psych_thinkhard thinkhard
+	rename s19q1		psych_thinkhard
+			lab def thinkhard 1 "Dont like to think" 2 "Like to think"
+			lab val psych_thinkhard thinkhard
 
 		
 /* Radio Distribution Compliance _______________________________________________*/
 
-rename treat_rd_pull treat_rd_pull 
+	rename treat_rd_pull treat_rd_pull 
 
-rename s30q1		rd_receive
-rename s30q2		rd_stillhave
-rename s30q3		rd_stillhave_whyno
-cap rename s30q4		rd_stillhave_show
-cap rename s30q5		rd_working
-cap rename s30q6		rd_working_whynot
+	rename s30q1		rd_receive
+	rename s30q2		rd_stillhave
+	rename s30q3		rd_stillhave_whyno
+	cap rename s30q4		rd_stillhave_show
+	cap rename s30q5		rd_working
+	cap rename s30q6		rd_working_whynot
 
-rename s30q7		rd_uses
-	cap rename s30q7_1 rd_uses_self
-	cap rename s30q7_2 rd_uses_spouse
-	cap rename s30q7_3 rd_uses_child
-	cap rename s30q7_4 rd_uses_othfam
-	cap rename s30q7_5 rd_uses_friends
-	cap rename s30q7_6 rd_uses_cowork
-	
-	/*
-	foreach var of varlist rd_uses_* {
-		cap lab val `var' yesno
-	}
-	*/
+	rename s30q7		rd_uses
+		cap rename s30q7_1 rd_uses_self
+		cap rename s30q7_2 rd_uses_spouse
+		cap rename s30q7_3 rd_uses_child
+		cap rename s30q7_4 rd_uses_othfam
+		cap rename s30q7_5 rd_uses_friends
+		cap rename s30q7_6 rd_uses_cowork
+		
+		/*
+		foreach var of varlist rd_uses_* {
+			cap lab val `var' yesno
+		}
+		*/
 
-cap rename s30q8		rd_controls
-cap rename s30q9		rd_problems
-cap rename s30q10		rd_challenge
-	cap rename s30q10_1 	rd_challenge_jealous
-	cap rename s30q10_2 	rd_challenge_mistrust
-	cap rename s30q10_3		rd_challenge_fight
-	cap rename s30q10_oth	rd_challenge_oth
-	
-	
+	cap rename s30q8		rd_controls
+	cap rename s30q9		rd_problems
+	cap rename s30q10		rd_challenge
+		cap rename s30q10_1 	rd_challenge_jealous
+		cap rename s30q10_2 	rd_challenge_mistrust
+		cap rename s30q10_3		rd_challenge_fight
+		cap rename s30q10_oth	rd_challenge_oth
+		
+		
 /* Audio Screening Compliance __________________________________________________*/
 
-rename s31q1		comply_topic
-rename s31q2		comply_discuss
-rename s31q3		comply_discuss_who	
+	rename s31q1		comply_topic
+	rename s31q2		comply_discuss
+	rename s31q3		comply_discuss_who	
 
 
 /* Conclusion __________________________________________________________________*/
 
-rename s20q1				svy_followupok
+	rename s20q1				svy_followupok
 
-rename s20q2latitude		svy_gps_lat
-rename s20q2longitude		svy_gps_long		
+	rename s20q2latitude		svy_gps_lat
+	rename s20q2longitude		svy_gps_long		
 
-rename s20q3				svy_others
-rename s20q4_sm				svy_others_who
+	rename s20q3				svy_others
+	rename s20q4_sm				svy_others_who
 
-	
-drop conjoint_randomizer_rpt_count choices_randomizer_rpt_count				// drop unecessary variables that are too long
+		
+	drop conjoint_randomizer_rpt_count choices_randomizer_rpt_count				// drop unecessary variables that are too long
 
-	
+		
 /* Save ________________________________________________________________________*/
 
 	save  "${data}\01_raw_data\pfm_as_endline_clean_partner.dta", replace
