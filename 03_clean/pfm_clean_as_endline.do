@@ -666,16 +666,16 @@ We are coding that higher is always "more gender equality"
 
 /* HIV Stigma _______________________________________________________________*/
 
-	rename s_hiv_stigma1 		hivstigma_nofired	
+	rename s_hiv_stigma1 		hivstigma_notfired	
 
 
-	rename s_hiv_stigma1_norm	hivstigma_nofired_norm
+	rename s_hiv_stigma1_norm	hivstigma_notfired_norm
 
 	rename s_hiv_stigma2		hivstigma_yesbus
 	
 	recode hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-	egen hivstigma_index = rowmean(hivstigma_fired hivstigma_bus)
+	egen hivstigma_index = rowmean(hivstigma_notfired hivstigma_yesbus)
 
 
 /* HIV Disclosure _______________________________________________________________*/
@@ -904,7 +904,7 @@ We are coding that higher is always "more gender equality"
 	rename s31q2		comply_discuss
 	rename s31q3		comply_discuss_who
 
-/* Community Sampling __________________________________________________________	
+/* Community Sampling __________________________________________________________	*/	
 
 	rename s33q1_r		comsample_name1
 
@@ -925,8 +925,8 @@ We are coding that higher is always "more gender equality"
 											comsample_who1 == 3 ///
 											comsample_who1 == 4 ///
 											comsample_who1 == 5
-	*/
 
+stop
 
 /* Children Sampling ___________________________________________________________*/
 

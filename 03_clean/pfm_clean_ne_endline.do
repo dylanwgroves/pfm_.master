@@ -425,6 +425,10 @@ ________________________________________________________________________________
 
 		lab val ptixpart_activ_* yesno
 		
+	egen ptixpart_villmeet = rowmean(ptixpart_activ_villmeet ptixpart_activ_wardmeet)
+	egen ptixpart_vote = rowmean(ptixpart_activ_votenatl ptixpart_activ_votelocal)
+	egen ptixpart_collact = rowmax(ptixpart_activ_collact ptixpart_activ_creategroup)
+		
 	cap rename s15q7						ptixpart_contact_satisfied
 
 	egen ptixpart_index = rowmean(ptixpart_activ_*)
