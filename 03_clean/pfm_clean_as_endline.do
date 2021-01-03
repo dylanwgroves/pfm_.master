@@ -44,6 +44,7 @@ ________________________________________________________________________________
 	lab def em_elect 0 "Vote Against EM Candidate" 1 "Vote For EM Candidate"
 	lab def hiv_elect 0 "Vote Against HIV Candidate" 1 "Vote for HIV Candidate"
 	lab def treatment 0 "Control" 1 "Treatment" 
+	lab def elect_topic 1 "EFM" 2 "HIV" 3 "Roads" 4 "Crime"
 	
 	
 /* Converting don't know/refuse/other to extended missing values _______________*/
@@ -339,25 +340,126 @@ ________________________________________________________________________________
 		cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
 	}
 
-
 /* Election ____________________________________________________________________*/
 
-	rename s3q4a_1		em_elect
+	/* Code Outcomes for Screening Experiments */
+	gen em_elect = s3q4a_1	
 		recode em_elect (2=0)(1=1)
 		lab val em_elect em_elect 
 		
-		recode s3q4a_2 (2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
-		replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
+		recode s3q4a_2 (2=1)(1=0), gen(s3q4a_2_reverse)												// Reversed order for randomly selected 1/2 of respondents
+		replace em_elect = s3q4a_2_reverse if rand_order_1st_txt == "second"
 
-	rename s3q4b_1		hiv_elect
+	gen hiv_elect = s3q4b_1		
 		recode hiv_elect (2=0)(1=1)
 		lab val hiv_elect hiv_elect
 		
-		recode s3q4b_2	(2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
-		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
+		recode s3q4b_2	(2=1)(1=0), gen(s3q4b_2_reverse)											// Reversed order for randomly selected 1/2 of respondents
+		replace hiv_elect = s3q4b_2_reverse if rand_order_2nd_txt == "second"
 
-
+	/* Code Candidate Profiles */
+	forval i = 1/4 {
+	
+		/* Religion */
+		gen cand`i'_muslim = 1 if 			rand_cand`i'_txt == "Mr. Salim" | ///
+											rand_cand`i'_txt == "Mrs. Mwanaidi"					// There were issues with this - check with Martin
+		replace cand`i'_muslim = 0 if 		rand_cand`i'_txt == "Mr. John" | ///
+											rand_cand`i'_txt == "Mrs. Rose"	
+											
+		lab val cand`i'_muslim yesno 
+		lab var cand`i'_muslim "Candidate `i' Muslim?"
 		
+		/* Gender */
+		gen cand`i'_female = 1 if 			rand_cand`i'_txt == "Mrs. Rose" | ///
+											rand_cand`i'_txt == "Mrs. Mwanaidi"		
+		replace cand`i'_female = 0 if 			rand_cand`i'_txt == "Mr. Salim" | ///
+											rand_cand`i'_txt == "Mr. John"		
+											
+		lab val cand`i'_female yesno
+		lab var cand`i'_female "Candidate `i' Female?"
+	}
+	
+		/* Issue */
+			/* First Election */
+			gen cand1_topic = 1 if 	 rand_order_1st_txt == "first" 
+				replace cand1_topic = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
+										 rand_order_1st_txt == "second"
+				replace cand1_topic = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
+										 rand_order_1st_txt == "second"
+				
+			gen cand2_topic = 2 if 	 rand_order_1st_txt == "second"
+				replace cand2_topic = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
+										 rand_order_1st_txt == "first"
+				replace cand2_topic = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
+										 rand_order_1st_txt == "first"
+										 
+			/* Second Election */					 
+			gen cand3_topic = 2 if 	 rand_order_2nd_txt == "first"
+				replace cand3_topic = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
+										 rand_order_2nd_txt == "second"
+				replace cand3_topic = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
+										 rand_order_2nd_txt == "second"
+				
+			gen cand4_topic = 2 if 	 rand_order_2nd_txt == "second"
+				replace cand4_topic = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
+										 rand_order_2nd_txt == "first"
+				replace cand4_topic = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
+										 rand_order_2nd_txt == "first"
+									 
+			forval i = 1/4 {
+				lab val cand`i'_topic elect_topic
+				lab var cand`i'_topic "Candidate Platform"
+			}
+		
+	/* Code Vote Choices */
+	gen vote_elect1 = s3q4a_1
+		replace vote_elect1 = s3q4a_2 if rand_order_1st_txt == "second"
+		recode vote_elect1 (2=0)(1=1)
+		
+	gen vote_elect2 = s3q4b_1
+		replace vote_elect2 = s3q4b_2 if rand_order_2nd_txt == "second"
+		recode vote_elect2 (2=0)(1=1)
+		
+	/* Gen Vote Pref */
+		/* Muslim */
+		gen vote_pref_muslim_1 = 1 if vote_elect1 == 1 & (cand1_muslim > cand2_muslim)
+			replace vote_pref_muslim_1 = 1 if vote_elect1 == 0 & (cand1_muslim < cand2_muslim)
+			
+			replace vote_pref_muslim_1 = 0 if vote_elect1 == 1 & (cand1_muslim < cand2_muslim)
+			replace vote_pref_muslim_1 = 0 if vote_elect1 == 0 & (cand1_muslim > cand2_muslim)
+			
+			replace vote_pref_muslim_1 = . if (cand1_muslim == cand2_muslim)
+			
+		gen vote_pref_muslim_2 = 1 if vote_elect2 == 1 & (cand3_muslim > cand4_muslim)
+			replace vote_pref_muslim_2 = 1 if vote_elect2 == 0 & (cand3_muslim < cand4_muslim)
+			
+			replace vote_pref_muslim_2 = 0 if vote_elect2 == 1 & (cand3_muslim < cand4_muslim)
+			replace vote_pref_muslim_2 = 0 if vote_elect2 == 0 & (cand3_muslim > cand4_muslim)
+			
+			replace vote_pref_muslim_2 = . if (cand3_muslim == cand4_muslim)
+			
+		egen vote_pref_muslim_index = rowmean(vote_pref_muslim_1 vote_pref_muslim_2)
+		
+		/* Female */
+		gen vote_pref_female_1 = 1 if vote_elect1 == 1 & (cand1_female > cand2_female)
+			replace vote_pref_female_1 = 1 if vote_elect1 == 0 & (cand1_female < cand2_female)
+			
+			replace vote_pref_female_1 = 0 if vote_elect1 == 1 & (cand1_female < cand2_female)
+			replace vote_pref_female_1 = 0 if vote_elect1 == 0 & (cand1_female > cand2_female)
+			
+			replace vote_pref_female_1 = . if (cand1_female == cand2_female)
+			
+		gen vote_pref_female_2 = 1 if vote_elect2 == 1 & (cand3_female > cand4_female)
+			replace vote_pref_female_2 = 1 if vote_elect2 == 0 & (cand3_female < cand4_female)
+			
+			replace vote_pref_female_2 = 0 if vote_elect2 == 1 & (cand3_female < cand4_female)
+			replace vote_pref_female_2 = 0 if vote_elect2 == 0 & (cand3_female > cand4_female)
+			
+			replace vote_pref_female_2 = . if (cand3_female == cand4_female)
+			
+		egen vote_pref_female_index = rowmean(vote_pref_female_1 vote_pref_female_2)
+
+
 /* Gender Equality _____________________________________________________________
 
 We are coding that higher is always "more gender equality"
@@ -734,7 +836,7 @@ We are coding that higher is always "more gender equality"
 
 /* Parenting ___________________________________________________________________*/
 
-	rename s11q0		parent_hhkids
+	rename s11q0		parent_hhkids_any
 
 	rename s11q1		parent_currentevents
 
@@ -904,43 +1006,190 @@ We are coding that higher is always "more gender equality"
 	rename s31q2		comply_discuss
 	rename s31q3		comply_discuss_who
 
+	
 /* Community Sampling __________________________________________________________	*/	
 
-	rename s33q1_r		comsample_name1
+	/* Person 1 */
+	rename s33q1_r		comsample_1_name
+		replace comsample_1_name = "" if comsample_1_name == "000"
+		replace comsample_1_name = "" if comsample_1_name == "-888"
+		replace comsample_1_name = "" if comsample_1_name == "Hana mtu"
+		replace comsample_1_name = "" if comsample_1_name == "Hakuna zaidi ya familia yangu"
+		
+	gen comsample_1_none = 1 if comsample_1_name == ""
+	
+	rename s33q2_r		comsample_1_rltn
+	
+		lab def s33q2_r 11 "Aunt/Uncle" 12 "Nephew/Neice" 13 "Parent in law" ///
+						14 "Sibling in law" 15 "Child in law" ///
+						16 "Granddaughter/son" 17 "Children" 18 "Spouse", modify	
+ 	
+		replace comsample_1_rltn = . if s33q2_oth_r == "Hana mtu"
+		replace comsample_1_rltn = . if s33q2_oth_r == "Hakuna zaidi ya familia yangu"
+		replace comsample_1_rltn = . if comsample_1_name == "-888"
 
-	rename s33q2_r		comsample_who1
+		replace comsample_1_rltn = 11 if s33q2_oth_r == "Baba Mdogo" | ///
+										 s33q2_oth_r == "Baba mdogo" | ///
+										 s33q2_oth_r == "Mama mdogo" | ///
+										 s33q2_oth_r == "Mama kubwa" | ///
+										 s33q2_oth_r == "Mama mkubwa"
+										 
+		replace comsample_1_rltn = 12 if s33q2_oth_r == "Mtoto wa kaka" | ///
+										 s33q2_oth_r == "Mtoto wa kaka yake"
+		
+		replace comsample_1_rltn = 13 if s33q2_oth_r == "Mama mkwe" | ///
+										 s33q2_oth_r == "Mother inlaw"
+		
+		replace comsample_1_rltn = 14 if s33q2_oth_r == "Brother In-law" | ///
+										 s33q2_oth_r == "Brother in law" | ///
+										 s33q2_oth_r == "Mke wa kaka yake" | ///
+										 s33q2_oth_r == "Mke wa kaka yake(wifi)" | ///
+										 s33q2_oth_r == "Mke wa shemeji yangu" | ///
+										 s33q2_oth_r == "Shemeji" | ///
+										 s33q2_oth_r == "Shemeji yake" | ///
+										 s33q2_oth_r == "Sister in law" | ///
+										 s33q2_oth_r == "Wifi" | ///
+										 s33q2_oth_r == "Wifi yangu"
+										 
+		replace comsample_1_rltn = 18 if s33q2_oth_r == "Mjengezi Mwenzangu" | ///
+										s33q2_oth_r == "Mke mwenza" | ///
+										s33q2_oth_r == "Mke mwenza" | ///
+										s33q2_oth_r == "Mke" | ///
+										s33q2_oth_r == "Mkemwenza" | ///
+										s33q2_oth_r == "Mke mwenzangu" | ///
+										s33q2_oth_r == "Mke Mwenzangu" | ///
+										s33q2_oth_r == "Mjengezi mwenzangu"
+										 
+		replace comsample_1_rltn = 15 if  s33q2_oth_r == "Mkwe (daughter inlaw)" | ///
+										  s33q2_oth_r == "Mkwe"
+										 
+		replace comsample_1_rltn = 16 if s33q2_oth_r == "Mjukuu" | ///
+										 s33q2_oth_r == "Mjukuu kwake"
+										  
+		replace comsample_1_rltn = 17 if s33q2_oth_r == "Mtoto wake" | ///
+										 s33q2_oth_r == "Mtoto wangu"
+										 		 
+		replace comsample_1_rltn = 1 if s33q2_oth_r == "Young brother"
+		
+		replace comsample_1_rltn = 4 if s33q2_oth_r == "Mdogo ake" | ///
+										s33q2_oth_r == "Mdogo wake"
+																
+		replace comsample_1_rltn = 9 if id_resp_uid == "3_41_3_34" | ///
+										s33q2_oth_r == "Kiongozi wa dini"
+		
+		replace comsample_1_rltn = 10 if s33q2_oth_r == "Jirani" | ///
+										 s33q2_oth_r == "Jirani yake"
+										 
+	gen comsample_1_fam = .	
+		forval i = 1/5 {
+			replace comsample_1_fam = 1 if comsample_1_rltn == `i'
+		}
+		forval i = 17/18 {
+			replace comsample_1_fam = 1 if comsample_1_rltn == `i'
+		}
+		forval i = 6/16 {
+			replace comsample_1_fam = 0 if comsample_1_rltn == `i'
+		}
 
-	rename s33q3_a		comsample_name2
-	rename s33q3_a_r	comsample_who2
-	stop
+	/* Person 2 _________________________________________________________________*/
+	
+	rename s33q3_a		comsample_2_name
 
-	replace comsample_name2 = s33q3_b if 	comsample_who1 == 1 ///
-											comsample_who1 == 2 ///
-											comsample_who1 == 3 ///
-											comsample_who1 == 4 ///
-											comsample_who1 == 5
+	replace comsample_2_name = s33q3_b if 	comsample_1_fam == 1
+										
+	rename s33q3_a_r	comsample_2_rltn
+		replace comsample_2_rltn = s33q3_b_r if comsample_1_fam == 1
+		
+	rename s33q3_a_oth	comsample_2_rltn_oth
+		replace comsample_2_rltn_oth = s33q3_b_oth if comsample_1_fam == 1
+											
+		replace comsample_2_rltn = . if comsample_2_rltn_oth == "-000" | ///
+										comsample_2_rltn_oth == "-888" | ///
+										comsample_2_rltn_oth == "000" | ///
+										comsample_2_rltn_oth == "Hakuna" | ///
+										comsample_2_rltn_oth == "Hakuna mwingine" | ///
+										comsample_2_rltn_oth == "Hakuna mwingine" | ///
+										comsample_2_rltn_oth == "Hakuna zaidi ya ndugu" | ///
+										comsample_2_rltn_oth == "Hakuna mtu wa pili" | ///
+										comsample_2_rltn_oth == "Hakuna mtu mwingine"| ///
+										comsample_2_rltn_oth == "Hana mwengine" | ///
+										comsample_2_rltn_oth == "Hana rafiki" | ///
+										comsample_2_rltn_oth == "Hana rafiki au mtu wa karibu" | ///
+										comsample_2_rltn_oth == "Hanaa" | ///
+										comsample_2_rltn_oth == "Hana" | ///
+										comsample_2_rltn_oth == "Sina"
+										
+		replace comsample_2_rltn = 1 if comsample_2_rltn_oth == "Mdogo ake" | ///
+										 comsample_2_rltn_oth == "Modogo wake" 
+										 
+		replace comsample_2_rltn = 10 if comsample_2_rltn_oth == "Jirani" | ///
+										 comsample_2_rltn_oth == "Jirani karibu" | ///
+										 comsample_2_rltn_oth == "Jirani yake pia"
+		
+		replace comsample_1_rltn = 11 if comsample_2_rltn_oth == "Mama mdogo" | ///
+										 comsample_2_rltn_oth == "Mtoto wa babu"
+										 
+		replace comsample_1_rltn = 12 if comsample_2_rltn_oth == "Mtoto wa kaka" | ///
+										 comsample_2_rltn_oth == "Mtoto wa mdogo wake"
+		
+		replace comsample_1_rltn = 13 if comsample_2_rltn_oth == "Baba mkwe" | ///
+										 comsample_2_rltn_oth == "Mother inlaw"
+		
+		replace comsample_2_rltn = 14 if comsample_2_rltn_oth == "Brother inlaw" | ///
+										 comsample_2_rltn_oth == "Shemeji" | ///
+										 comsample_2_rltn_oth == "Sister in law" | ///
+										 comsample_2_rltn_oth == "Sistern inlaw"
 
-	replace comsample_who2 = s33q3_b_r if 	comsample_who1 == 1 ///
-											comsample_who1 == 2 ///
-											comsample_who1 == 3 ///
-											comsample_who1 == 4 ///
-											comsample_who1 == 5
+		replace comsample_2_rltn = 16 if comsample_2_rltn_oth == "Mjukuu"
+		
+		replace comsample_2_rltn = 15 if comsample_2_rltn_oth == "Mkaza mwanangu (mkwe wangu)" | ///
+										 comsample_2_rltn_oth == "Mkwe wako" | ///
+										 comsample_2_rltn_oth == "Mkwe wangu"
+										 
+		replace comsample_2_rltn = 17 if comsample_2_rltn_oth == "Mtoto" | ///
+										 comsample_2_rltn_oth == "Mtoto wake" | ///
+										 comsample_2_rltn_oth == "Mtoto wangu ambae anaishi jirani"
+		
+		replace comsample_2_rltn = 12 if comsample_2_rltn_oth == "Mtoto wa kaka" | ///
+										 comsample_2_rltn_oth == "Mtoto wa Kaka"
 
-stop
+		replace comsample_2_rltn = 18 if comsample_2_rltn_oth == "Wifi" | ///
+										 comsample_2_rltn_oth == "Wifi yangu" | ///
+										 comsample_2_rltn_oth == "Wiki yake" | ///
+										 comsample_2_rltn_oth == "Fiance" | ///
+										 comsample_2_rltn_oth == "Mke Mwenzangu" | ///
+										 comsample_2_rltn_oth == "Mke Mwenzio" | ///
+										 comsample_2_rltn_oth == "Mke mwenzangu" | ///
+										 comsample_2_rltn_oth == "Mkwe" 
+	
+		lab val comsample_2_rltn s33q2_r
+		
+	gen comsample_2_fam = .	
+		forval i = 1/5 {
+			replace comsample_2_fam = 1 if comsample_2_rltn == `i'
+		}
+		forval i = 17/18 {
+			replace comsample_1_fam = 2 if comsample_1_rltn == `i'
+		}
+		forval i = 6/16 {
+			replace comsample_1_fam = 0 if comsample_1_rltn == `i'
+		}
 
 /* Children Sampling ___________________________________________________________*/
 
-	rename s7q1			kidsample_kidnum
+	rename s7q1			kidssample_kidnum
 
 	forval i = 1/12 {
 		rename s7q5_first_name_r_`i'	kidssample_namefirst_`i'
 		rename s7q5_second_name_r_`i'	kidssample_namesecond_`i'
 		rename s7q5_third_name_r_`i'	kidssample_namethird_`i'
 		
+		egen kidssample_name_`i' = concat(kidssample_namefirst_`i'  kidssample_namesecond_`i' kidssample_namethird_`i'), punct(" ")
+		
 		rename s7q6_old_r_`i'			kidssample_age_`i'
 		rename s7q7_gender_r_`i'		kidssample_gender_`i'
 	}
-
+	
 	rename s7q9			kidssample_consent
 	
 
@@ -963,6 +1212,6 @@ stop
 	gen endline_as = 1
 	
 	* Within folder
-	save  "${data}\01_raw_data\pfm_as_endline_clean.dta", replace
+	save "${data}\01_raw_data\pfm_as_endline_clean.dta", replace
 
 

@@ -78,6 +78,11 @@ ______________________________________________________________________________*/
 		/* Radio Distribution */
 		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
 		global rd_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Radio Distribution\03 Tables and Figures"
+		
+		
+		/* Court */
+		global data_court "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Court/01_data"
+		global court_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Court\03_tables"
 	
 /*		
 	

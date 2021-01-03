@@ -338,23 +338,126 @@ rename s5q9				efficacy_speakout
 		destring `var', replace
 	}
 
-	rename s3q4a_1		em_elect
+		/* Code Outcomes for Screening Experiments */
+	gen em_elect = s3q4a_1	
 		recode em_elect (2=0)(1=1)
 		lab val em_elect em_elect 
 		
-		recode s3q4a_2 (2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
-		replace em_elect = s3q4a_2 if rand_order_1st_txt == "second"
+		recode s3q4a_2 (2=1)(1=0), gen(s3q4a_2_reverse)												// Reversed order for randomly selected 1/2 of respondents
+		replace em_elect = s3q4a_2_reverse if rand_order_1st_txt == "second"
 
-	rename s3q4b_1		hiv_elect
+	gen hiv_elect = s3q4b_1		
 		recode hiv_elect (2=0)(1=1)
 		lab val hiv_elect hiv_elect
 		
-		recode s3q4b_2	(2=1)(1=0)												// Reversed order for randomly selected 1/2 of respondents
-		replace hiv_elect = s3q4b_2 if rand_order_2nd_txt == "second"
+		recode s3q4b_2	(2=1)(1=0), gen(s3q4b_2_reverse)											// Reversed order for randomly selected 1/2 of respondents
+		replace hiv_elect = s3q4b_2_reverse if rand_order_2nd_txt == "second"
 
+	/* Code Candidate Profiles */
+	forval i = 1/4 {
+	
+		/* Religion */
+		gen cand`i'_muslim = 1 if 			rand_cand`i'_txt == "Mr. Salim" | ///
+											rand_cand`i'_txt == "Mrs. Mwanaidi"					// There were issues with this - check with Martin
+		replace cand`i'_muslim = 0 if 		rand_cand`i'_txt == "Mr. John" | ///
+											rand_cand`i'_txt == "Mrs. Rose"	
+											
+		lab val cand`i'_muslim yesno 
+		lab var cand`i'_muslim "Candidate `i' Muslim?"
+		
+		/* Gender */
+		gen cand`i'_female = 1 if 			rand_cand`i'_txt == "Mrs. Rose" | ///
+											rand_cand`i'_txt == "Mrs. Mwanaidi"		
+		replace cand`i'_female = 0 if 			rand_cand`i'_txt == "Mr. Salim" | ///
+											rand_cand`i'_txt == "Mr. John"		
+											
+		lab val cand`i'_female yesno
+		lab var cand`i'_female "Candidate `i' Female?"
+	}
+	
+		/* Issue */
+			/* First Election */
+			gen cand1_topic = 1 if 	 rand_order_1st_txt == "first"
+				replace cand1_topic = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
+										 rand_order_1st_txt == "second"
+				replace cand1_topic = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
+										 rand_order_1st_txt == "second"
+				
+			gen cand2_topic = 2 if 	 rand_order_1st_txt == "second"
+				replace cand2_topic = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
+										 rand_order_1st_txt == "first"
+				replace cand2_topic = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
+										 rand_order_1st_txt == "first"
+										 
+			/* Second Election */					 
+			gen cand3_topic = 2 if 	 rand_order_2nd_txt == "first"
+				replace cand3_topic = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
+										 rand_order_2nd_txt == "second"
+				replace cand3_topic = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
+										 rand_order_2nd_txt == "second"
+				
+			gen cand4_topic = 2 if 	 rand_order_2nd_txt == "second"
+				replace cand4_topic = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
+										 rand_order_2nd_txt == "first"
+				replace cand4_topic = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
+										 rand_order_2nd_txt == "first"
+									 
+			forval i = 1/4 {
+				lab val cand`i'_topic elect_topic
+				lab var cand`i'_topic "Candidate Platform"
+			}
+		
+	/* Code Vote Choices */
+	gen vote_elect1 = s3q4a_1
+		replace vote_elect1 = s3q4a_2 if rand_order_1st_txt == "second"
+		recode vote_elect1 (2=0)(1=1)
+		
+	gen vote_elect2 = s3q4b_1
+		replace vote_elect2 = s3q4b_2 if rand_order_2nd_txt == "second"
+		recode vote_elect2 (2=0)(1=1)
+		
+	/* Gen Vote Pref */
+		/* Muslim */
+		gen vote_pref_muslim_1 = 1 if vote_elect1 == 1 & (cand1_muslim > cand2_muslim)
+			replace vote_pref_muslim_1 = 1 if vote_elect1 == 0 & (cand1_muslim < cand2_muslim)
+			
+			replace vote_pref_muslim_1 = 0 if vote_elect1 == 1 & (cand1_muslim < cand2_muslim)
+			replace vote_pref_muslim_1 = 0 if vote_elect1 == 0 & (cand1_muslim > cand2_muslim)
+			
+			replace vote_pref_muslim_1 = . if (cand1_muslim == cand2_muslim)
+			
+		gen vote_pref_muslim_2 = 1 if vote_elect2 == 1 & (cand3_muslim > cand4_muslim)
+			replace vote_pref_muslim_2 = 1 if vote_elect2 == 0 & (cand3_muslim < cand4_muslim)
+			
+			replace vote_pref_muslim_2 = 0 if vote_elect2 == 1 & (cand3_muslim < cand4_muslim)
+			replace vote_pref_muslim_2 = 0 if vote_elect2 == 0 & (cand3_muslim > cand4_muslim)
+			
+			replace vote_pref_muslim_2 = . if (cand3_muslim == cand4_muslim)
+			
+		egen vote_pref_muslim_index = rowmean(vote_pref_muslim_1 vote_pref_muslim_2)
+		
+		/* Female */
+		gen vote_pref_female_1 = 1 if vote_elect1 == 1 & (cand1_female > cand2_female)
+			replace vote_pref_female_1 = 1 if vote_elect1 == 0 & (cand1_female < cand2_female)
+			
+			replace vote_pref_female_1 = 0 if vote_elect1 == 1 & (cand1_female < cand2_female)
+			replace vote_pref_female_1 = 0 if vote_elect1 == 0 & (cand1_female > cand2_female)
+			
+			replace vote_pref_female_1 = . if (cand1_female == cand2_female)
+			
+		gen vote_pref_female_2 = 1 if vote_elect2 == 1 & (cand3_female > cand4_female)
+			replace vote_pref_female_2 = 1 if vote_elect2 == 0 & (cand3_female < cand4_female)
+			
+			replace vote_pref_female_2 = 0 if vote_elect2 == 1 & (cand3_female < cand4_female)
+			replace vote_pref_female_2 = 0 if vote_elect2 == 0 & (cand3_female > cand4_female)
+			
+			replace vote_pref_female_2 = . if (cand3_female == cand4_female)
+			
+		egen vote_pref_female_index = rowmean(vote_pref_female_1 vote_pref_female_2)
+		
 
 /* Gender Equality _____________________________________________________________
-
+	
 	We are coding that higher is always "more gender equality"
 
 */
@@ -672,7 +775,7 @@ rename s5q9				efficacy_speakout
 	
 	recode hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-	egen hivstigma_index = rowmean(hivstigma_fired hivstigma_bus)
+	egen hivstigma_index = rowmean(hivstigma_nofired hivstigma_yesbus)
 
 
 /* HIV Disclosure _______________________________________________________________*/
