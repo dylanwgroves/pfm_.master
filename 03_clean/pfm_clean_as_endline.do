@@ -365,62 +365,76 @@ ________________________________________________________________________________
 											rand_cand`i'_txt == "Mrs. Mwanaidi"					// There were issues with this - check with Martin
 		replace cand`i'_muslim = 0 if 		rand_cand`i'_txt == "Mr. John" | ///
 											rand_cand`i'_txt == "Mrs. Rose"	
-											
+		
 		lab val cand`i'_muslim yesno 
 		lab var cand`i'_muslim "Candidate `i' Muslim?"
+
 		
 		/* Gender */
 		gen cand`i'_female = 1 if 			rand_cand`i'_txt == "Mrs. Rose" | ///
 											rand_cand`i'_txt == "Mrs. Mwanaidi"		
-		replace cand`i'_female = 0 if 			rand_cand`i'_txt == "Mr. Salim" | ///
+		replace cand`i'_female = 0 if 		rand_cand`i'_txt == "Mr. Salim" | ///
 											rand_cand`i'_txt == "Mr. John"		
 											
 		lab val cand`i'_female yesno
 		lab var cand`i'_female "Candidate `i' Female?"
 	}
 	
+		rename cand1_muslim cand1_muslim_1  
+		rename cand2_muslim cand2_muslim_1
+		rename cand3_muslim cand1_muslim_2
+		rename cand4_muslim cand2_muslim_2
+		rename cand1_female cand1_female_1  
+		rename cand2_female cand2_female_1
+		rename cand3_female cand1_female_2
+		rename cand4_female cand2_female_2
+	
+
+	
 		/* Issue */
 			/* First Election */
-			gen cand1_topic = 1 if 	 rand_order_1st_txt == "first" 
-				replace cand1_topic = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
+			gen cand1_topic_1 = 1 if 	 rand_order_1st_txt == "first"
+				replace cand1_topic_1 = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
 										 rand_order_1st_txt == "second"
-				replace cand1_topic = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
+				replace cand1_topic_1 = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
 										 rand_order_1st_txt == "second"
 				
-			gen cand2_topic = 2 if 	 rand_order_1st_txt == "second"
-				replace cand2_topic = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
+			gen cand2_topic_1 = 2 if 	 rand_order_1st_txt == "second"
+				replace cand2_topic_1 = 3 if rand_promise_1st_txt == "improve roads in the village" & ///
 										 rand_order_1st_txt == "first"
-				replace cand2_topic = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
+				replace cand2_topic_1 = 4 if rand_promise_1st_txt == "reduce crime in the village" & ///
 										 rand_order_1st_txt == "first"
 										 
 			/* Second Election */					 
-			gen cand3_topic = 2 if 	 rand_order_2nd_txt == "first"
-				replace cand3_topic = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
+			gen cand1_topic_2 = 2 if 	 rand_order_2nd_txt == "first"
+				replace cand1_topic_2 = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
 										 rand_order_2nd_txt == "second"
-				replace cand3_topic = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
+				replace cand1_topic_2 = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
 										 rand_order_2nd_txt == "second"
 				
-			gen cand4_topic = 2 if 	 rand_order_2nd_txt == "second"
-				replace cand4_topic = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
+			gen cand2_topic_2 = 2 if 	 rand_order_2nd_txt == "second"
+				replace cand2_topic_2 = 3 if rand_promise_2nd_txt == "improve roads in the village" & ///
 										 rand_order_2nd_txt == "first"
-				replace cand4_topic = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
+				replace cand2_topic_2 = 4 if rand_promise_2nd_txt == "reduce crime in the village" & ///
 										 rand_order_2nd_txt == "first"
 									 
-			forval i = 1/4 {
-				lab val cand`i'_topic elect_topic
-				lab var cand`i'_topic "Candidate Platform"
+			forval i = 1/2 {
+				lab val cand`i'_topic_1 cand`i'_topic_2 elect_topic
+				lab var cand`i'_topic_1 "Candidate Platform"
+				lab var cand`i'_topic_2 "Candidate Platform"
+
 			}
 		
 	/* Code Vote Choices */
-	gen vote_elect1 = s3q4a_1
-		replace vote_elect1 = s3q4a_2 if rand_order_1st_txt == "second"
-		recode vote_elect1 (2=0)(1=1)
+	gen vote_1 = s3q4a_1
+		replace vote_1 = s3q4a_2 if rand_order_1st_txt == "second"
+		recode vote_1 (2=0)(1=1)
 		
-	gen vote_elect2 = s3q4b_1
-		replace vote_elect2 = s3q4b_2 if rand_order_2nd_txt == "second"
-		recode vote_elect2 (2=0)(1=1)
+	gen vote_2 = s3q4b_1
+		replace vote_2 = s3q4b_2 if rand_order_2nd_txt == "second"
+		recode vote_2 (2=0)(1=1)
 		
-	/* Gen Vote Pref */
+	/* Gen Vote Pref
 		/* Muslim */
 		gen vote_pref_muslim_1 = 1 if vote_elect1 == 1 & (cand1_muslim > cand2_muslim)
 			replace vote_pref_muslim_1 = 1 if vote_elect1 == 0 & (cand1_muslim < cand2_muslim)
@@ -458,6 +472,7 @@ ________________________________________________________________________________
 			replace vote_pref_female_2 = . if (cand3_female == cand4_female)
 			
 		egen vote_pref_female_index = rowmean(vote_pref_female_1 vote_pref_female_2)
+	 */	
 
 
 /* Gender Equality _____________________________________________________________
@@ -615,7 +630,6 @@ We are coding that higher is always "more gender equality"
 	rename s21_txt_treat treat_wpp
 
 	rename s21q1	wpp_attitude
-
 		gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
 		replace wpp_attitude_dum = 0 if wpp_attitude == 0
 		lab var wpp_attitude_dum "Who should lead? Equal women or more women"
@@ -1085,7 +1099,7 @@ We are coding that higher is always "more gender equality"
 			replace comsample_1_fam = 1 if comsample_1_rltn == `i'
 		}
 		forval i = 17/18 {
-			replace comsample_1_fam = 1 if comsample_1_rltn == `i'
+			replace comsample_1_fam = 2 if comsample_1_rltn == `i'
 		}
 		forval i = 6/16 {
 			replace comsample_1_fam = 0 if comsample_1_rltn == `i'
@@ -1096,6 +1110,11 @@ We are coding that higher is always "more gender equality"
 	rename s33q3_a		comsample_2_name
 
 	replace comsample_2_name = s33q3_b if 	comsample_1_fam == 1
+			replace comsample_2_name = "" if comsample_2_name == "000"
+			replace comsample_2_name = "" if comsample_2_name == "000"
+			replace comsample_2_name = "" if comsample_2_name == "-888"
+			replace comsample_2_name = "" if comsample_2_name == "Hana mtu"
+			replace comsample_2_name = "" if comsample_2_name == "Hakuna zaidi ya familia yangu"
 										
 	rename s33q3_a_r	comsample_2_rltn
 		replace comsample_2_rltn = s33q3_b_r if comsample_1_fam == 1

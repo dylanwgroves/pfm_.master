@@ -65,7 +65,6 @@ ______________________________________________________________________________*/
 		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
 		global ne_tables	"${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Natural Experiment\03 Tables and Figures"
 		
-		
 		/* Audio Screening */
 			/* FM */
 			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
@@ -79,10 +78,18 @@ ______________________________________________________________________________*/
 		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
 		global rd_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Radio Distribution\03 Tables and Figures"
 		
-		
 		/* Court */
 		global data_court "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Court/01_data"
 		global court_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Court\03_tables"
+		
+		/* Womens Political Participation */
+		global data_wpp "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Womens Political Participation/01_data"
+		global wpp_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Womens Political Participation\03_tables"
+		
+		/* Pluralistic Ignorance */
+		global data_pi "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
+		global pi_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Pluralistic Ignorance\03_tables"
+	
 	
 /*		
 	

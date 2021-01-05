@@ -515,7 +515,9 @@ ________________________________________________________________________________
 		lab var wpp_norm_dum "Who should lead? Equal women or more women"
 		
 	rename s21q3	wpp_behavior
-	cap rename s21q4	wpp_malehhh
+	rename s21q4	wpp_nomalehhh
+		recode wpp_nomalehhh (0=1)(1=0)
+		lab var wpp_nomalehhh "[Reversed]: Agree or Disagree: A man should have final say in HH"
 
 	foreach var of varlist wpp_* {
 		recode `var' (-888 = .r) (-999 = .d) (-222 = .d)

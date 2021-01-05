@@ -47,7 +47,6 @@ tempfile temp_as
 	surveys. 
 	
 */
-	stop
 	use `temp_as'
 	qui append using `temp_ne', force
 	save "${data}/03_final_data/pfm_appended_prefix.dta", replace
