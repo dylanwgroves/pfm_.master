@@ -40,6 +40,8 @@ ________________________________________________________________________________
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
 	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
+
 
 
 /* Survey Info _________________________________________________________________*/
@@ -543,14 +545,14 @@ ________________________________________________________________________________
 		replace em_reject = 0 if em_allow == 1 | em_allow == 3
 
 	rename s17q9		em_norm_reject
-		recode em_norm_reject (2=1)(1=0)(3=0)
-		lab val em_norm_reject reject
+		recode em_norm_reject (0=0)(1=2)(2=1)
+		lab val em_norm_reject em_norm_reject
 		lab var em_norm_reject "Community Rejects Early Marraige"
 		
 	clonevar em_norm_reject_dum = em_norm_reject
-		recode em_norm_reject_dum (2=0)(1=1)(0=0)
+		recode em_norm_reject_dum (2=1)(1=0)(0=0)
 		lab val em_norm_reject_dum reject
-		lab var em_norm_reject_dum "Norm percpetion - reject early marriage"
+		lab var em_norm_reject_dum "(Dummy) Community rejects early marriage"
 		
 	gen treat_pi = 1 if em_txt_treat == "treat"
 		replace treat_pi = 0 if em_txt_treat == "control"
@@ -592,22 +594,32 @@ ________________________________________________________________________________
 		replace em_record_name = 0 if em_record_reject != 1
 		replace em_record_name = 0 if em_record_any == 0
 		
-	rename s17q11		em_record_shareptix		
-		replace em_record_shareptix = 0 if em_record_reject != 1
+	** Share Politics
+	rename s17q11		em_record_shareptix	
+		replace em_record_shareptix = 0 if em_record_reject != 1 & record_rand_draw == "gov"
 		replace em_record_shareptix = 0 if em_record_any == 0 & record_rand_draw == "gov"
+		
+	gen em_record_shareptix_name = em_record_shareptix
+		replace em_record_shareptix_name = 0 if em_record_name == 0 & record_rand_draw == "gov"
 
+	** Share Pangani FM
 	rename s17q12		em_record_sharepfm
-		replace em_record_sharepfm = 0 if em_record_reject != 1
+		replace em_record_sharepfm = 0 if em_record_reject != 1 & record_rand_draw == "pfm"
 		replace em_record_sharepfm = 0 if em_record_any == 0 & record_rand_draw == "pfm"
 		
+	gen em_record_sharepfm_name = em_record_sharepfm 
+		replace em_record_sharepfm_name = 0 if em_record_name == 0 & record_rand_draw == "pfm"
+		
+	** Share Any 
 	gen em_record_shareany = em_record_sharepfm 
-		replace em_record_shareany = em_record_shareptix if em_record_sharepfm == .
-		replace em_record_shareany = 0 if em_record_reject != 1
+		replace em_record_shareany = em_record_shareptix if record_rand_draw == "gov"
+
+	gen em_record_shareany_name = em_record_sharepfm_name
+		replace em_record_shareany_name = em_record_shareptix_name if record_rand_draw == "gov"
 		
 	foreach var of varlist em_reject_* em_record_*  {
 		recode `var' (-999 = .d) (-888 = .r)
 	}	
-
 
 	
 /* Health Knowledge ____________________________________________________________*/

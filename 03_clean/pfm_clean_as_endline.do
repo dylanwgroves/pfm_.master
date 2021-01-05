@@ -45,6 +45,8 @@ ________________________________________________________________________________
 	lab def hiv_elect 0 "Vote Against HIV Candidate" 1 "Vote for HIV Candidate"
 	lab def treatment 0 "Control" 1 "Treatment" 
 	lab def elect_topic 1 "EFM" 2 "HIV" 3 "Roads" 4 "Crime"
+	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
+
 	
 	
 /* Converting don't know/refuse/other to extended missing values _______________*/
@@ -666,20 +668,21 @@ We are coding that higher is always "more gender equality"
 		lab val em_reject reject
 
 	rename s17q5		em_norm_reject
-		recode em_norm_reject (2=1)(1=0)(3=0)
-		lab val em_norm_reject reject
-		lab var em_norm_reject "Community Rejects Early Marraige"
+		recode em_norm_reject (2=2)(1=0)(3=1)
+		lab val em_norm_reject em_norm_reject
+		lab var em_norm_reject "Community rejects Early Marraige"
 		
 	clonevar em_norm_reject_dum = em_norm_reject
-		recode em_norm_reject_dum (2=0)(1=1)(0=0)
+		recode em_norm_reject_dum (2=1)(1=0)(0=0)
 		lab val em_norm_reject_dum reject
-		lab var em_norm_reject_dum "Norm percpetion - reject early marriage"
+		lab var em_norm_reject_dum "(Dummy) Communtiy rejects early marriage"
 
 	rename s17q5b_new	em_norm_reject_bean
 
 	rename s17q5c		em_hearddiscussed
 
-	rename s17q5d		em_herddiscussed_often
+	rename s17q5d		em_hearddiscussed_often
+		replace em_hearddiscussed_often = 0 if em_hearddiscussed == 0
 		
 	gen treat_pi = 1 if em_txt_treat == "treat"
 		replace treat_pi = 0 if em_txt_treat == "control"
@@ -721,18 +724,30 @@ We are coding that higher is always "more gender equality"
 		replace em_record_name = 0 if em_record_reject != 1
 		replace em_record_name = 0 if em_record_any == 0
 		
-	rename s17q11		em_record_shareptix		
-		replace em_record_shareptix = 0 if em_record_reject != 1
+	** Share Politics
+	rename s17q11		em_record_shareptix	
+		replace em_record_shareptix = 0 if em_record_reject != 1 & record_rand_draw == "gov"
 		replace em_record_shareptix = 0 if em_record_any == 0 & record_rand_draw == "gov"
+		
+	gen em_record_shareptix_name = em_record_shareptix
+		replace em_record_shareptix_name = 0 if em_record_name == 0 & record_rand_draw == "gov"
 
+	** Share Pangani FM
 	rename s17q12		em_record_sharepfm
-		replace em_record_sharepfm = 0 if em_record_reject != 1
+		replace em_record_sharepfm = 0 if em_record_reject != 1 & record_rand_draw == "pfm"
 		replace em_record_sharepfm = 0 if em_record_any == 0 & record_rand_draw == "pfm"
 		
-	gen em_record_shareany = em_record_sharepfm 
-		replace em_record_shareany = em_record_shareptix if em_record_sharepfm == .
-		replace em_record_shareany = 0 if em_record_reject != 1
+	gen em_record_sharepfm_name = em_record_sharepfm 
+		replace em_record_sharepfm_name = 0 if em_record_name == 0 & record_rand_draw == "pfm"
 		
+	** Share Any 
+	gen em_record_shareany = em_record_sharepfm 
+		replace em_record_shareany = em_record_shareptix if record_rand_draw == "gov"
+
+	gen em_record_shareany_name = em_record_sharepfm_name
+		replace em_record_shareany_name = em_record_shareptix_name if record_rand_draw == "gov"
+		
+	** Reporting
 	rename s17q13		em_report 
 		recode em_report (2=0)(1=1)
 		lab val em_report report
