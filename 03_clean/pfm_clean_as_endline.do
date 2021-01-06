@@ -1036,7 +1036,7 @@ We are coding that higher is always "more gender equality"
 	rename s31q3		comply_discuss_who
 
 	
-/* Community Sampling __________________________________________________________	*/	
+/* Friend Sampling __________________________________________________________	*/	
 
 	/* Person 1 */
 	rename s33q1_r		comsample_1_name
@@ -1108,7 +1108,8 @@ We are coding that higher is always "more gender equality"
 		
 		replace comsample_1_rltn = 10 if s33q2_oth_r == "Jirani" | ///
 										 s33q2_oth_r == "Jirani yake"
-										 
+				
+	
 	gen comsample_1_fam = .	
 		forval i = 1/5 {
 			replace comsample_1_fam = 1 if comsample_1_rltn == `i'
@@ -1120,6 +1121,7 @@ We are coding that higher is always "more gender equality"
 			replace comsample_1_fam = 0 if comsample_1_rltn == `i'
 		}
 
+		stop
 	/* Person 2 _________________________________________________________________*/
 	
 	rename s33q3_a		comsample_2_name
