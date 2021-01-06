@@ -95,8 +95,8 @@ ______________________________________________________________________________*/
 		global enumeffects_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Enumerator Effects\03_tables"
 	
 		/* Election */
-		global data_enumeffects "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
-		global enumeffects_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania  - Election\03_tables"
+		global data_election "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
+		global election_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania  - Election\03_tables"
 	
 /*		
 	
