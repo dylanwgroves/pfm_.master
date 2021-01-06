@@ -65,7 +65,7 @@ ______________________________________________________________________________*/
 		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
 		global ne_tables	"${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Natural Experiment\03 Tables and Figures"
 		
-		/* Audio Screening */
+		/* Audio Screening */	
 			/* FM */
 			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
 			global as_tables	"${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Audio Screening (endline)\03 Tables and Figures"
@@ -89,13 +89,20 @@ ______________________________________________________________________________*/
 		/* Pluralistic Ignorance */
 		global data_pi "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
 		global pi_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Pluralistic Ignorance\03_tables"
+		
+		/* Enumerator Effects */
+		global data_enumeffects "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Enumerator Effects/01_data"
+		global enumeffects_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Enumerator Effects\03_tables"
 	
+		/* Election */
+		global data_enumeffects "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
+		global enumeffects_tables "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania  - Election\03_tables"
 	
 /*		
 	
 	/* Dylan */
 	if "`c(username)'" == "dylan" {
-		
+			
 		/* Maine */
 		global code "X:\Documents/pfm_.master"
 		global data "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data"
