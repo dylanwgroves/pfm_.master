@@ -1121,7 +1121,7 @@ We are coding that higher is always "more gender equality"
 			replace comsample_1_fam = 0 if comsample_1_rltn == `i'
 		}
 
-		stop
+
 	/* Person 2 _________________________________________________________________*/
 	
 	rename s33q3_a		comsample_2_name
@@ -1220,7 +1220,7 @@ We are coding that higher is always "more gender equality"
 		rename s7q5_second_name_r_`i'	kidssample_namesecond_`i'
 		rename s7q5_third_name_r_`i'	kidssample_namethird_`i'
 		
-		egen kidssample_name_`i' = concat(kidssample_namefirst_`i'  kidssample_namesecond_`i' kidssample_namethird_`i'), punct(" ")
+		egen kidssample_fullname_`i' = concat(kidssample_namefirst_`i'  kidssample_namesecond_`i' kidssample_namethird_`i'), punct(" ")
 		
 		rename s7q6_old_r_`i'			kidssample_age_`i'
 		rename s7q7_gender_r_`i'		kidssample_gender_`i'
