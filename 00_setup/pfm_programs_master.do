@@ -25,13 +25,13 @@ set maxvar 30000
 /* Dylan */ 
 if "c(username)" == "dylan" {
 	
-	global code "X:\Documents/pfm_.master/02_code"
-	global data "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data"
-	global output "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\02_outputs"
-	global output_final "X:\Dropbox/Apps/Overleaf"
-	global ipa_ne "X:\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis"
-	global ipa_as "X:\Box Sync\17_PanganiFM_2\07&08 Questionnaires & Data\03 Baseline\04_Data Quantitative\02 Main Survey Data"
-	global ipa_endline "X:\Box Sync\19_Community Media Endlines"
+	global code "X:/Documents/pfm_.master/02_code"
+	global data "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
+	global output "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
+	global output_final "X:/Dropbox/Apps/Overleaf"
+	global ipa_ne "X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
+	global ipa_as "X:/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
+	global ipa_endline "X:/Box Sync/19_Community Media Endlines"
 	
 }
 

@@ -42,6 +42,6 @@ ________________________________________________________________________________
 
 /* Export  _____________________________________________________________________*/
 
-	save "${data}\01_raw_data\pfm_as_villagesample.dta", replace
+	save "${data}/01_raw_data/pfm_as_villagesample.dta", replace
 
 

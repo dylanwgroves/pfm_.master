@@ -86,6 +86,6 @@ ________________________________________________________________________________
 	rename * rd_*
 	
 	* Export
-	save "${data}\02_mid_data\pfm_clean_rd_distribution_as.dta", replace
+	save "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", replace
 
 

@@ -19,7 +19,7 @@ ________________________________________________________________________________
 
 /* Import  _____________________________________________________________________*/
 
-	import delimited "X:\Dropbox\Wellspring Tanzania Papers\wellspring_01_master\01_data\01_raw_data\02_publicdata\01_GIS\01_villages\TZvillages.csv", encoding(ISO-8859-2) clear 
+	import delimited "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/02_publicdata/01_GIS/01_villages/TZvillages.csv", encoding(ISO-8859-2) clear 
 
 /* Clean _______________________________________________________________________*/
 
@@ -40,6 +40,6 @@ ________________________________________________________________________________
 	
 /* Export  _____________________________________________________________________*/
 
-	save "${data}\01_raw_data\pfm_allvills_clean.dta", replace
+	save "${data}/01_raw_data/pfm_allvills_clean.dta", replace
 
 

@@ -16,7 +16,7 @@ set more off
 
 /* Import Data _________________________________________________________________*/
 
-	use "${ipa_as}\05_data\09_radio_distribution\04_precheck/panganifm2_radio_survey_clean_MERGED.dta", clear 
+	use "${ipa_as}/05_data/09_radio_distribution/04_precheck/panganifm2_radio_survey_clean_MERGED.dta", clear 
 	rename resp_name resp_n
 	sort resp_n
 	drop if resp_n == "Henry francis mbago" & q9_consent == . 				// two interviews with same respondnent, one in which radio distribution appears to have happend

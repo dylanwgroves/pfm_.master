@@ -19,7 +19,7 @@
 
 /* Import Data  ________________________________________________________________*/
 
-	use "${data}\01_raw_data\03_surveys\pfm_as_midline_nopii.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_as_midline_nopii.dta", clear
 
 
 /* Clean Data  _________________________________________________________________*/
@@ -613,6 +613,6 @@ rename s10bq16_`num' mig_remituse_other_`num'
 	
 
 * Save -------------------------------------------------------------------------
-save  "${data}\01_raw_data\pfm_as_midline_clean.dta", replace
+save  "${data}/01_raw_data/pfm_as_midline_clean.dta", replace
 
 

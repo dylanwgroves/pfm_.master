@@ -20,7 +20,7 @@ set maxvar 30000
 
 /* Import Data ______________________________________________________________________________*/
 
-	import delimited "${ipa_ne}\2 - Final Data\5_Radio Distribution\panganifm_radio distribution randomization_2018.04.15.csv", clear 
+	import delimited "${ipa_ne}/2 - Final Data/5_Radio Distribution/panganifm_radio distribution randomization_2018.04.15.csv", clear 
 
 
 /* Essential Cleanign ______________________________________________________________________________*/
@@ -90,9 +90,9 @@ set maxvar 30000
 /* Export ______________________________________________________________________________*/
 
 	/* PII */
-	save "${data}\01_raw_data\03_surveys\pfm_pii_rd_randomization_ne.dta", replace
+	save "${data}/01_raw_data/03_surveys/pfm_pii_rd_randomization_ne.dta", replace
 
 	/* Non-PII */
-	save "${data}\01_raw_data\03_surveys\pfm_nopii_rd_randomization_ne.dta", replace
+	save "${data}/01_raw_data/03_surveys/pfm_nopii_rd_randomization_ne.dta", replace
 
 	
