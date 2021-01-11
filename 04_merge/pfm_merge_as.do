@@ -56,18 +56,18 @@ ________________________________________________________________________________
 		save `temp_base'
 		
 		/* Midline */
-		use "${data}\01_raw_data\pfm_as_midline_clean.dta", clear
+		use "${data}/01_raw_data/pfm_as_midline_clean.dta", clear
 		rename * m_*
 		rename m_resp_id resp_id
 		sort resp_id 
 		save `temp_mid', replace
 		
 		/* Endline */
-		use  "${data}\01_raw_data\pfm_as_endline_clean.dta", clear
+		use  "${data}/01_raw_data/pfm_as_endline_clean.dta", clear
 		save `temp_end'
 		
 		/* Partner */
-		use "${data}\01_raw_data\pfm_as_endline_clean_partner.dta", clear
+		use "${data}/01_raw_data/pfm_as_endline_clean_partner.dta", clear
 		rename * p_*			
 		gen id_resp_uid = subinstr(p_id_resp_uid,"_p","",.)						// Create matching unique respondent id
 			replace id_resp_uid =subinstr(id_resp_uid,"_P","",.)

@@ -35,7 +35,7 @@ _______________________________________________________________________________*
 	/* Natural Experiment */
 	
 		/* All villages */
-		use "${data}\01_raw_data\pfm_allvills_clean.dta"
+		use "${data}/01_raw_data/pfm_allvills_clean.dta"
 		sort village_id
 		save `temp_allvills'
 		
@@ -56,7 +56,7 @@ _______________________________________________________________________________*
 		save `temp_end', replace
 		
 		/* Village Sample */
-		use "${data}\01_raw_data\pfm_sample_ne.dta", clear
+		use "${data}/01_raw_data/pfm_sample_ne.dta", clear
 		drop village_id
 		save `temp_rand', replace 
 
@@ -95,22 +95,22 @@ _______________________________________________________________________________*
 
 	/* Merge Baseline */
 	
-		** Baseline, Treatment Assignment
+		/* Baseline, Treatment Assignment */
 		use `temp_allvills'
 		merge 1:n objectid using `temp_base', gen(merge_base)						// Baseline
 			drop if merge_base==1
 		merge n:1 objectid using `temp_rand', gen(merge_base_rand)					// Village randomization
 		save `temp_base_rand', replace
 
-		** Radio Randomization and Distribution
+		/* Radio Randomization and Distribution */
 		use `temp_rd_rand', clear													// Radio randomization
 		merge 1:1 respid using `temp_rd_dist', gen(merge_rd)						// Radio distribution
 			drop if merge_rd == 2
 		
-		** NE and RD
+		/*	NE and RD */
 		merge 1:1 resp_id using `temp_base_rand', gen(merge_base_rand_rd)
 		
-		** RI
+		/* RI */
 		merge 1:1 resp_id using `temp_rd_ri', gen(merge_rd_ri)
 	
 	/* Create Unique IDs */

@@ -46,10 +46,7 @@ ______________________________________	_________________________________________
 * Note: This can only be run by authors with Boxcryptor Access
 
 	/* Radio Distribution */
-		
-		do "${code}/01_import/pfm_import_rd_randomization_ne.do" // Randomization - Audio screening
-		do "${code}/01_import/pfm_import_rd_randomization_ne.do" // Randomizatoin - Natural experiment
-
+	
 		do "${code}/01_import/pfm_import_rd_distribution_as.do" // Distribution - Audio Screening
 		do "${code}/01_import/pfm_import_rd_distribution_ne.do" // Distribution - Natural Experiment
 		
