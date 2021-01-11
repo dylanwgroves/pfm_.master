@@ -79,6 +79,6 @@ set maxvar 30000
 	rename * rd_*
 
 	* Export
-	save "${data}\02_mid_data\pfm_clean_rd_distribution_ne.dta", replace
+	save "${data}/02_mid_data/pfm_clean_rd_distribution_ne.dta", replace
 
 

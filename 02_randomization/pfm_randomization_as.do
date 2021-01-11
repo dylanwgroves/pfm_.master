@@ -24,7 +24,7 @@ set seed 1956
 
 /* Import ______________________________________________________________________*/
 
-	use "${data}\01_raw_data\pfm_as_villagesample.dta", clear
+	use "${data}/01_raw_data/pfm_as_villagesample.dta", clear
 
 	* Stable Sort
 	sort vill_id

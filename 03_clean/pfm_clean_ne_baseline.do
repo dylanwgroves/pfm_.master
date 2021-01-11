@@ -19,7 +19,7 @@ set maxvar 30000
 
 /* Load Data ________________________________________________________________*/
 
-use "${data}\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
+use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 
 
 /* Labels _______________________________________________________________________*/
@@ -595,7 +595,7 @@ use "${data}\01_raw_data\03_surveys\pfm_ne_baseline_nopii.dta", clear
 
 
 * Save -------------------------------------------------------------------------
-save "${data}\02_mid_data\pfm_ne_baseline_clean.dta", replace
+save "${data}/02_mid_data/pfm_ne_baseline_clean.dta", replace
 											
 				
 				

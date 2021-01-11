@@ -26,7 +26,7 @@ ________________________________________________________________________________
 
 /* Import  _____________________________________________________________________*/
 
-	use "${data}\01_raw_data\03_surveys\pfm_rawpii_as_endline_partner.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_rawpii_as_endline_partner.dta", clear
 	
 	
 /* Labels _______________________________________________________________________*/
@@ -1045,4 +1045,4 @@ rename s5q9				efficacy_speakout
 		
 /* Save ________________________________________________________________________*/
 
-	save  "${data}\01_raw_data\pfm_as_endline_clean_partner.dta", replace
+	save  "${data}/01_raw_data/pfm_as_endline_clean_partner.dta", replace

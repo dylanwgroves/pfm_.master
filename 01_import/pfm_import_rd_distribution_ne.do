@@ -21,7 +21,7 @@ ________________________________________________________________________________
 
 /* Import Data _________________________________________________________________*/
 
-	import excel "${ipa_ne}\2 - Final Data\5_Radio Distribution\PanganiFM_II_data.xlsx", sheet("Foglio2") firstrow clear
+	import excel "${ipa_ne}/2 - Final Data/5_Radio Distribution/PanganiFM_II_data.xlsx", sheet("Foglio2") firstrow clear
 
 
 

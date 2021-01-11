@@ -22,7 +22,7 @@ set more off
 
 /* Import ______________________________________________________________________*/
 
-	import delimited "X:\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis\2 - Final Data\5_Radio Distribution\pfm_ri_base.csv", clear 
+	import delimited "X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/5_Radio Distribution/pfm_ri_base.csv", clear 
 	
 /* Re-Randomize ______________________________________________________________________*/
 
@@ -69,7 +69,7 @@ forvalues x = 1/10000 {
 
 save "${data}/02_mid_data/pfm_ri_rd_ne.dta", replace
 
-*export delimited using "X:\Box Sync\08_PanganiFM\PanganiFM\2 - Data and Analysis\2 - Final Data\5_Radio Distribution\pfm_ri_sb.csv", replace
+*export delimited using "X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/5_Radio Distribution/pfm_ri_sb.csv", replace
 
 
 

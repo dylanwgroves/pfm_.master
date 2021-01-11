@@ -21,7 +21,7 @@ ________________________________________________________________________________
 	
 /* Import data ____________________________________________________________________*/
 
-use "${ipa_ne}\0 - Raw Data_encrypted\Baseline\panganifm_baseline survey_cleaned.dta" 
+use "${ipa_ne}/0 - Raw Data_encrypted/Baseline/panganifm_baseline survey_cleaned.dta" 
 
 
 /* Cleaning ____________________________________________________________________*/
@@ -48,11 +48,11 @@ replace id  = "98" if key == "uuid:cedf83e9-2107-4365-8159-f2aed9000eea"
 /* Export ____________________________________________________________________*/
 
 /* PII */
-save "${data}\01_raw_data\03_surveys\pfm_rawpii_ne_baseline.dta", replace
+save "${data}/01_raw_data/03_surveys/pfm_rawpii_ne_baseline.dta", replace
 
 /* No PII */
 drop head_name resp_name survey_locationlongitude survey_locationlatitude enumerator_notes resp_phon*
-save "${data}\01_raw_data\03_surveys\pfm_rawnopii_ne_baseline.dta", replace
+save "${data}/01_raw_data/03_surveys/pfm_rawnopii_ne_baseline.dta", replace
 
 	
 	

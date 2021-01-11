@@ -26,7 +26,7 @@ ________________________________________________________________________________
 
 /* Import  _____________________________________________________________________*/
 
-	use "${data}\01_raw_data\03_surveys\pfm_rawpii_as_endline.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_rawpii_as_endline.dta", clear
 	
 	
 /* Labels _______________________________________________________________________*/
@@ -1248,6 +1248,6 @@ We are coding that higher is always "more gender equality"
 	gen endline_as = 1
 	
 	* Within folder
-	save "${data}\01_raw_data\pfm_as_endline_clean.dta", replace
+	save "${data}/01_raw_data/pfm_as_endline_clean.dta", replace
 
 
