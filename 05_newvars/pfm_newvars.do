@@ -24,7 +24,7 @@ _______________________________________________________________________________*
 
 /* Run Globals (if necessary ____________________________________________________*/
 
-	do "X:/Documents/pfm_.master/00_setup/pfm_paths_master.do"
+	do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"
 
 	
 /* Import Data _________________________________________________________________*/
@@ -325,7 +325,7 @@ stop
 
 *replace id_resp_n = ""
 save "${data}/03_final_data/pfm_all.dta", replace
-save "X:/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean/pfm_all.dta", replace
+save "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean/pfm_all.dta", replace
 
 
 /* Export Cases for Audio Screening Study */
@@ -338,7 +338,7 @@ keep id_resp_n id_* sample_* treat_* as_resp_* as_b_cases_* cases_emreject cases
 
 
 * Append Pilot *
-append using "X:/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean/pilot_pfm_as.dta"
+append using "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean/pilot_pfm_as.dta"
 
 export delimited using "${data}/03_final_data/pfm_as_cases.csv", replace
 

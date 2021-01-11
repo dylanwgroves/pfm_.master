@@ -24,7 +24,7 @@ ________________________________________________________________________________
 
 /* Import ______________________________________________________________________*/
 
-	import delimited "X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/5_Radio Distribution/pfm_ri_base.csv", clear 
+	import delimited "${user}/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/5_Radio Distribution/pfm_ri_base.csv", clear 
 	
 /* Randomize ______________________________________________________________________*/
 
