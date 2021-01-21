@@ -359,6 +359,7 @@ ________________________________________________________________________________
 		recode s3q4b_2	(2=1)(1=0), gen(s3q4b_2_reverse)											// Reversed order for randomly selected 1/2 of respondents
 		replace hiv_elect = s3q4b_2_reverse if rand_order_2nd_txt == "second"
 
+		
 	/* Code Candidate Profiles */
 	forval i = 1/4 {
 	

@@ -42,6 +42,7 @@ ________________________________________________________________________________
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
 	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
 	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
+	
 
 
 
@@ -101,8 +102,8 @@ ________________________________________________________________________________
 	gen resp_age_yr	=		2017-resp_age
 
 	gen resp_female = .
-		replace resp_female = 1 if gender_pull == "Female"
-		replace resp_female = 0 if gender_pull == "Male"
+		replace resp_female = 0 if gender_pull == "Female"
+		replace resp_female = 1 if gender_pull == "Male"
 		lab val resp_female yesno 
 		
 	rename s1q3 	resp_howyoudoing
