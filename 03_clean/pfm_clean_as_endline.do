@@ -800,7 +800,6 @@ We are coding that higher is always "more gender equality"
 
 	rename s_hiv_stigma1 		hivstigma_notfired	
 
-
 	rename s_hiv_stigma1_norm	hivstigma_notfired_norm
 
 	rename s_hiv_stigma2		hivstigma_yesbus
@@ -861,6 +860,7 @@ We are coding that higher is always "more gender equality"
 	rename s12q13_9		couples_talk_none
 
 	rename s12q14		couples_autonomy
+	
 
 
 
