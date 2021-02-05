@@ -28,7 +28,7 @@ ________________________________________________________________________________
 
 	use "${data}/01_raw_data/03_surveys/pfm_rawpii_as_endline.dta", clear
 	
-	
+
 /* Labels _______________________________________________________________________*/
 
 	lab def yesno 0 "No" 1 "Yes"
@@ -584,44 +584,6 @@ We are coding that higher is always "more gender equality"
 	cap rename s15q7	ptixpart_contact_satisfied
 	
 
-/* Political Knowledge _________________________________________________________*/
-
-	/* Popular Culture */
-	gen ptixknow_pop_music = .
-		replace ptixknow_pop_music = 1 if 	(s13q1a == 4 | s13q1a == 3)
-		replace ptixknow_pop_music = 0 if 	(s13q1a == 5 | s13q1a == -999)
-		replace ptixknow_pop_music = 0 if 	(s13q1a == 1 | s13q1a == 2) 		
-		lab val ptixknow_pop_music correct
-
-	gen ptixknow_pop_sport = .
-		replace ptixknow_pop_sport = 1 if 	(s13q1b == 1)
-		replace ptixknow_pop_sport = 0 if 	(s13q1b == 5 | s13q1b == -999)
-		replace ptixknow_pop_sport = 0 if 	(s13q1b == 3 | s13q1b == 4 | s13q1b == 2) 		
-		lab val ptixknow_pop_sport correct	
-
-	rename s13q2 	ptixknow_local_dc 
-
-	/* National Politics */
-	rename s13q3a	 ptixknow_natl_pm 
-		recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
-
-	rename s13q3b	ptixknow_natl_vp
-		recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
-
-	lab val ptixknow_natl_* correct
-
-	/* Foreign Affiars */
-	rename s13q4new ptixknow_fopo_kenyatta 
-		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
-		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
-		
-	rename s13q5		ptixknow_em_aware
-
-	rename s13q6		ptixknow_sourcetrust
-		
-	foreach var of varlist ptixknow_* {
-		cap recode `var' (-999 = 0)(-222 = 0)
-	}
 
 
 /* Women's Political Participation _____________________________________________
@@ -720,6 +682,8 @@ We are coding that higher is always "more gender equality"
 
 	gen em_record_accept = 1 if em_record_reject == 0 & em_record_any == 1
 		replace em_record_accept = 0 if em_record_any == 0
+		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0
+
 		
 	rename s17q10		em_record_name
 		replace em_record_name = 0 if em_record_reject != 1
@@ -1233,6 +1197,9 @@ We are coding that higher is always "more gender equality"
 /* Conclusion __________________________________________________________________*/
 
 	rename s20q1				svy_followupok
+	
+	rename s20q1b 				svy_phone 
+	rename s20q1b_oth			svy_phone2 
 
 	rename s20q2latitude		svy_gps_lat
 	rename s20q2longitude		svy_gps_long		
@@ -1241,7 +1208,7 @@ We are coding that higher is always "more gender equality"
 	rename s20q4_sm				svy_others_who
 
 
-
+	
 		
 	
 /* Export ______________________________________________________________________*/

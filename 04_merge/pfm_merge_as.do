@@ -75,14 +75,14 @@ ________________________________________________________________________________
 		save `temp_end_partner'
 
 		/* Village Randomization */
-		use "${data}/02_mid_data/pfm_randomized_as.dta", clear
-		save `temp_rand'
-		
-		/* Village RI */
-		use "${data}/02_mid_data/pfm_ri_as.dta", clear
-		save `temp_ri'
-		
-	/* Radio */
+			use "${data}/02_mid_data/pfm_randomized_as.dta", clear
+			save `temp_rand'
+			
+			/* Village RI */
+			use "${data}/02_mid_data/pfm_ri_as.dta", clear
+			save `temp_ri'
+			
+		/* Radio */
 	
 		/* Radio Distribution */
 		use "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", clear

@@ -802,16 +802,16 @@ rename s5q9				efficacy_speakout
 
 /* HIV Stigma _______________________________________________________________*/
 
-	rename s_hiv_stigma1 		hivstigma_nofired	
+	rename s_hiv_stigma1 		hivstigma_notfired	
 
 
-	rename s_hiv_stigma1_norm	hivstigma_nofired_norm
+	rename s_hiv_stigma1_norm	hivstigma_notfired_norm
 
 	rename s_hiv_stigma2		hivstigma_yesbus
 	
 	recode hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-	egen hivstigma_index = rowmean(hivstigma_nofired hivstigma_yesbus)
+	egen hivstigma_index = rowmean(hivstigma_notfired hivstigma_yesbus)
 
 
 /* HIV Disclosure _______________________________________________________________*/
