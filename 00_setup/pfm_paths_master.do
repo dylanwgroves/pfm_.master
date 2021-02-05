@@ -33,7 +33,6 @@ ______________________________________________________________________________*/
  
 /* Set Globals _________________________________________________________*/
 
-	/* Bea */
 	foreach user in  "X:" "/Users/BeatriceMontano" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
@@ -88,7 +87,7 @@ ______________________________________________________________________________*/
 		
 		/* Pluralistic Ignorance */
 		global data_pi "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
-		global pi_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/03_tables"
+		global pi_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/03_output"
 		
 		/* Enumerator Effects */
 		global data_enumeffects "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Enumerator Effects/01_data"
@@ -97,7 +96,12 @@ ______________________________________________________________________________*/
 		/* Election */
 		global data_election "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
 		global election_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/03_tables"
-	
+
+		/* HH roles */
+		global data_hhroles "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/01_data"
+		global hhroles_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/03_output"
+
+				
 /*		
 	
 	/* Dylan */
