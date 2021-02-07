@@ -219,6 +219,7 @@ rename s5q9				efficacy_speakout
 		lab var prej_kidmarry`i' "Would accept X group to marry your child"
 		lab val prej_kidmarry`i' yesno
 	}
+	
 		rename prej_kidmarry1 		prej_kidmarry_nottribe				// Not sure this is coded right
 		rename prej_kidmarry2		prej_kidmarry_notrelig
 		rename prej_kidmarry3		prej_kidmarry_nottz

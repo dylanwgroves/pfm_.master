@@ -215,6 +215,7 @@ ________________________________________________________________________________
 	egen prej_yesneighbor_index = rowmean(prej_yesneighbor_aids prej_yesneighbor_homo prej_yesneighbor_alcoholic prej_yesneighbor_unmarried)
 	lab var prej_yesneighbor_index "Mean of all questions about acceptable neighbors"
 
+	stop
 	/* Kids Marrying */
 	forval i = 1/4 {
 		gen prej_kidmarry`i' = .
