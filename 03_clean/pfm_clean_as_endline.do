@@ -32,6 +32,7 @@ ________________________________________________________________________________
 /* Labels _______________________________________________________________________*/
 
 	lab def yesno 0 "No" 1 "Yes"
+	lab def female 0 "Male" 1 "Female"
 	lab def agree 0 "Disagree" 1 "Agree"
 	lab def reject 0 "Accept" 1 "Reject"
 	lab def report 0 "Dont report" 1 "Report"
@@ -46,6 +47,8 @@ ________________________________________________________________________________
 	lab def treatment 0 "Control" 1 "Treatment" 
 	lab def elect_topic 1 "EFM" 2 "HIV" 3 "Roads" 4 "Crime"
 	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
+	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
+
 
 	
 	
@@ -110,7 +113,7 @@ ________________________________________________________________________________
 	gen resp_female = .
 		replace resp_female = 1 if gender_pull == "Female"
 		replace resp_female = 0 if gender_pull == "Male"
-		lab val resp_female yesno 
+		lab val resp_female female 
 		
 	rename s1q3 	resp_howyoudoing
 	
@@ -163,9 +166,11 @@ ________________________________________________________________________________
 		lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
 		lab val values_urbangood values_urbangood
 		
-	rename s3q20_tz_tribe		values_tzortribe
-		gen values_tzortribe_dum = (values_tzortribe == 1 | values_tzortribe == 2)
-		replace values_tzortribe_dum = . if values_tzortribe == -888 | values_tzortribe == .
+	rename s3q20_tz_tribe		values_tzovertribe
+		gen values_tzovertribe_dum = (values_tzovertribe == 1 | values_tzovertribe == 2)
+		replace values_tzovertribe_dum = . if values_tzovertribe == -888 | values_tzovertribe == .
+		lab val values_tzovertribe_dum tzovertribe
+
 
 	/* Recode */
 	recode values_* (-999 = .d) (-888 = .r)
@@ -191,20 +196,20 @@ ________________________________________________________________________________
 ** People you would live near
 
 	/* Create Values */
-	gen prej_yesneighbor_aids = .		
-	gen prej_yesneighbor_homo = .
-	gen prej_yesneighbor_alcoholic = .
-	gen prej_yesneighbor_unmarried = .
+	gen prej_yesnbr_aids = .		
+	gen prej_yesnbr_homo = .
+	gen prej_yesnbr_alcoholic = .
+	gen prej_yesnbr_unmarried = .
 
 	forval j = 1/3 {	
-		replace prej_yesneighbor_homo = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mashoga"
-		replace prej_yesneighbor_aids = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mtu mwenye virus vya ukimwi"
-		replace prej_yesneighbor_alcoholic = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Walevi"
-		replace prej_yesneighbor_unmarried = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Watu wanaoishi pamoja lakini hawajaoana"
+		replace prej_yesnbr_homo = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mashoga"
+		replace prej_yesnbr_aids = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Mtu mwenye virus vya ukimwi"
+		replace prej_yesnbr_alcoholic = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Walevi"
+		replace prej_yesnbr_unmarried = s5q5_r_`j' if s5q5_name_sw_r_`j' == "Watu wanaoishi pamoja lakini hawajaoana"
 		}
 		
-	foreach var of varlist prej_yesneighbor_* {
-		lab var `var' "Would accept X group to be your neighbor"
+	foreach var of varlist prej_yesnbr_* {
+		lab var `var' "Would accept X group to be your nbr"
 		recode `var' (1=0)(0=1)
 		recode `var' (1=0)(0=1) if (svy_enum==5 | svy_enum==13 | svy_enum==10 | ///
 		svy_enum==23 | svy_enum==24) & (startdate== td(07,12,2020) | startdate== td(08,12,2020))
@@ -212,10 +217,10 @@ ________________________________________________________________________________
 		recode `var' (-999 = .d)(-888 = .r)
 	}	
 
-	egen prej_yesneighbor_index = rowmean(prej_yesneighbor_aids prej_yesneighbor_homo prej_yesneighbor_alcoholic prej_yesneighbor_unmarried)
-	lab var prej_yesneighbor_index "Mean of all questions about acceptable neighbors"
+	egen prej_yesnbr_index = rowmean(prej_yesnbr_aids prej_yesnbr_homo prej_yesnbr_alcoholic prej_yesnbr_unmarried)
+	lab var prej_yesnbr_index "Mean of all questions about acceptable nbrs"
 
-	stop
+
 	/* Kids Marrying */
 	forval i = 1/4 {
 		gen prej_kidmarry`i' = .
@@ -724,6 +729,64 @@ We are coding that higher is always "more gender equality"
 		recode `var' (-999 = .d)(-888 = .r)(-222 = .o)
 	}
 
+/* Political Knowledge _________________________________________________________*/
+
+	* Popular Culture
+	/*
+	gen ptixknow_pop_music = .
+		replace ptixknow_pop_music = 1 if (s13q1 == 4 | s13q1 == 3) & s13q1_rand_cl == "1"
+		replace ptixknow_pop_music = 1 if (s13q2 == 4 | s13q2 == 3) & s13q2_rand_cl == "1"
+		replace ptixknow_pop_music = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "1"
+		replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
+		replace ptixknow_pop_music = 0 if (s13q1 == 1 | s13q1 == 2) & s13q1_rand_cl == "1"	
+		replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
+		lab val ptixknow_pop_music correct
+
+	gen ptixknow_pop_sport = .
+		replace ptixknow_pop_sport = 1 if (s13q1 == 1) & s13q1_rand_cl == "2"
+		replace ptixknow_pop_sport = 1 if (s13q2 == 1) & s13q2_rand_cl == "2"
+		replace ptixknow_pop_sport = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "2"
+		replace ptixknow_pop_sport = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "2"
+		replace ptixknow_pop_sport = 0 if (s13q1b == 3 | s13q1b == 4 | s13q1b == 2) & s13q1_rand_cl == "2"		
+		replace ptixknow_pop_sport = 0 if (s13q2 == 3 | s13q2 == 4 | s13q2 == 2) & s13q2_rand_cl == "2"		
+		lab val ptixknow_pop_sport correct	
+	*/
+	rename s13q2 	ptixknow_local_dc 
+
+	/* National Politics */
+	rename s13q3a	 ptixknow_natl_pm 
+		recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
+
+	rename s13q3b	ptixknow_natl_vp
+		recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
+
+	lab val ptixknow_natl_* correct
+
+	/* Foreign Affairs */
+	rename s13q4new ptixknow_fopo_kenyatta 
+		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
+		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
+
+	rename s13q5		ptixknow_em_aware
+		cap replace ptixknow_em_aware = s17q1_intro if s17_txt_treat == "treat_both" | s17_txt_treat == "treat_court"
+		destring ptixknow_em_aware, replace
+
+	rename s13q6		ptixknow_sourcetrust
+	
+	gen ptixknow_trustloc = 1 if ptixknow_sourcetrust == 1
+		replace ptixknow_trustloc = 0 if ptixknow_sourcetrust == 2 | ptixknow_sourcetrust == 3
+	
+	gen ptixknow_trustnat = 1 if ptixknow_sourcetrust == 2
+		replace ptixknow_trustnat = 0 if ptixknow_sourcetrust == 1 | ptixknow_sourcetrust == 3
+		
+	gen ptixknow_trustrel = 1 if ptixknow_sourcetrust == 3
+		replace ptixknow_trustrel = 0 if ptixknow_sourcetrust == 1 | ptixknow_sourcetrust == 2
+		
+	foreach var of varlist ptixknow_* {
+		cap recode `var' (-999 = 0)(-222 = 0)
+	}
+	
+
 	
 /* Health Knowledge ____________________________________________________________*/
 
@@ -791,23 +854,31 @@ We are coding that higher is always "more gender equality"
 
 /* Intimate Partner Violence __________________________________________________*/
 
-	* Reject IPV																
+	* Reject IPV
 	rename s9q1a		ipv_rej_disobey
+		recode ipv_rej_disobey (0=1)(1=0)
+		lab val 		ipv_rej_disobey ipv
+		
 	rename s9q1b		ipv_rej_hithard
-		recode ipv_rej_hithard (2=1)(1=0)
+		recode ipv_rej_hithard (2=0)(1=1)
+		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 1
+		lab val 		ipv_rej_hithard ipv
+		
 	rename s9q1c		ipv_rej_persists
+		recode ipv_rej_persists (0 = 1)(1 = 0)
+		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
+		lab val ipv_rej_persists ipv
 
 	rename s9q2 			ipv_norm_rej
 		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
-
+		lab val ipv_norm_rej ipv
+		
 	rename s9q3		ipv_report
 		recode ipv_report (2=0)(1=1)
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
 	recode ipv_* (-999 = .d)(-888 = .r)(-222 = .o)
-
-
 
 /* Relationships ________________________________________________________________*/
 

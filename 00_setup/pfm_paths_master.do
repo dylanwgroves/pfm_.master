@@ -57,7 +57,8 @@ ______________________________________________________________________________*/
 			/* Audio Screening */
 			global ipa_as "${user}/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
 			global ipa_as_endline "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
-		
+			global ipa_as_endline_spill "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
+
 			global ipa_endline "${user}/Box Sync/19_Community Media Endlines"
 		
 		/* Natural Experiment */
@@ -100,6 +101,15 @@ ______________________________________________________________________________*/
 		/* HH roles */
 		global data_hhroles "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/01_data"
 		global hhroles_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/03_output"
+		
+		/* WEP */
+		global data_wep "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - WEP/01_data"
+		global wep_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - WEP/03_output"
+		
+		/* Socialization */
+		global data_socialization "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/01_data"
+		global socialization_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/03_output"
+
 
 				
 /*		

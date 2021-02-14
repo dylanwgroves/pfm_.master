@@ -487,7 +487,16 @@ ________________________________________________________________________________
 	rename s13q5		ptixknow_em_aware
 
 	rename s13q6		ptixknow_sourcetrust
+	
+	gen ptixknow_trustloc = 1 if ptixknow_sourcetrust == 1
+	replace ptixknow_trustloc = 0 if ptixknow_sourcetrust == 2 | ptixknow_sourcetrust == 3
+	
+	gen ptixknow_trustnat = 1 if ptixknow_sourcetrust == 2
+		replace ptixknow_trustnat = 0 if ptixknow_sourcetrust == 1 | ptixknow_sourcetrust == 3
 		
+	gen ptixknow_trustrel = 1 if ptixknow_sourcetrust == 3
+		replace ptixknow_trustrel = 0 if ptixknow_sourcetrust == 1 | ptixknow_sourcetrust == 2
+	
 	foreach var of varlist ptixknow_* {
 		cap recode `var' (-999 = 0)(-222 = 0)
 	}
@@ -643,13 +652,21 @@ ________________________________________________________________________________
 
 	* Reject IPV																// Will need to come back and recode this now that the structure is different
 	rename s9q1a		ipv_rej_disobey
-		recode ipv_rej_disobey (1=0)(0=1)
+		recode ipv_rej_disobey (0=1)(1=0)
+		lab val 		ipv_rej_disobey ipv
+		
 	rename s9q1b		ipv_rej_hithard
 		recode ipv_rej_hithard (2=0)(1=1)
 		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 1
+		lab val 		ipv_rej_hithard ipv
+		
 	rename s9q1c		ipv_rej_persists
-		recode ipv_rej_persists (0=1)(1=0)
 		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
+		lab val ipv_rej_persists ipv
+
+	rename s9q2 			ipv_norm_rej
+		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
+		lab val ipv_norm_rej ipv
 
 	forval i = 1/6 {
 		gen ipv_rej_`i' = .
@@ -674,9 +691,6 @@ ________________________________________________________________________________
 	egen ipv_rejindex 	= rowmean(ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
 	egen ipv_rejall		= rowmin(ipv_rej_disobey ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
 		lab val ipv_rejall yesno
-		
-	rename s9q2 			ipv_norm_rej
-		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
 
 	* IPV Report
 	rename s9q3a		ipv_report_police
@@ -703,7 +717,7 @@ ________________________________________________________________________________
 		lab val ipv_report_femleader ipv_report_femleader
 		lab var ipv_report_femleader "How respond to cousin being absued by husband?"
 		
-	egen ipv_report_index = rowmean(ipv_report_police ipv_report_vc ipv_report_parents ipv_report_femleader)
+	egen ipv_report = rowmean(ipv_report_police ipv_report_vc ipv_report_parents ipv_report_femleader)
 	egen ipv_report_any = rowmax(ipv_report*)
 
 	drop s9q4 s9q5	// We dropped these variables after one day to save sapce									

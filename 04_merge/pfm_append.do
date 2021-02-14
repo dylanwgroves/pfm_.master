@@ -17,6 +17,7 @@ _______________________________________________________________________________*
 /* Locals and Tempfiles ________________________________________________________*/
 
 tempfile temp_ne
+tempfile temp_ne_new
 tempfile temp_as
 
 
@@ -52,22 +53,41 @@ tempfile temp_as
 	save "${data}/03_final_data/pfm_appended_prefix.dta", replace
 
 	
-/* Export without Prefixes _____________________________________________________
+/* Export Each AS Dataset Independently ________________________________________
 
-	This is iseful when we want to combien surveys for some reason
+	This is useful so we can pull in different datasets
 	
 */
 
 	use `temp_ne', clear
 		rename ne_* *
-		save `temp_ne', replace
+		save `temp_ne_new', replace
 
 	use `temp_as', clear
 		rename as_* *
 		rename treat treat_as
-		save `temp_as', replace
 
-	append using `temp_ne', force
+	append using `temp_ne_new', force
+	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
+
+	
+
+	
+/* Export without Prefixes _____________________________________________________
+
+	This is useful when we want to combine surveys for some reason
+	
+*/
+
+	use `temp_ne', clear
+		rename ne_* *
+		save `temp_ne_new', replace
+
+	use `temp_as', clear
+		rename as_* *
+		rename treat treat_as
+
+	append using `temp_ne_new', force
 	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
 
 	

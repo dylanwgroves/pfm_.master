@@ -2,7 +2,7 @@
 /* _____________________________________________________________________________
 
 project: Wellspring Tanzania, Audio Screening
-purpose: Endline Data: import raw data and remove PII
+purpose: Endline Data: import raw data and remove PII from friends data
 author: dylan groves, dylanwgroves@gmail.com
 date: 2020/12/23
 
@@ -33,8 +33,9 @@ ________________________________________________________________________________
 	
 /* Import data _________________________________________________________________*/
 	
-	use "${ipa_as_endline}/audio_screening_survey_encrypted_clean.dta", clear
- 
+	use "${ipa_as_endline_spill}/friend_survey_encrypted_clean_martin.dta" 
+
+
 /* Cleaning __________________________________________________________*/
 
 
@@ -42,11 +43,12 @@ ________________________________________________________________________________
 /* Export ____________________________________________________________________*/
 
 	/* PII */
-	save "${data}/01_raw_data/03_surveys/pfm_rawpii_as_endline.dta", replace
+	save "${data}/01_raw_data/03_surveys/pfm_rawpii_as_endline_friend.dta", replace
 
 	/* No PII */
 	*drop head_name resp_name survey_locationlongitude survey_locationlatitude enumerator_notes resp_phon*				/// NEED TO UPDATE
-	save "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline.dta", replace
+	
+	save "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", replace
 
 		
 		

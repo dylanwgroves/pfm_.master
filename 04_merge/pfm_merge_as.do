@@ -18,8 +18,12 @@ ________________________________________________________________________________
 	tempfile temp_allvills
 	tempfile temp_base
 	tempfile temp_mid
+	
 	tempfile temp_end
 	tempfile temp_end_partner
+	tempfile temp_end_friend
+	tempfile temp_end_kid
+	
 	tempfile temp_rd_dist
 	tempfile temp_rd_rand
 	tempfile temp_rand
@@ -73,16 +77,30 @@ ________________________________________________________________________________
 			replace id_resp_uid =subinstr(id_resp_uid,"_P","",.)
 			duplicates drop id_resp_uid, force
 		save `temp_end_partner'
+		
+		/* Friends */
+		use "${data}/01_raw_data/pfm_as_endline_clean_friend.dta", clear
+		rename * f_*		
+		rename f_id_resp_uid id_resp_uid
+		save `temp_end_friend'
+		
+		/* Kids */
+		use "${data}/01_raw_data/pfm_as_endline_clean_kid.dta", clear
+		rename * k_*		
+		rename k_id_resp_uid id_resp_uid
+		save `temp_end_kid'
 
+	/* Randomization */
+	
 		/* Village Randomization */
-			use "${data}/02_mid_data/pfm_randomized_as.dta", clear
-			save `temp_rand'
+		use "${data}/02_mid_data/pfm_randomized_as.dta", clear
+		save `temp_rand'
 			
-			/* Village RI */
-			use "${data}/02_mid_data/pfm_ri_as.dta", clear
-			save `temp_ri'
+		/* Village RI */
+		use "${data}/02_mid_data/pfm_ri_as.dta", clear
+		save `temp_ri'
 			
-		/* Radio */
+	/* Radio */
 	
 		/* Radio Distribution */
 		use "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", clear
@@ -145,6 +163,9 @@ ________________________________________________________________________________
 	/* Merge Endlines */
 		merge 1:1 id_resp_uid using `temp_end', gen(merge_end)
 		merge 1:1 id_resp_uid using `temp_end_partner', gen(merge_end_part)
+		merge 1:1 id_resp_uid using `temp_end_friend', gen(merge_end_friend)
+		merge 1:1 id_resp_uid using `temp_end_kid', gen(merge_end_kid)
+		
 		
 /* Label ______________________________________________________________________*/
 

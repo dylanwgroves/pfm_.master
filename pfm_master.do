@@ -57,6 +57,8 @@ ______________________________________	_________________________________________
 		do "${code}/01_import/pfm_import_as_midline.do" 						// Midline
 		do "${code}/01_import/pfm_import_as_endline.do" 						// Endline
 		do "${code}/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
+		do "${code}/01_import/pfm_import_as_endline_friend.do" 					// Endline (Partner)
+		do "${code}/01_import/pfm_import_as_endline_kid.do" 					// Endline (Partner)
 
 	/* Natural Experiment */
 	
@@ -115,8 +117,10 @@ Tasks: Clean, and generate variables
 		do "${code}/03_clean/pfm_clean_as_midline.do" 							// Midline
 		do "${code}/03_clean/pfm_clean_as_endline.do" 							// Endline
 		do "${code}/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
+		do "${code}/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Partner)
+		do "${code}/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
 
-	
+		
 	/* Natural Experiment */
 	
 		do "${code}/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
