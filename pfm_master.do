@@ -134,7 +134,6 @@ Tasks: Clean, and generate variables
  
  */
  
- 
 		/* Main Files */
 
 			do "${code}/04_merge/pfm_merge_ne.do" 									// Natural Experiment
