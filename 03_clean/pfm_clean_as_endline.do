@@ -48,7 +48,10 @@ ________________________________________________________________________________
 	lab def elect_topic 1 "EFM" 2 "HIV" 3 "Roads" 4 "Crime"
 	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
 	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
-
+	lab def hhlabor 1 "Mother" 2 "Father" 3 "Both"
+	lab def hhdecision 1 "Mother" 2 "Father" 3 "Both" 4 "Other man" 5 "Other woman"
+	lab def hh_dum 0 "Woman" 1 "Man or balanced"
+	lab def hh_dum_rev 0 "Man" 1 "Woman or balanced"
 
 	
 	
@@ -521,11 +524,7 @@ We are coding that higher is always "more gender equality"
 
 	egen ge_index = rowmean(ge_school ge_work ge_leadership ge_business)
 
-
-
-	** Household Responsibility
-	lab def ge_hhlabor 1 "Mother" 2 "Father" 3 "Both"
-
+	/* HH Labor */
 	forval i = 1/3 {
 		gen ge_hhlabor`i' = .
 			forval j = 1/3 {	
@@ -538,16 +537,21 @@ We are coding that higher is always "more gender equality"
 		rename ge_hhlabor2		ge_hhlabor_kids
 		rename ge_hhlabor3		ge_hhlabor_money
 		
+		/* Create dummies in progressive direction */
 		foreach var of varlist ge_hhlabor_chores ge_hhlabor_kids {				// create dummy = 1 if shoudl share labor
-			gen `var'_dum = 1 if `var' == 3	| `var' == 2
-				replace `var'_dum = 0 if `var' == 1
+			recode `var' 	(2 3 = 1 "men/balance") ///
+							(1 = 0 "women"), ///
+							gen(`var'_dum) lab(`var'_dum)
+			lab var `var'_dum "1=prog/bal : Ideally, who is responsible for..."
 		}
 		
 		foreach var of varlist ge_hhlabor_money {								// create dummy = 1 if shoudl share labor
-			gen `var'_dum = 1 if `var' == 3	| `var' == 1
-				replace `var'_dum = 0 if `var' == 2
+			recode `var' 	(1 3 = 1 "women/balance") ///
+							(2 = 0 "men"), ///
+							gen(`var'_dum) label(`var'_dum)
+			lab var `var'_dum "1=prog/bal : Ideally, who is responsible for..."
 		}
-
+		
 /* Forced Marriage _____________________________________________________________*/
 
 	rename s8q5			fm_reject
@@ -664,7 +668,7 @@ We are coding that higher is always "more gender equality"
 	rename s17q8b		em_reject_noschool
 	rename s17q8c		em_reject_pregnant
 	rename s17q8d		em_reject_money
-	rename s17q8e		em_reject_needhusband
+	rename s17q8e		em_reject_needhus
 
 	foreach var of varlist em_reject_* {
 		recode `var' (3=0)(1=1)(2=2)
@@ -677,7 +681,7 @@ We are coding that higher is always "more gender equality"
 									em_reject_noschool_dum ///
 									em_reject_pregnant_dum ///
 									em_reject_money_dum ///
-									em_reject_needhusband_dum)
+									em_reject_needhus_dum)
 	
 	gen em_reject_all = (em_reject_index == 1)
 
@@ -854,23 +858,23 @@ We are coding that higher is always "more gender equality"
 
 /* Intimate Partner Violence __________________________________________________*/
 
-	* Reject IPV
+	* Reject IPV																
 	rename s9q1a		ipv_rej_disobey
-		recode ipv_rej_disobey (0=1)(1=0)
+		recode ipv_rej_disobey (0=1)(1=0)(-999 = .d)(-888 = .r)	
 		lab val 		ipv_rej_disobey ipv
 		
 	rename s9q1b		ipv_rej_hithard
-		recode ipv_rej_hithard (2=0)(1=1)
+		recode ipv_rej_hithard (2=0)(1=1)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 1
 		lab val 		ipv_rej_hithard ipv
 		
 	rename s9q1c		ipv_rej_persists
-		recode ipv_rej_persists (0 = 1)(1 = 0)
+		recode ipv_rej_persists (0 = 1)(1 = 0)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
 		lab val ipv_rej_persists ipv
 
 	rename s9q2 			ipv_norm_rej
-		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
+		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
 		lab val ipv_norm_rej ipv
 		
 	rename s9q3		ipv_report
@@ -878,26 +882,82 @@ We are coding that higher is always "more gender equality"
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
-	recode ipv_* (-999 = .d)(-888 = .r)(-222 = .o)
+	recode ipv_* (-999 = .d)(-888 = .r)		
 
-/* Relationships ________________________________________________________________*/
+/* HH Labor _____________________________________________________________________*/
 
-	rename s12q1_1		couples_hhlabor_water
-	rename s12q1_2		couples_hhlabor_laundry
-	rename s12q1_3		couples_hhlabor_kids
-	rename s12q1_4		couples_hhlabor_money
+	/* Actual HH Labor (Attitudes twowards HH Labor are above) */
+	rename s12q1_1		hhlabor_water
+	rename s12q1_2		hhlabor_laundry
+	rename s12q1_3		hhlabor_kids
+	rename s12q1_4		hhlabor_money
+		
+		foreach var of varlist hhlabor_* {
+			lab val `var' hhlabor
+		}
+		
+	/* Generate Dummy Variable for Outcome */
+	recode hhlabor_water (2=1)(3=1)(1=0), gen(hhlabor_water_dum)
+		lab val hhlabor_water_dum hh_dum
+		lab var hhlabor_water_dum "[1 = prog/bal] Who in HH is responsible for water?"
+	
+	recode hhlabor_laundry (2=1)(3=1)(1=0), gen(hhlabor_laundry_dum)
+		lab val hhlabor_laundry_dum hh_dum
+		lab var hhlabor_laundry_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
+		
+	egen hhlabor_chores_dum = rowmean(hhlabor_water hhlabor_laundry)
+		lab val hhlabor_chores_dum hh_dum
+		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
+	
+	recode hhlabor_kids (2=1)(3=1)(1=0), gen(hhlabor_kids_dum)
+		lab val hhlabor_kids_dum hh_dum
+		lab var hhlabor_kids_dum "[1 = prog/bal] Who in HH is responsible for kids?"
+	
+	recode hhlabor_money (2=0)(3=1)(1=1), gen(hhlabor_money_dum)
+		lab val hhlabor_money_dum hh_dum_rev
+		lab var hhlabor_money_dum "[1 = prog/bal] Who in HH is responsible for kids?"
+	
+	recode hhlabor* (-999 = .d)(-888 = .r)		
 
-	rename s12q12_1		couples_hhdecision_health
-	rename s12q12_2		couples_hhdecision_school
-	rename s12q12_3		couples_hhdecision_hhfix
 
+/* HH Decisions _____________________________________________________________________*/
+
+
+	/* HH Decision-making (actual) */
+	rename s12q12_1		hhdecision_health
+	rename s12q12_2		hhdecision_school
+	rename s12q12_3		hhdecision_hhfix
+	
+		foreach var of varlist hhdecision_* {
+			lab val `var' hhdecision
+		}
+		
+	/* Generate Dummy Variable for Outcome */
+	recode hhdecision_health (2=1)(3=1)(1=0)(4=1)(5=0), gen(hhdecision_health_dum)
+		lab val hhdecision_health hh_dum
+		lab var hhdecision_health "[1 = progressive/balanced] Who in HH makes decisions about health?"
+		
+	recode hhdecision_school (2=1)(3=1)(1=0)(4=1)(5=0), gen(hhdecision_school_dum)
+		lab val hhdecision_school_dum hh_dum
+		lab var hhdecision_school_dum "[1 = progressive/balanced] Who in HH makes decisions about school?"
+		
+	recode hhdecision_hhfix (2=1)(3=1)(1=0)(4=1)(5=0), gen(hhdecision_hhfix_dum)
+		lab val hhdecision_hhfix_dum hh_dum
+		lab var hhdecision_hhfix_dum "[1 = progressive/balanced] Who in HH makes decisions about hh fixes?"
+	
+	recode hhdecision* (-999 = .d)(-888 = .r)		
+
+	
+/* Relationships _______________________________________________________________*/
+
+	/* Couples Info */
 	rename s12q13_1		couples_talk_news
 	rename s12q13_2		couples_talk_kids
 	rename s12q13_9		couples_talk_none
 
 	rename s12q14		couples_autonomy
 	
-
+	recode couples* (-999 = .d)(-888 = .r)	
 
 
 /* Parenting ___________________________________________________________________*/

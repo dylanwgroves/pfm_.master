@@ -102,10 +102,6 @@ ______________________________________________________________________________*/
 		global data_hhroles "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/01_data"
 		global hhroles_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/03_output"
 		
-		/* WEP */
-		global data_wep "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - WEP/01_data"
-		global wep_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - WEP/03_output"
-		
 		/* Socialization */
 		global data_socialization "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/01_data"
 		global socialization_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/03_output"

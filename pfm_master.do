@@ -39,7 +39,7 @@ ______________________________________	_________________________________________
 	}
 
 
-
+	
 /* Part 1: Import ______________________________________________________________*/
 
 * Tasks: Import files from Box, remove PII
@@ -117,7 +117,7 @@ Tasks: Clean, and generate variables
 		do "${code}/03_clean/pfm_clean_as_midline.do" 							// Midline
 		do "${code}/03_clean/pfm_clean_as_endline.do" 							// Endline
 		do "${code}/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
-		do "${code}/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Partner)
+		do "${code}/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Friend)		
 		do "${code}/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
 
 		
@@ -127,10 +127,12 @@ Tasks: Clean, and generate variables
 		do "${code}/03_clean/pfm_clean_ne_endline.do" 							// Endline
 
 	
-/* Part 3: Merge _______________________________________________________________*/
+/* Part 3: Merge _______________________________________________________________
 
-/* Tasks: Clean, and generate variables 
- Note: Prelimenary data collection and PII removal occurs in Box Folders */
+	Tasks: Clean, and generate variables 
+	Note: Prelimenary data collection and PII removal occurs in Box Folders
+ 
+ */
  
  
 		/* Main Files */

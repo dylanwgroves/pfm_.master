@@ -51,7 +51,8 @@ ________________________________________________________________________________
 	lab def as_parentattend  0 "No/Dont Know" 1 "Yes"
 	lab def s3q19_tribe 40 "Mdengeleko" 41 "Wamburu", modify
 	lab def hhlabor_simple 0 "Traditional gender role" 1 "Balanced or progressive gender roles"
-	lab def tzortribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
+	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
+	lab def leadership 0 ""
 
 
 /* Survey Info _________________________________________________________________*/
@@ -108,7 +109,8 @@ ________________________________________________________________________________
 	rename resp_name 		resp_name
 	
 	rename s2q0_female 		resp_female
-		lab val resp_female resp_female
+		lab val resp_female female
+		
 		
 	rename s2q1_ppe 		resp_ppe
 
@@ -118,6 +120,7 @@ ________________________________________________________________________________
 	
 	rename s3q7				resp_edu
 	rename s3q8				resp_readandwrite
+		replace resp_readandwrite = 1 if resp_edu > 7
 	
 	rename s3q16_religion	resp_religion
 	
@@ -172,10 +175,10 @@ ________________________________________________________________________________
 /* Prejudice ___________________________________________________________________*/
 		
 	/* Tribe vs Nation */
-	rename s3q20_tz_tribe		values_tzortribe
-	gen values_tzortribe_dum = (values_tzortribe == 1 | values_tzortribe == 2)
-	replace values_tzortribe_dum = . if values_tzortribe == -888 | values_tzortribe == .
-	lab val values_tzortribe_dum tzortribe
+	rename s3q20_tz_tribe		values_tzovertribe
+	gen values_tzovertribe_dum = (values_tzovertribe == 1 | values_tzovertribe == 2)
+	replace values_tzovertribe_dum = . if values_tzovertribe == -888 | values_tzovertribe == .
+	lab val values_tzovertribe_dum tzovertribe
 
 
 	/* Marriage */	
@@ -300,8 +303,10 @@ ________________________________________________________________________________
 
 	** Participation Activities														
 	rename s15q2	efficacy_understand
-	rename s15q4	efficacy_leadership
-	
+	recode s15q4 	(1=1 "Want to lead") ///
+					(2=0 "Other things to do"), ///
+					gen(ptixpart_leaderhsip) label(ptixpart_leadership)
+
 /* Early Marriage ______________________________________________________________*/
 
 	rename s3q11	em_bestage 
@@ -335,7 +340,7 @@ ________________________________________________________________________________
 			gen `var'_dum = (`var' == 2)
 			lab val `var'_dum yesno
 		}
-
+		
 	rename s13q5 	em_legalage
 		recode em_legalage (-999 = .d) (-888 = .r)
 	
@@ -344,6 +349,9 @@ ________________________________________________________________________________
 	foreach var of varlist em_reject_* {
 		recode `var' (-999 = .d) (-888 = .r)
 	}	
+	
+	egen em_reject_index = rowmean(em_reject_religion_dum em_reject_money_dum)
+
 
 	
 /* Election ____________________________________________________________________*/
@@ -476,25 +484,44 @@ ________________________________________________________________________________
 
 	rename s_hiv_stigma2		hivstigma_yesbus
 	
-	rename s_hiv_stigma2_parent	hivstigma_parent_hivstigma
+	rename s_hiv_stigma2_parent	hivstigma_parent_yesbus
 	
 	recode hiv* (-999 = .d)(-888 = .r)(-222 = .o)
 	
 
-/* HH roles Experiment _________________________________________________________*/
-
-	rename scouples_txt_treat 	couples_treat
-
-	
-/* Gender Equality _____________________________________________________________*/
 
 	/* Pre-treatment: s HH roles in family*/	
 	drop s12q1ab
 	
 	rename s12q1a				hhlabor_water
 	rename s12q1b				hhlabor_laundry
-	rename s12q1c				hhlabor_children
+	rename s12q1c				hhlabor_kids
+	
+	foreach var of varlist hhlabor_water hhlabor_laundry hhlabor_kids {
+		recode `var' (0 = 4) if resp_female == 1								// If girl and say "self", it means you are saying "girls"
+		recode `var' (0 = 5) if resp_female == 0								// If boy and say "self", it means you are saying "boys"
+		
+		recode `var'	(1 4 = 0 "women") ///
+						(2 3 5 6 7 = 1 "men / balance"), ///
+						gen(`var'_dum) label(`var'_dum)
+		
+		lab var `var'_dum "[1=prog/bal] Who in household is responsible for..."
+		}
+
 	rename s12q1d				hhlabor_money
+		recode hhlabor_money (0 = 4) if resp_female == 1								// If girl and say "self", it means you are saying "girls"
+		recode hhlabor_money (0 = 5) if resp_female == 0								// If boy and say "self", it means you are saying "boys"
+		recode hhlabor_money 	(1 3 4 6 7 = 1 "women / balance") ///
+								(2 5 = 0 "men"), ///
+								gen(hhlabor_money_dum) label(hhlabor_money_dum)
+		lab var hhlabor_money_dum  "[1=prog/bal] Who in household is responsible for..."
+								
+/* HH roles Experiment _________________________________________________________*/
+
+	rename scouples_txt_treat 	couples_treat
+	
+
+/* Gender Equality _____________________________________________________________*/
 
 	gen hhlabor_chores = hhlabor_water if txt_choresactual == "water"
 		replace hhlabor_chores = hhlabor_laundry if txt_choresactual == "laundry"
@@ -528,7 +555,7 @@ ________________________________________________________________________________
 		lab var ge_school "[Disagree = 1] It is more important that a boy goes to school than a girl"
 		
 	recode ge_* (-999 = .d) (-888 = .r)
-
+	
 	/* Ideal HH roles outcome */												// we should add "taking care of children" back in for socialization purposes!
 	lab def ge_hhlabor 	1 "Mother" 2 "Father" 3 "Both Parents" 4 "Female kid" ///
 						5 "Male kid" 6 "All kids" 7 "Whole family"
@@ -543,29 +570,16 @@ ________________________________________________________________________________
 	}
 		
 		rename ge_hhlabor1 		ge_hhlabor_chores
-			gen ge_hhlabor_chores_dum = 1 if 	 ge_hhlabor_chores == 2 | ///
-												 ge_hhlabor_chores == 3 | ///
-												 ge_hhlabor_chores == 6 | ///
-												 ge_hhlabor_chores == 5 | ///
-												 ge_hhlabor_chores == 7
-			replace ge_hhlabor_chores_dum = 0 if  ge_hhlabor_chores == 1 | ///
-												 ge_hhlabor_chores == 4
-		
-		rename ge_hhlabor2		ge_hhlabor_money
-			gen ge_hhlabor_money_dum = 1 if 	 ge_hhlabor_money == 1 | ///
-												 ge_hhlabor_money == 3 | ///
-												 ge_hhlabor_money == 6 | ///
-												 ge_hhlabor_money == 4 | ///
-												 ge_hhlabor_money == 7
-			replace ge_hhlabor_money_dum = 0 if  ge_hhlabor_money == 2 | ///
-												 ge_hhlabor_money == 5
-												 
-	lab var ge_hhlabor_money_dum "Who is ideally responsible for making money"
-	lab val ge_hhlabor_money_dum hhlabor_simple
-	
-	lab var ge_hhlabor_chores_dum "Who is ideally responsible for hh chores"
-	lab val ge_hhlabor_chores_dum hhlabor_simple
+			recode ge_hhlabor_chores 	(2 3 5 6 7 = 1 "men/balanced") ///
+										(1 4 = 0 "women"), ///
+										gen(ge_hhlabor_chores_dum) label(ge_hhlabor_chores_dum)
+										lab var ge_hhlabor_chores_dum "[1=prog/bal] Who is ideally responsible for hh chores"
 
+		rename ge_hhlabor2		ge_hhlabor_money
+			recode ge_hhlabor_money 	(1 3 4 6 7 = 1 "women/balanced") ///
+										(2 5 = 0 "men"), ///
+										gen(ge_hhlabor_money_dum) label(ge_hhlabor_money_dum)				
+										lab var ge_hhlabor_money_dum "[1=prog/bal] Who is ideally responsible for making money"
 	
 	/* Good wife */
 	rename s6q6		goodwife
@@ -607,6 +621,8 @@ ________________________________________________________________________________
 	rename s6q7__222	goodhusb_oth
 	*s6q7_oth																	// clean this at the end of collection
 	
+	egen ge_index = rowmean(ge_wep_dum ge_earning ge_school)
+
 	
 /* Family and Parenting ________________________________________________________*/
 
@@ -614,11 +630,10 @@ ________________________________________________________________________________
 	
 	rename s11q1 		parent_talknews
 
-	rename s11q3		parent_question
-		recode parent_question (2=1) (1=0)
-		lab def parent_question 0 "Agree" 1 "Disagree"
-		lab val parent_question parent_question
-		lab var parent_question "Agree (0) or Disagree (1): Parents should not allow children to question their decisions"
+	recode s11q3 	(2=1 "Disagree") ///
+					(1=0 "Agree"), ///
+					gen(parent_question) label(parent_question)
+					lab var parent_question "Agree (0) or Disagree (1): Parents should not allow children to question their decisions"
 	
 /* Media Consumption ___________________________________________________________*/
 	
@@ -708,7 +723,7 @@ ________________________________________________________________________________
 	rename s31q3 		as_parentattend_topic									// add check whether the topic is the right one!
 	rename s31q4 		as_parentattend_findout
 
-	recode as_parent* (-999 = .d) (-888 = .r) (-222 = .)
+	recode as_parent* (-999=.d)(-888=.r) (-222=.)
 
 																			
 /* Conclusion __________________________________________________________________*/

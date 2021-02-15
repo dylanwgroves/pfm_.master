@@ -86,6 +86,7 @@ use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", clear
 	rename ward_pull		id_ward_n
 	rename village_pull		id_village_n
 
+	
 /* Consent _____________________________________________________________________*/
 
 	rename consent consent														
@@ -113,6 +114,8 @@ use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", clear
 	rename s3q4a			resp_numkids
 	
 	rename s3q5				resp_yrsinvill
+		destring resp_yrsinvill, replace
+		recode resp_yrsinvill (-888 = .r)(-999 = .d)
 	
 	rename s3q6				resp_villknow
 	
@@ -229,8 +232,8 @@ We are coding that higher is always "more gender equality"
 
 	lab var ge_school "[Disagree = 1] It is more important that a boy goes to school than a girl"
 	lab var ge_work "[Disagree = 1] When jobs are scarce, men should have more right to a job than women"
-	lab var ge_leadership "In general, women make equally good village leaders as men"
-	lab var ge_business "In general, women are just as able to run a successful business as men"
+	lab var ge_leadership "[Agree = 1] In general, women make equally good village leaders as men"
+	lab var ge_business "[Agree = 1] In general, women are just as able to run a successful business as men"
 		
 	recode ge_* (-999 = .d) (-888 = .r)
 
@@ -238,7 +241,7 @@ We are coding that higher is always "more gender equality"
 	
 	
 	rename s6q5				ge_earning
-	recode ge_earning (1=0)(2=1)
+	recode ge_earning (1=0)(2=1)(-999=.d)(-888=.r)
 	lab var ge_earning "[Disagree = 1] If a woman earns more, it will cause problems"
 	lab val ge_earning agree_rev
 	
@@ -296,7 +299,7 @@ gen fm_reject_long = .
 							2 "Disagree" ///
 							3 "Strongly Disagree"
 	lab val fm_reject_long fm_reject_long
-	lab var fm_reject_long "[REVERSED, LONG] A woman shoudl not have a say in who she marries"
+	lab var fm_reject_long "[Strongly Disagree = highest] A woman shoudl not have a say in who she marries"
 	
 rename s8q5c		fm_friend_reject
 	recode fm_friend_reject (1=0)(2=1)(-999 = .d)(-888 = .r)
@@ -596,18 +599,20 @@ rename s8q5c		fm_friend_reject
 
 	/* Code Outcomes for Screening Experiments */
 	gen em_elect = s3q4a_1	
-		recode em_elect (2=0)(1=1)
+		recode em_elect (2=0)(1=1)(-888 = .r)(-999 = .d)
 		lab val em_elect em_elect 
 		
 		recode s3q4a_2 (2=1)(1=0), gen(s3q4a_2_reverse)												// Reversed order for randomly selected 1/2 of respondents
 		replace em_elect = s3q4a_2_reverse if rand_order_1st_txt == "second"
-
+		recode em_elect (-888 = .r)(-999 = .d)
+		
 	gen hiv_elect = s3q4b_1		
-		recode hiv_elect (2=0)(1=1)
+		recode hiv_elect (2=0)(1=1)(-888 = .r)(-999 = .d)
 		lab val hiv_elect hiv_elect
 		
 		recode s3q4b_2	(2=1)(1=0), gen(s3q4b_2_reverse)											// Reversed order for randomly selected 1/2 of respondents
 		replace hiv_elect = s3q4b_2_reverse if rand_order_2nd_txt == "second"
+		recode hiv_elect (-888 = .r)(-999 = .d)
 
 		
 	/* Code Candidate Profiles */
@@ -769,9 +774,9 @@ rename s8q5c		fm_friend_reject
 	
 	recode hivdisclose_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
+	egen hivdisclose_index = rowmean(hivdisclose_friend hivdisclose_cowork)
 	
-	recode hivknow_* hivdisclose_* hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
+	recode hivknow_* hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
 	
 	
 	
@@ -779,25 +784,29 @@ rename s8q5c		fm_friend_reject
 
 	* Reject IPV																
 	rename s9q1a		ipv_rej_disobey
+		recode ipv_rej_disobey (0=1)(1=0)(-999 = .d)(-888 = .r)	
+		lab val 		ipv_rej_disobey ipv
+		
 	rename s9q1b		ipv_rej_hithard
-		recode ipv_rej_hithard (2=1)(1=0)
-		lab def hithard 0 "slapped" 1 "More force than that"
-		lab val ipv_rej_hithard hithard
+		recode ipv_rej_hithard (2=0)(1=1)(-999 = .d)(-888 = .r)	
+		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 1
+		lab val 		ipv_rej_hithard ipv
 		
 	rename s9q1c		ipv_rej_persists
+		recode ipv_rej_persists (0 = 1)(1 = 0)(-999 = .d)(-888 = .r)	
+		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
+		lab val ipv_rej_persists ipv
 
 	rename s9q2 			ipv_norm_rej
-		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
-
+		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
+		lab val ipv_norm_rej ipv
+		
 	rename s9q3		ipv_report
 		recode ipv_report (2=0)(1=1)
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
-	recode ipv_* (-999 = .d)(-888 = .r)(-222 = .o)
-
-	
-	
+	recode ipv_* (-999 = .d)(-888 = .r)		
 	
 	
 /* Media Consumption ___________________________________________________________*/
