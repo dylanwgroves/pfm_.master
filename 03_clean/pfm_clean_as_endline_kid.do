@@ -100,9 +100,13 @@ ________________________________________________________________________________
 		lab var id_kid_rank "Age order out of kids in family 13-18"
 
 	rename district_pull	id_district_n
+		replace id_district_n = district_name if id_district_n==""
+
 	rename ward_pull		id_ward_n
-	rename village_pull		id_village_n
-	
+		replace id_ward_n = ward_name if id_ward_n==""
+
+	rename village_pull		id_village_n										
+		replace id_village_n = village_name if id_village_n==""
 
 
 /* Consent _____________________________________________________________________*/
