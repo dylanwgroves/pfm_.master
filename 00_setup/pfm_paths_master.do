@@ -1,24 +1,14 @@
 /*______________________________________________________________________________
 	
-	
 	Purpose: Set globals for Pangani FM project
 			 
-	Stata version: 15
 	Author: Dylan Groves, dylanwgroves@gmail.com 
-	Date created: 2020/08/19
-	
-	Set Seeed
-	Set Globals
-	Set Date
-	Run Programs
-	
- 											
+	Date created: 2020/08/19 											
 ______________________________________________________________________________*/
 
 
 /* Stata Prep ___________________________________________________________________*/
 
-	*version 15 
 	clear all 
 	clear matrix
 	clear mata
@@ -41,26 +31,47 @@ ______________________________________________________________________________*/
 	global user `dir'
 	display "${user}"
 
-		/* Main */
-		global code "${user}/Documents/pfm_.master"
+	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" {
+					capture cd "`user'"
+					if _rc == 0 macro def path `user'
+				}
+	local dir `c(pwd)'
+	global userboxcryptor `dir'
+	display "${userboxcryptor}"	
+
+	
+	
+/* Main folders ________________________________________________________________*/
+
+			/* Main */
+		global code "${user}/Documents"
 		global data "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
 		
 		/* Output */
 		global output "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
 		global output_final "${user}/Dropbox/Apps/Overleaf"
-		
+
+	
+
+/* Importing and Cleaning _______________________________________________________*/
+				
 		/* IPA source files */
 			/* Natural Experiment */
-			global ipa_ne "${user}/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
-			global ipa_ne_endline "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
+			global ipa_ne "${userboxcryptor}/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
+			global ipa_ne_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
 		
 			/* Audio Screening */
-			global ipa_as "${user}/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
-			global ipa_as_endline "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
-			global ipa_as_endline_spill "${user}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
+			global ipa_as "${userboxcryptor}/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
+			global ipa_as_midline "${userboxcryptor}/Box Sync/19_Community Media Endlines/04_Research Design/04 Randomization & Sampling"
+			global ipa_as_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
+			global ipa_as_endline_spill "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
 
-			global ipa_endline "${user}/Box Sync/19_Community Media Endlines"
+		global ipa_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines"
+
+
 		
+/* Analysis ____________________________________________________________________*/
+
 		/* Natural Experiment */
 		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
 		global ne_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/03 Tables and Figures"
@@ -69,7 +80,7 @@ ______________________________________________________________________________*/
 			/* FM */
 			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
 			global as_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/03 Tables and Figures"
-		
+			
 			/* HIV Results */
 			global data_hiv "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/01 Data"
 			global hiv_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/03 Tables and Figures"
@@ -98,7 +109,7 @@ ______________________________________________________________________________*/
 		global data_election "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
 		global election_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/03_tables"
 
-		/* HH roles */
+		/* Household roles */
 		global data_hhroles "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/01_data"
 		global hhroles_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/03_output"
 		
@@ -106,49 +117,12 @@ ______________________________________________________________________________*/
 		global data_socialization "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/01_data"
 		global socialization_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/03_output"
 
-
-				
-/*		
-	
-	/* Dylan */
-	if "`c(username)'" == "dylan" {
-			
-		/* Maine */
-		global code "X:/Documents/pfm_.master"
-		global data "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
 		
-		/* Output */
-		global output "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
-		global output_final "X:/Dropbox/Apps/Overleaf"
-		
-		/* IPA source files */
-		global ipa_ne "X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
-		global ipa_ne_endline "X:/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
-		global ipa_as "X:/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
-		global ipa_as_endline "X:/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
-		global ipa_endline "X:/Box Sync/19_Community Media Endlines"
-		
-	}
-
-*/
-
 /* Set Date _____________________________________________________________________*/
 
 	global date : di %tdDNCY daily("$S_DATE", "DMY")
 
-
-/* Indicate Globals Set _________________________________________________________*/
+/* Indicate whether the globals have been set __________________________________*/
 
 	global globals_set "yes"
 
-
-	di "${code}"
-	di "${data}"
-
-
-
-/* Page 2: Run Programs ________________________________________________________
-
-do "${code}/02_code/pfm_programs.do"
-
-*/

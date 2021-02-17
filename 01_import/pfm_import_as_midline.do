@@ -18,7 +18,7 @@ ________________________________________________________________________________
 
 /* Import  _____________________________________________________________________*/
 
-	import delimited "${user}/Box Sync/19_Community Media Endlines/04_Research Design/04 Randomization & Sampling/02_uzikwasa_survey/pfm_uzikwasasurvey_sample_v2.csv", clear 
+	import delimited "${ipa_as_midline}/02_uzikwasa_survey/pfm_uzikwasasurvey_sample_v2.csv", clear 
 
 
 /* Randomize ___________________________________________________________________*/

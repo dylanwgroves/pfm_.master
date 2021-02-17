@@ -10,14 +10,24 @@ Date: 2021/02/12
 ________________________________________________________________________________*/
 
 
-
 /* Notes _______________________________________________________________________
 
-(1) Rememeber to check in 02_kids_survey_encrypted_cleaning.do that training and pilot data are cut.
-(2) Respondent Info (basic) 
-	- Need to input "other tribe" at the end of data collection
-
+(*) Rememeber to check in kids_02_cleaning_martin.do that training and pilot data are cut.
+(*) Respondent Info (basic) 
+	- clean "other tribe" at the end of collection
+	- Think about how to code religiosity differently across religions
+(*) Prejudice
+	- check outer thermomether for tribe_txt
+(*) Forced Marriage and Early Marriage
+	- check labeling of answers, can we make them all coherent?
+(*) Elections
+	- check cleaning - not done 
+(*) Political Knowledge
+	- clean "other food" at the end of collection
+(*) Gender Equality
+	- clean "other" in good wife / good husband at the end of collection
 */
+
 
 /* Set Seed ____________________________________________________________________*/
 	

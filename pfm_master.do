@@ -2,16 +2,15 @@
 	
 	Purpose: Run dofiles from cleaning to analysis for the Pangani FM project
 			 
-	Stata version: 15
+	Stata version: 16
 	Author: Dylan Groves, dylanwgroves@gmail.com 
 	Date created: 2020/08/19
 	Date last modified: 											
-______________________________________	__________________________________________*/
+________________________________________________________________________________*/
 
 
 /* Stata Prep __________________________________________________________________*/	
   
-  *version 15 
   clear all 
   clear matrix
   clear mata		
@@ -29,15 +28,12 @@ ______________________________________	_________________________________________
 	display "${user}"
 
 	cap assert "$`{globals_set}'" == "yes"
-	if _rc!=0 {  
-		* Set the path below to lead to the globals dofile. 
+	if _rc!=0 {   
 		do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"	
-		* Now open the globals dofile, and set paths as needed 
 		}
 	else { 
 		di "Globals have already been set."
 	}
-
 
 	
 /* Part 1: Import ______________________________________________________________*/
@@ -57,8 +53,8 @@ ______________________________________	_________________________________________
 		do "${code}/01_import/pfm_import_as_midline.do" 						// Midline
 		do "${code}/01_import/pfm_import_as_endline.do" 						// Endline
 		do "${code}/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
-		do "${code}/01_import/pfm_import_as_endline_friend.do" 					// Endline (Partner)
-		do "${code}/01_import/pfm_import_as_endline_kid.do" 					// Endline (Partner)
+		do "${code}/01_import/pfm_import_as_endline_friend.do" 					// Endline (Friend)
+		do "${code}/01_import/pfm_import_as_endline_kid.do" 					// Endline (Kid)
 
 	/* Natural Experiment */
 	
@@ -66,14 +62,14 @@ ______________________________________	_________________________________________
 		do "${code}/01_import/pfm_import_ne_baseline.do" 						// Baseline
 		do "${code}/01_import/pfm_import_ne_endline.do" 						// Endline
 
-
 	/* Village Master */
 	
 		do "${code}/01_import/pfm_import_villagemaster.do" // Tanzania census of all villages
 
 
 
-
+		
+		
 /* Part 2: Randomzation ________________________________________________________
 
 Note that only radio distribution and audio screening are randomized, the natural
@@ -102,7 +98,7 @@ experiment was generated using GenMatch											*/
 /* Part 2: Cleaning ____________________________________________________________
 
 Tasks: Clean, and generate variables 
-	Note: Prelimenary data collection and PII removal occurs in Box Folders
+	Note: Preliminary data collection and PII removal occurs in Box Folders
 		  Need to go back and do recoding throughout 							*/
 
 	/* Radio Distribution */
@@ -129,24 +125,22 @@ Tasks: Clean, and generate variables
 	
 /* Part 3: Merge _______________________________________________________________
 
-	Tasks: Clean, and generate variables 
-	Note: Prelimenary data collection and PII removal occurs in Box Folders
- 
- */
+	Tasks: Merge different samples into one dta 								 */
  
 		/* Main Files */
 
-			do "${code}/04_merge/pfm_merge_ne.do" 									// Natural Experiment
-			do "${code}/04_merge/pfm_merge_as.do" 									// Audio Screening
+			do "${code}/04_merge/pfm_merge_ne.do" 								// Natural Experiment
+			do "${code}/04_merge/pfm_merge_as.do" 								// Audio Screening
 
 
 		/* Append Together */
 		
-			do "${code}/04_merge/pfm_append.do" 									// Append Natural Experiment and Audio Screening
+			do "${code}/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
 
 
 			
 
+			
 /* Part 4: New Vars ____________________________________________________________
 
 	CONSIDERING GETTING RID OF NEW VARS
@@ -154,13 +148,8 @@ Tasks: Clean, and generate variables
 		And anything necessary for a specific analysis that doenst affect
 		the other projects can just be done with a "prelim" file in that project's
 		folder
-*/
 
+	*do "${code}/05_newvars/pfm_newvars.do" 									
 
-* Tasks: Clean, and generate variables 
-* Note: Prelimenary data collection and PII removal occurs in Box Folders
-
-	*do "${code}/05_newvars/pfm_newvars.do" 	// Merge Audio Screening Baseline and Endline
-
-			
+																				*/
 

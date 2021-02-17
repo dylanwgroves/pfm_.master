@@ -24,7 +24,6 @@ ________________________________________________________________________________
 	import excel "${ipa_ne}/2 - Final Data/5_Radio Distribution/PanganiFM_II_data.xlsx", sheet("Foglio2") firstrow clear
 
 
-
 /* Essential Cleaning __________________________________________________________*/
 
 	rename resp_id respid // respid is the version with no "_"
