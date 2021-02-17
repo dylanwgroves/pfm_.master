@@ -1,12 +1,10 @@
-	
+/* _____________________________________________________________________________
 
-/* Basics ______________________________________________________________________
-
-Project: Wellspring Tanzania, Audio 
+Project: Wellspring Tanzania, Audio  (Kids)
 Purpose: Primary Cleaning of Audio Screening Kids Survey Data
 Author: 	Dylan Groves, dylanwgroves@gmail.com
 			Beatrice Montano, bm2955@columbia.edu
-Date: 2021/02/12
+Date: 2021/01/25
 ________________________________________________________________________________*/
 
 
@@ -29,12 +27,9 @@ ________________________________________________________________________________
 */
 
 
-/* Set Seed ____________________________________________________________________*/
-	
-	set seed 1956
-
 /* Import  _____________________________________________________________________*/
 
+	*do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"	
 	use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_kid.dta", clear
 
 
@@ -62,7 +57,6 @@ ________________________________________________________________________________
 	lab def s3q19_tribe 40 "Mdengeleko" 41 "Wamburu", modify
 	lab def hhlabor_simple 0 "Traditional gender role" 1 "Balanced or progressive gender roles"
 	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
-	lab def leadership 0 ""
 	lab def ge_hhlabor 	1 "Mother" 2 "Father" 3 "Both Parents" 4 "Female kid" ///
 						5 "Male kid" 6 "All kids" 7 "Whole family"
 
@@ -131,6 +125,7 @@ ________________________________________________________________________________
 	rename s1q4				resp_age
 	
 	rename s3q7				resp_edu
+	
 	rename s3q8				resp_readandwrite
 		replace resp_readandwrite = 1 if resp_edu > 7
 	
@@ -317,7 +312,7 @@ ________________________________________________________________________________
 	rename s15q2	efficacy_understand
 	recode s15q4 	(1=1 "Want to lead") ///
 					(2=0 "Other things to do"), ///
-					gen(ptixpart_leaderhsip) label(ptixpart_leadership)
+					gen(ptixpart_leadership) label(ptixpart_leadership)
 
 /* Early Marriage ______________________________________________________________*/
 
@@ -501,15 +496,22 @@ ________________________________________________________________________________
 	recode hiv* (-999 = .d)(-888 = .r)(-222 = .o)
 	
 
+/* Gender Equality _____________________________________________________________*/
 
+	
+	/* Treatment Variable */
+	rename scouples_txt_treat couples_treat
+
+	
 	/* Pre-treatment: s HH roles in family*/	
 	drop s12q1ab
 	
 	rename s12q1a				hhlabor_water
 	rename s12q1b				hhlabor_laundry
-	rename s12q1c				hhlabor_kids
-	
-	foreach var of varlist hhlabor_water hhlabor_laundry hhlabor_kids {
+	rename s12q1c				hhlabor_kids    							 
+	rename s12q1d				hhlabor_money
+
+		foreach var of varlist hhlabor_water hhlabor_laundry hhlabor_kids {
 		recode `var' (0 = 4) if resp_female == 1								// If girl and say "self", it means you are saying "girls"
 		recode `var' (0 = 5) if resp_female == 0								// If boy and say "self", it means you are saying "boys"
 		
@@ -520,22 +522,15 @@ ________________________________________________________________________________
 		lab var `var'_dum "[1=prog/bal] Who in household is responsible for..."
 		}
 
-	rename s12q1d				hhlabor_money
 		recode hhlabor_money (0 = 4) if resp_female == 1						// If girl and say "self", it means you are saying "girls"
 		recode hhlabor_money (0 = 5) if resp_female == 0						// If boy and say "self", it means you are saying "boys"
 		recode hhlabor_money 	(1 3 4 6 7 = 1 "women / balance") ///
 								(2 5 = 0 "men"), ///
 								gen(hhlabor_money_dum) label(hhlabor_money_dum)
-		lab var hhlabor_money_dum  "[1=prog/bal] Who in household is responsible for..."
-								
-/* HH roles Experiment _________________________________________________________*/
-
-	rename scouples_txt_treat 	couples_treat
+		lab var hhlabor_money_dum  "[1=prog/bal] Who in household is responsible for..."	
 	
-
-/* Gender Equality _____________________________________________________________*/
-
 	gen hhlabor_chores = hhlabor_water if txt_choresactual == "water"
+		replace hhlabor_chores = hhlabor_laundry if txt_choresactual == "laundry"
 		replace hhlabor_chores = hhlabor_laundry if txt_choresactual == "laundry"
 	
 	/* Core outcome */
@@ -592,7 +587,6 @@ ________________________________________________________________________________
 										lab var ge_hhlabor_money_dum "[1=prog/bal] Who is ideally responsible for making money"
 	
 	/* Good wife */
-	rename s6q6		goodwife
 	rename s6q6__1		goodwife_hard
 	rename s6q6_0 		goodwife_respecful
 	rename s6q6_1 		goodwife_makemoney										
@@ -612,7 +606,6 @@ ________________________________________________________________________________
 	*s6q6_oth																	// clean this at the end of collection
 	
 	/* Good husband */
-	rename s6q7		goodhusb
 	rename s6q7__1		goodhusb_hard
 	rename s6q7_0 		goodhusb_respecful
 	rename s6q7_1 		goodhusb_makemoney	
@@ -693,8 +686,6 @@ ________________________________________________________________________________
 	
 /* Role Model __________________________________________________________________*/
 
-	rename s40q1 			rolemodel_who
-
 	rename s40q1_1			rm_oldwoman
 	rename s40q1_2			rm_oldman
 	rename s40q1_3			rm_child
@@ -752,15 +743,16 @@ ________________________________________________________________________________
 	gen sample_kids = 1
 	
 	
-/* Remove Variables ____________________________________________________________*/
+/* Remove Remaining Variables __________________________________________________*/
 
 	drop rand_* simid subscriberid devicephone* duration username ///
 	caseid *_pull enum_oth s1* int_* txt_* choices_* ///
 	s0* s3* s4* s6* s20* s8* ///
 	ranked_* *_cl *_count *_rand *_sw *_txt scouples_* v4* v5* ///	
-	scouplesq4 scouplesq5 section_*_start section_*_end s_* section_* ///
-	district_name enum_name ward_name village_name deviceid goodwife goodhusb ///
-	formdef_* rolemodel_who key starttime startdate endtime enddate survey_length
+	scouplesq4 scouplesq5 section_*_start section_*_end /// 
+	s_* section_* ///
+	district_name enum_name ward_name village_name deviceid  ///
+	formdef_*  key starttime startdate endtime enddate survey_length
 
 /* Export Long __________________________________________________________________*/
 
