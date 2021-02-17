@@ -53,6 +53,8 @@ ________________________________________________________________________________
 	lab def hhlabor_simple 0 "Traditional gender role" 1 "Balanced or progressive gender roles"
 	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
 	lab def leadership 0 ""
+	lab def ge_hhlabor 	1 "Mother" 2 "Father" 3 "Both Parents" 4 "Female kid" ///
+						5 "Male kid" 6 "All kids" 7 "Whole family"
 
 
 /* Survey Info _________________________________________________________________*/
@@ -509,8 +511,8 @@ ________________________________________________________________________________
 		}
 
 	rename s12q1d				hhlabor_money
-		recode hhlabor_money (0 = 4) if resp_female == 1								// If girl and say "self", it means you are saying "girls"
-		recode hhlabor_money (0 = 5) if resp_female == 0								// If boy and say "self", it means you are saying "boys"
+		recode hhlabor_money (0 = 4) if resp_female == 1						// If girl and say "self", it means you are saying "girls"
+		recode hhlabor_money (0 = 5) if resp_female == 0						// If boy and say "self", it means you are saying "boys"
 		recode hhlabor_money 	(1 3 4 6 7 = 1 "women / balance") ///
 								(2 5 = 0 "men"), ///
 								gen(hhlabor_money_dum) label(hhlabor_money_dum)
@@ -557,8 +559,6 @@ ________________________________________________________________________________
 	recode ge_* (-999 = .d) (-888 = .r)
 	
 	/* Ideal HH roles outcome */												// we should add "taking care of children" back in for socialization purposes!
-	lab def ge_hhlabor 	1 "Mother" 2 "Father" 3 "Both Parents" 4 "Female kid" ///
-						5 "Male kid" 6 "All kids" 7 "Whole family"
 
 	forval i = 1/2 {
 		gen ge_hhlabor`i' = .
