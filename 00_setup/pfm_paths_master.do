@@ -23,7 +23,7 @@ ______________________________________________________________________________*/
  
 /* Set Globals _________________________________________________________*/
 
-	foreach user in  "X:" "/Users/BeatriceMontano" {
+	foreach user in  "X:" "/Users/BeatriceMontano" "/Users/Bardia" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
@@ -31,7 +31,7 @@ ______________________________________________________________________________*/
 	global user `dir'
 	display "${user}"
 
-	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" {
+	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" "/Volumes/Secomba/Bardia/Boxcryptor" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
