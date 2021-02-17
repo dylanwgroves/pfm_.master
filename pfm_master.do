@@ -19,7 +19,7 @@ ________________________________________________________________________________
 
 /* Part 0: Set Globals _________________________________________________________*/
 
-	foreach user in  "X:" "/Users/BeatriceMontano" {
+	foreach user in  "X:" "/Users/BeatriceMontano" "/Users/Bardia" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
