@@ -761,6 +761,7 @@ rename s8q5c		fm_friend_reject
 
 /* HIV _________________________________________________________________________*/
 
+
 	gen hivknow_arv_survive = .
 		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "1") 
 		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "2") 	
