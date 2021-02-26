@@ -43,28 +43,28 @@ ________________________________________________________________________________
 
 	/* Radio Distribution */
 
-		do "${code}/01_import/pfm_import_rd_distribution_as.do" // Distribution - Audio Screening
-		do "${code}/01_import/pfm_import_rd_distribution_ne.do" // Distribution - Natural Experiment
+		do "${code}/pfm_.master/01_import/pfm_import_rd_distribution_as.do" // Distribution - Audio Screening
+		do "${code}/pfm_.master/01_import/pfm_import_rd_distribution_ne.do" // Distribution - Natural Experiment
 		
 	/* Audio Screening */
 
-		do "${code}/01_import/pfm_import_as_sample.do" 							// Randomization
-		do "${code}/01_import/pfm_import_as_baseline.do" 						// Baseline
-		do "${code}/01_import/pfm_import_as_midline.do" 						// Midline
-		do "${code}/01_import/pfm_import_as_endline.do" 						// Endline
-		do "${code}/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
-		do "${code}/01_import/pfm_import_as_endline_friend.do" 					// Endline (Friend)
-		do "${code}/01_import/pfm_import_as_endline_kid.do" 					// Endline (Kid)
+		do "${code}/pfm_.master/01_import/pfm_import_as_sample.do" 							// Randomization
+		do "${code}/pfm_.master/01_import/pfm_import_as_baseline.do" 						// Baseline
+		do "${code}/pfm_.master/01_import/pfm_import_as_midline.do" 						// Midline
+		do "${code}/pfm_.master/01_import/pfm_import_as_endline.do" 						// Endline
+		do "${code}/pfm_.master/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
+		do "${code}/pfm_.master/01_import/pfm_import_as_endline_friend.do" 					// Endline (Friend)
+		do "${code}/pfm_.master/01_import/pfm_import_as_endline_kid.do" 					// Endline (Kid)
 
 	/* Natural Experiment */
 	
-		do "${code}/01_import/pfm_import_ne_sample.do" 							// Sample
-		do "${code}/01_import/pfm_import_ne_baseline.do" 						// Baseline
-		do "${code}/01_import/pfm_import_ne_endline.do" 						// Endline
+		do "${code}/pfm_.master/01_import/pfm_import_ne_sample.do" 							// Sample
+		do "${code}/pfm_.master/01_import/pfm_import_ne_baseline.do" 						// Baseline
+		do "${code}/pfm_.master/01_import/pfm_import_ne_endline.do" 						// Endline
 
 	/* Village Master */
 	
-		do "${code}/01_import/pfm_import_villagemaster.do" // Tanzania census of all villages
+		do "${code}/pfm_.master/01_import/pfm_import_villagemaster.do" // Tanzania census of all villages
 
 
 
@@ -78,14 +78,14 @@ experiment was generated using GenMatch											*/
 
 	/* Radio Distribution */
 		
-		do "${code}/02_randomization/pfm_randomization_rd_as.do" 				// Randomization - Audio screening
-		do "${code}/02_randomization/pfm_randomization_rd_ne.do" 				// Randomization - Natural experiment
-		*do "${code}/02_randomization/pfm_ri_rd_as.do"
-		*do "${code}/02_randomization/pfm_ri_rd_ne.do"
+		do "${code}/pfm_.master/02_randomization/pfm_randomization_rd_as.do" 				// Randomization - Audio screening
+		do "${code}/pfm_.master/02_randomization/pfm_randomization_rd_ne.do" 				// Randomization - Natural experiment
+		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_as.do"
+		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_ne.do"
 
 	/* Audio Screening */
 
-		do "${code}/02_randomization/pfm_randomization_as.do" 					// Randomization
+		do "${code}/pfm_.master/02_randomization/pfm_randomization_as.do" 					// Randomization
 	
 	/* Natural Experiment */
 	
@@ -103,24 +103,24 @@ Tasks: Clean, and generate variables
 
 	/* Radio Distribution */
 	
-		do "${code}/03_clean/pfm_clean_rd_distribution_as.do" 					// Distribution - Audio Screening
-		do "${code}/03_clean/pfm_clean_rd_distribution_ne.do" 					// Distribution - Natural Experiment
+		do "${code}/pfm_.master/03_clean/pfm_clean_rd_distribution_as.do" 					// Distribution - Audio Screening
+		do "${code}/pfm_.master/03_clean/pfm_clean_rd_distribution_ne.do" 					// Distribution - Natural Experiment
 
 		
 	/* Audio Screening */
 
-		do "${code}/03_clean/pfm_clean_as_baseline.do" 							// Baseline	
-		do "${code}/03_clean/pfm_clean_as_midline.do" 							// Midline
-		do "${code}/03_clean/pfm_clean_as_endline.do" 							// Endline
-		do "${code}/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
-		do "${code}/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Friend)		
-		do "${code}/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
+		do "${code}/pfm_.master/03_clean/pfm_clean_as_baseline.do" 							// Baseline	
+		do "${code}/pfm_.master/03_clean/pfm_clean_as_midline.do" 							// Midline
+		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline.do" 							// Endline
+		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
+		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Friend)		
+		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
 
 		
 	/* Natural Experiment */
 	
-		do "${code}/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
-		do "${code}/03_clean/pfm_clean_ne_endline.do" 							// Endline
+		do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
+		do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
 
 	
 /* Part 3: Merge _______________________________________________________________
@@ -129,13 +129,13 @@ Tasks: Clean, and generate variables
  
 		/* Main Files */
 
-			do "${code}/04_merge/pfm_merge_ne.do" 								// Natural Experiment
-			do "${code}/04_merge/pfm_merge_as.do" 								// Audio Screening
+			do "${code}/pfm_.master/04_merge/pfm_merge_ne.do" 								// Natural Experiment
+			do "${code}/pfm_.master/04_merge/pfm_merge_as.do" 								// Audio Screening
 
 
 		/* Append Together */
 		
-			do "${code}/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
+			do "${code}/pfm_.master/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
 
 
 			
@@ -149,7 +149,7 @@ Tasks: Clean, and generate variables
 		the other projects can just be done with a "prelim" file in that project's
 		folder
 
-	*do "${code}/05_newvars/pfm_newvars.do" 									
+	*do "${code}/pfm_.master/05_newvars/pfm_newvars.do" 									
 
 																				*/
 
