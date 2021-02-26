@@ -70,7 +70,7 @@ ________________________________________________________________________________
 
 		
 		
-/* Part 2: Randomzation ________________________________________________________
+/* Part 2: Randomization ________________________________________________________
 
 Note that only radio distribution and audio screening are randomized, the natural
 experiment was generated using GenMatch											*/
