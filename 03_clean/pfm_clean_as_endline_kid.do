@@ -550,12 +550,12 @@ ________________________________________________________________________________
 			lab var ge_wep_dum "Woman [man] support self [wife] participating economically"
 	
 	/* Gender equality outcomes */		
-	rename s6q8 			    ge_earning
+	rename s6q8 		ge_earning
 		recode ge_earning (1=0)(2=1)	
 		lab val ge_earning agree_rev
 		lab var ge_earning "[Disagree = 1] If a woman earns more, it will cause problems"
 
-	rename s6q8_parent 			ge_parent_earning
+	rename s6q8_parent 	ge_parent_earning
 		recode ge_parent_earning (1=0)(2=1)
 		lab val ge_parent_earning agree_rev
 		lab var ge_parent_earning "[Parent, Disagree = 1] If a woman earns more, it will cause problems"

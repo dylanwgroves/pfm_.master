@@ -31,6 +31,7 @@ ________________________________________________________________________________
 /* Labels _______________________________________________________________________*/
 
 	lab def yesno 0 "No" 1 "Yes"
+	lab def yesno_rev 0 "Yes" 1 "No"
 	lab def agree 0 "Disagree" 1 "Agree"
 	lab def reject 0 "Accept" 1 "Reject"
 	lab def report 0 "Dont report" 1 "Report"
@@ -224,7 +225,6 @@ ________________________________________________________________________________
 		rename prej_kidmarry3		prej_kidmarry_nottz
 		rename prej_kidmarry4		prej_kidmarry_notrural	
 		
-
 
 		foreach var of varlist prej_kidmarry_* {
 			cap recode `var' (-999 = .d)(-888 = .r)
@@ -809,21 +809,18 @@ ________________________________________________________________________________
 		
 	** VAC Behaviors
 	rename s10q6_sm_2	vac_nopunish_shout
-		lab var vac_nopunish_shout "[Reversed] Have you shouted at children in last month?"
-		lab val vac_nopunish_shout yesno
+		lab var vac_nopunish_shout "[1 = No] Have you shouted at children in last month?"
 		
 	rename s10q6_sm_3	vac_nopunish_hithand
-		lab var vac_nopunish_hithand "[Reversed] Have you hit children with hand in last month?"
-		lab val vac_nopunish_hithand yesno
+		lab var vac_nopunish_hithand "[1 = No] Have you hit children with hand in last month?"
 		
 	rename s10q6_sm_4		vac_nopunish_hitobj
-		lab var vac_nopunish_hitobj "[Reversed] Have you hit children with stick or object in last month?"
-		lab val vac_nopunish_hitobj yesno
+		lab var vac_nopunish_hitobj "[1 = No] Have you hit children with stick or object in last month?"
 
 	/* Reverse coding */
 	foreach var of varlist vac_nopunish_* {
 		recode `var' (1=0)(0=1)
-		lab val `var' yesno
+		lab val `var' yesno_rev
 	}
 	
 	egen vac_nopunish_index = rowmean(vac_nopunish_hithand vac_nopunish_hitobj)

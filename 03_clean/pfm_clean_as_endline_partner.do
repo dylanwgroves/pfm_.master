@@ -857,21 +857,21 @@ rename s5q9				efficacy_speakout
 
 	* Reject IPV																
 	rename s9q1a		ipv_rej_disobey
-		recode ipv_rej_disobey (0=1)(1=0)
+		recode ipv_rej_disobey (0=1)(1=0)(-999 = .d)(-888 = .r)	
 		lab val 		ipv_rej_disobey ipv
 		
 	rename s9q1b		ipv_rej_hithard
-		recode ipv_rej_hithard (2=0)(1=1)
+		recode ipv_rej_hithard (2=0)(1=1)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 1
 		lab val 		ipv_rej_hithard ipv
 		
 	rename s9q1c		ipv_rej_persists
-		recode ipv_rej_persists (0 = 1)(1 = 0)
+		recode ipv_rej_persists (0 = 1)(1 = 0)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
 		lab val ipv_rej_persists ipv
 
 	rename s9q2 			ipv_norm_rej
-		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
+		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
 		lab val ipv_norm_rej ipv
 		
 	rename s9q3		ipv_report
