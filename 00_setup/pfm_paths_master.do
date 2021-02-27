@@ -44,7 +44,7 @@ ______________________________________________________________________________*/
 /* Main folders ________________________________________________________________*/
 
 			/* Main */
-		global code "${user}/Documents/pfm_.master"
+		global code "${user}/Documents"
 		global data "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
 		
 		/* Output */
