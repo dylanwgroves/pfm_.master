@@ -1330,8 +1330,8 @@ We are coding that higher is always "more gender equality"
 
 	rename s20q1				svy_followupok
 	
-	rename s20q1b 				svy_phone 
-	rename s20q1b_oth			svy_phone2 
+	rename s20q1b 				svy_phonenum 
+	rename s20q1b_oth			svy_phonenum2 
 
 	rename s20q2latitude		svy_gps_lat
 	rename s20q2longitude		svy_gps_long		
