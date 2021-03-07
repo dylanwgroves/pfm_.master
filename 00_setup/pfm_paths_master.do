@@ -43,7 +43,7 @@ ______________________________________________________________________________*/
 	
 /* Main folders ________________________________________________________________*/
 
-			/* Main */
+		/* Main */
 		global code "${user}/Documents"
 		global data "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
 		
@@ -116,6 +116,14 @@ ______________________________________________________________________________*/
 		/* Socialization */
 		global data_socialization "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/01_data"
 		global socialization_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/03_output"
+
+		
+/* Clean Tables and Figures ____________________________________________________*/
+
+	/* Natural Experiment */
+	global ne_clean_tables "X:/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
+	global ne_clean_figures "X:/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
+
 
 		
 /* Set Date _____________________________________________________________________*/

@@ -862,6 +862,7 @@ We are coding that higher is always "more gender equality"
 	rename s9q1a		ipv_rej_disobey
 		recode ipv_rej_disobey (0=1)(1=0)(-999 = .d)(-888 = .r)	
 		lab val 		ipv_rej_disobey ipv
+	
 		
 	rename s9q1b		ipv_rej_hithard
 		recode ipv_rej_hithard (2=0)(1=1)(-999 = .d)(-888 = .r)	
