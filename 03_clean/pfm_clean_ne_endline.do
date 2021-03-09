@@ -26,7 +26,7 @@ ________________________________________________________________________________
 /* Import  _____________________________________________________________________*/
 
 	use "${data}/01_raw_data/03_surveys/pfm_rawpii_ne_endline.dta", clear
-
+	
 
 /* Labels _______________________________________________________________________*/
 
@@ -97,13 +97,14 @@ ________________________________________________________________________________
 
 		Age is a little bit tricky because we updated the age variable after two days when
 		we realized the original age question was inaccurate */
-		
+	
+	drop resp_age
 	destring age_pull, 		gen(resp_age)
 	gen resp_age_yr	=		2017-resp_age
 
 	gen resp_female = .
-		replace resp_female = 1 if gender_txt == "Female"
-		replace resp_female = 0 if gender_txt == "Male"
+		replace resp_female = 1 if gender_pull == "Female"
+		replace resp_female = 0 if gender_pull == "Male"
 		lab val resp_female yesno 	
 		
 	rename s1q3 	resp_howyoudoing
@@ -373,7 +374,7 @@ ________________________________________________________________________________
 		recode `var' (-999 = .d) (-888 = .r)
 	}
 	
-	egen ge_index = rowtotal	(ge_raisekids ge_earning ge_school ge_work ge_leadership ge_business ge_autonomy ge_adultery ge_womanleave ge_womanspend)
+	egen ge_index = rowmean(ge_raisekids ge_earning ge_school ge_work ge_leadership ge_business ge_autonomy ge_adultery ge_womanleave ge_womanspend)
 
 	
 
@@ -574,7 +575,7 @@ ________________________________________________________________________________
 	rename s17q8b		em_reject_noschool
 	rename s17q8c		em_reject_pregnant
 	rename s17q8d		em_reject_money
-	rename s17q8e		em_reject_needhusband
+	rename s17q8e		em_reject_needhus
 
 	foreach var of varlist em_reject_* {
 		recode `var' (3=0)(1=1)(2=2)
@@ -587,9 +588,9 @@ ________________________________________________________________________________
 									em_reject_noschool_dum ///
 									em_reject_pregnant_dum ///
 									em_reject_money_dum ///
-									em_reject_needhusband_dum)
+									em_reject_needhus_dum)
 									
-	gen em_reject_all = (em_reject_index == 2)
+	gen em_reject_all = (em_reject_index == 1)
 
 	rename s17q7		em_record_any
 
@@ -650,23 +651,27 @@ ________________________________________________________________________________
 
 /* Intimate Partner Violence __________________________________________________*/
 
-	* Reject IPV																// Will need to come back and recode this now that the structure is different
+* Reject IPV																
 	rename s9q1a		ipv_rej_disobey
-		recode ipv_rej_disobey (0=1)(1=0)
+		recode ipv_rej_disobey (0=1)(1=0)(-999 = .d)(-888 = .r)	
 		lab val 		ipv_rej_disobey ipv
 		
 	rename s9q1b		ipv_rej_hithard
-		recode ipv_rej_hithard (2=0)(1=1)
+		recode ipv_rej_hithard (2=0)(1=1)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 1
 		lab val 		ipv_rej_hithard ipv
 		
 	rename s9q1c		ipv_rej_persists
+		recode ipv_rej_persists (0 = 1)(1 = 0)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
 		lab val ipv_rej_persists ipv
+		
+	gen fixed = 1
 
 	rename s9q2 			ipv_norm_rej
-		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)
+		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
 		lab val ipv_norm_rej ipv
+		
 
 	forval i = 1/6 {
 		gen ipv_rej_`i' = .
@@ -688,13 +693,13 @@ ________________________________________________________________________________
 		lab val `ipv' reject	
 	}
 
-	egen ipv_rejindex 	= rowmean(ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
-	egen ipv_rejall		= rowmin(ipv_rej_disobey ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
-		lab val ipv_rejall yesno
+	egen ipv_rej_index 	= rowmean(ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
+	egen ipv_rej_all	= rowmax(ipv_rej_disobey ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
+		lab val ipv_rej_all yesno
 
 	* IPV Report
 	rename s9q3a		ipv_report_police
-		recode ipv_report_police (2=0)
+		recode ipv_report_police (2=1)(1=0)
 		lab def ipv_report_police 0 "Don't Report" 1 "Report to police"
 		lab val ipv_report_police ipv_report_police
 		lab var ipv_report_police "How respond to cousin being absued by husband?"
@@ -717,13 +722,12 @@ ________________________________________________________________________________
 		lab val ipv_report_femleader ipv_report_femleader
 		lab var ipv_report_femleader "How respond to cousin being absued by husband?"
 		
-	egen ipv_report = rowmean(ipv_report_police ipv_report_vc ipv_report_parents ipv_report_femleader)
-	egen ipv_report_any = rowmax(ipv_report*)
+	egen ipv_report_index = rowmean(ipv_report_police ipv_report_vc ipv_report_parents ipv_report_femleader)
 
 	drop s9q4 s9q5	// We dropped these variables after one day to save sapce									
 
 
-/* Relationships ________________________________________________________________*/
+/* HH Labor _____________________________________________________________________*/
 
 	** People you would live near
 	forval i = 1/4 {
@@ -732,54 +736,115 @@ ________________________________________________________________________________
 				replace couples_labor_`i' = s12q1_r_`j' if s12q1_ranked_list_r_`j' == "`i'"
 			}
 	}
-
-		rename couples_labor_1 		couples_labor_water
-		rename couples_labor_2		couples_labor_laundry
-		rename couples_labor_3		couples_labor_kids
-		rename couples_labor_4		couples_labor_money
 		
-		foreach var of varlist couples_labor_* {
-			lab val `var' s12q1_r_1
-		}
-
-	** Final Decisions
-	gen couples_decide_edu = .
-		replace couples_decide_edu = s12q12b if s12q2_txt_eng == "children’s education"
-	gen couples_decide_hh = .
-		replace couples_decide_hh = s12q12b if s12q2_txt_eng == "household repairs"
+	/* Generate Dummy Variable for Outcome */
+	recode couples_labor_1 	(2 3 4 6 = 1 "Equal/Progressive") ///
+							(1 5 = 0 "Conservative"), ///
+							gen(hhlabor_water_dum) 
+			lab var hhlabor_water_dum "[1 = prog/bal] Who in HH is responsible for water?"
+	
+	recode couples_labor_2 	(2 3 4 6 = 1 "Equal/Progressive") ///
+							(1 5 = 0 "Conservative"), ///
+							gen(hhlabor_laundry_dum) 
+		lab var hhlabor_laundry_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
 		
-		foreach var of varlist couples_decide* {
-			lab val `var' s12q12b
-		}
+	egen hhlabor_chores_dum = rowmean(hhlabor_water hhlabor_laundry)
+		lab val hhlabor_chores_dum hh_dum
+		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
+	
+	recode couples_labor_3 	(2 3 4 6 = 1 "Equal/Progressive") ///
+							(1 5 = 0 "Conservative"), ///
+							gen(hhlabor_kids_dum) 
+		lab var hhlabor_kids_dum "[1 = prog/bal] Who in HH is responsible for kids?"
+	
+	recode couples_labor_4 	(1 3 5 6 = 1 "Equal/Progressive") ///
+							(2 4 = 0 "Conservative"), ///
+							gen(hhlabor_money_dum) 
+		lab var hhlabor_money_dum "[1 = prog/bal] Who in HH is responsible for money?"
+	
+	recode hhlabor* (-999 = .d)(-888 = .r)	
+	
+	egen hhlabor_index = rowmean(hhlabor_water_dum hhlabor_laundry_dum hhlabor_kids_dum hhlabor_money_dum)
 
-	** Partner 
+	
+/* HH Decisions _____________________________________________________________________*/
+		
+	gen hhdecision_school = s12q12b if s12q2_txt_eng == "children’s education"
+	gen hhdecision_hhfix = s12q12b if s12q2_txt_eng == "household repairs"
+		
+	recode hhdecision_school (2=1)(3=1)(1=0)(4=1)(5=0), gen(hhdecision_school_dum)
+		lab val hhdecision_school_dum hh_dum
+		lab var hhdecision_school_dum "[1 = progressive/balanced] Who in HH makes decisions about school?"
+		
+	recode hhdecision_hhfix (2=1)(3=1)(1=0)(4=1)(5=0), gen(hhdecision_hhfix_dum)
+		lab val hhdecision_hhfix_dum hh_dum
+		lab var hhdecision_hhfix_dum "[1 = progressive/balanced] Who in HH makes decisions about hh fixes?"
+		
+	recode hhdecision_school hhdecision_hhfix (-999 = .d)(-888 = .r)
+	
+	egen hhdecision_index = rowtotal(hhdecision_school_dum hhdecision_hhfix)
+		lab var hhdecision_index "Index of two hhdecision questions"
+	
+	
+/* Relationships _______________________________________________________________*/
+
 	rename s12q13a					couples_support
-	rename s12q13b					couples_insult
-	rename s12q13c					couples_preventleave
+	recode s12q13b					(0 = 1 "Doesn't insult") ///
+									(1 = 0 "Does insult"), ///
+									gen(couples_noinsult)
+									lab var couples_noinsult "[1 = no insult] Does Husband ever make you feel bad about yourself / insult you?"
+	
+	recode s12q13c					(0 = 1 "Doesn't prevent") ///
+									(1 = 0 "Does prevent"), ///
+									gen(couples_stopleave)
+									lab var couples_stopleave "[1 = no prevent] Does Husband ever prevent you from leaving the house?"
 
-	rename s12q14a					couples_crutch
-	rename s12q14b					couples_dependable
-	rename s12q14c					couples_notopen
-	rename s12q14d					couples_unfaithful
+	recode s12q14a					(1 = 1 "can depend") ///
+									(2 = 0 "cant depend"), ///
+									gen(couples_crutch)
+									lab var couples_crutch "[1 = can depend] Can you depend on this person in a time of need?"
+									
+	recode s12q14b					(1 = 1 "can depend") ///
+									(2 = 0 "cant depend"), ///
+									gen(couples_depend)
+									lab var couples_depend "[1 = can depend] Find it easy to depend on this person?"
+									
+	recode s12q14c					(1 = 1 "can be open") ///
+									(2 = 0 "cant be open"), ///
+									gen(couples_open)
+									lab var couples_open "[1 = can be open] Do you feel comfortable being open with your partner?"
+									
+	recode s12q14d					(1 = 1 "not unfaithful") ///
+									(2 = 0 "is unfaithful"), ///
+									gen(couples_nocheat)
+									lab var couples_nocheat "[1 = not unfaithful] Do you worry your partner is unfaithful?"
 
 	rename s12q15					couples_marriagerating
-
+	
+	recode couples_marriagerating	(1 2 3 = 1 "Satisfied") ///
+									(4 5 = 0 "Not satisfied"), ///
+									gen(couples_satisfied)
+									lab var couples_satisfied "[1 = satisfied] How satisfied are you with your marriage?"
 
 	foreach var of varlist couples_* {
 		recode `var' (-888 = .r) (-999 = .d)
 	}
-
-
 	
+	egen couples_depend_index = rowmean(couples_crutch couples_depend)
+		lab var couples_depend_index "Index of two synonimous measures of couple strength"
+		
+	egen couples_index = rowmean(couples_noinsult couples_stopleave couples_depend_index couples_open couples_nocheat)
+		lab var couples_index "Average of five measures of relationships"
+
+
 /* Parenting ___________________________________________________________________*/
 
 	rename s11q1		parent_currentevents
 
-	rename s11q3		parent_question
-		recode parent_question (2=1) (1=0)
-		lab def parent_question 0 "Agree" 1 "Disagree"
-		lab val parent_question parent_question
-		lab var parent_question "Agree (0) or Disagree (1): Parents should not allow children to question their decisions"
+	recode s11q3		(2 = 1 "Disagree") ///
+						(1 = 0 "Agree"), ///
+						gen(parent_question)
+						lab var parent_question "[disagree = 1] Parents should not allow children to quesiton their decisions"
 		
 
 /* Violence Against Children ___________________________________________________
@@ -829,7 +894,7 @@ ________________________________________________________________________________
 /* Media Consumption ___________________________________________________________*/
 	rename s4q2_listen_radio	radio_listen							
 		lab def s4q2_listen_radio 0 "Never", modify
-		lab val radio s4q2_listen_radio
+		lab val radio_listen s4q2_listen_radio
 		
 	rename s4q2b_listen_radio_time	radio_listen_hrs
 		replace radio_listen_hrs = 0 if radio_listen == 0
@@ -888,6 +953,10 @@ ________________________________________________________________________________
 			
 			replace `var' = 0 if radio_ever == 0
 		}
+		
+	egen radio_stations_nonpfm = rowmean(radio_stations_voa radio_stations_tbc ///
+										  radio_stations_rone radio_stations_uhuru ///
+										  radio_stations_tk)
 
 	rename s4q3b_radio_group_often				radio_group
 
@@ -918,6 +987,8 @@ ________________________________________________________________________________
 
 	** Pangani FM	
 	rename s4q7a_				radio_uhuru
+	
+	drop radio_pfm
 	rename s4q7_panganifm 		radio_pfm
 		replace radio_pfm = 1 if radio_stations_pfm == 1
 		replace radio_pfm = 0 if radio_ever == 0
@@ -932,12 +1003,12 @@ ________________________________________________________________________________
 		rename s4q8_programs_sm_3		radio_pfm_shows_leaders
 		rename s4q8_programs_sm_4		radio_pfm_shows_women
 		rename s4q8_programs_sm_5		radio_pfm_shows_youth
-	lab val radio_pfm_shows_* listen/*
+	lab val radio_pfm_shows_* listen
+	
 	foreach var of varlist radio_pfm_shows_* {
-		replace `var' = 0 if  radio_pfm_shows == ""
+		replace `var' = 0 if  radio_pfm == 0
 	}
-	*/
-
+	
 	rename s4q9_callpfm							radio_pfm_call
 
 	** Call into PFM Shows	
@@ -956,8 +1027,28 @@ ________________________________________________________________________________
 	** Reports
 	rename s4q11_vill_report		radio_villreport	
 	rename s4q12_ward_leader		radio_locleader
-	rename s4q13_ntl_leader			radio_natleader								
+	rename s4q13_ntl_leader			radio_natleader		
+	
+	** Add in supplment															// we conducted a follow up bc of a coding error that meant pfm programs question was not asked to some respondents
+	rename Umeshawahikusikilizakipindich supp_pfm_programs
+	rename JeUmewahikupigasimuPangani supp_pfm_call 
+	rename NikipindiganikwenyePanganiF supp_pfm_call_program	
+	
+	replace radio_pfm_shows = supp_pfm_programs if radio_pfm_shows == ""
+	replace radio_pfm_shows_couples = 1 if strpos(supp_pfm_programs, "1")>0
+	replace radio_pfm_shows_soap = 1 if strpos(supp_pfm_programs, "2")>0
+	replace radio_pfm_shows_leaders = 1 if strpos(supp_pfm_programs, "3")>0
+	replace radio_pfm_shows_women = 1 if strpos(supp_pfm_programs, "4")>0
+	replace radio_pfm_shows_youth = 1 if strpos(supp_pfm_programs, "5")>0
 
+	replace radio_pfm_call = 1 if supp_pfm_call == "Yes"
+		replace radio_pfm_call = 0 if supp_pfm_call == "No"
+	
+	replace radio_pfm_call_couples = 1 if strpos(supp_pfm_call_program, "1")>0
+	replace radio_pfm_call_soap = 1 if strpos(supp_pfm_call_program, "2")>0
+	replace radio_pfm_call_leaders = 1 if strpos(supp_pfm_call_program, "3")>0
+	replace radio_pfm_call_women = 1 if strpos(supp_pfm_call_program, "4")>0
+	replace radio_pfm_call_youth = 1 if strpos(supp_pfm_call_program, "4")>0
 
 /* Assetts _____________________________________________________________________*/
 

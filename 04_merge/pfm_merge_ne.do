@@ -18,6 +18,8 @@ _______________________________________________________________________________*
 	tempfile temp_allvills
 	tempfile temp_base
 	tempfile temp_end
+	tempfile temp_end_merge
+	tempfile temp_merged
 	tempfile temp_base_rand
 	tempfile temp_rd_dist
 	tempfile temp_rd_rand
@@ -41,6 +43,7 @@ _______________________________________________________________________________*
 		
 		/* Baseline */
 		use "${data}/02_mid_data/pfm_ne_baseline_clean.dta", clear
+		gen baseline = 1
 		rename * b_*
 			rename b_village_c village_c
 			rename b_resp_id resp_id
@@ -53,6 +56,7 @@ _______________________________________________________________________________*
 		
 		/* Endline */
 		use "${data}/02_mid_data/pfm_ne_endline_clean.dta", clear
+		gen endline = 1
 		save `temp_end', replace
 		
 		/* Village Sample */
@@ -131,12 +135,55 @@ _______________________________________________________________________________*
 			
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
-
-	/* Merge Endline */
+			
+		save `temp_base', replace
+			
+		/* Merge endline */
 		merge 1:1 id_resp_uid using `temp_end', gen(merge_end)
 		rename treat b_treat
 		bys id_village_n : egen treat_ne = max(b_treat)							// Assign treatment to replacements, who dont have baseline data w/ treatment assignment
 		bys id_village_n : egen block_ne = max(pair_c)	
+		gen svy_attrition = 1 if b_baseline ==1 & endline != 1					// Create attrition variable
+			replace svy_attrition = 0 if b_baseline == 1 & endline == 1
+		gen rand_merge = runiform()												// Merged
+		save `temp_end', replace
+
+		
+		/* Fix endline respondent IDs */
+			/* Prepare endline replacements */
+			use `temp_end', clear												// Randomly assign ID to replacement respondents
+			keep if svy_replacement == 1
+			sort id_village_n  svy_replacement resp_female rand_merge 
+			egen merge_rank = rank(rand_merge), by(id_village_n svy_replacement resp_female)
+			keep id_resp_uid id_village_n resp_female merge_rank treat_ne resp_name asset_radio
+			rename id_resp_uid id_resp_uidR
+			save `temp_merged', replace
+			
+			/* Prepare basleine attriters */
+			use `temp_end', clear												// Randomly assign ID to respondents who needed to be replaced
+			keep if svy_attrition == 1 											// Only assign to attriters
+			keep if rd_treat == . 												// Do not assign to folks in RD sample snce they were not assigned replacements
+			sort id_village_n b_resp_female rand_merge 
+			egen merge_rank = rank(rand_merge), by(id_village_n b_resp_female)
+			keep id_resp_uid id_village_n b_resp_female merge_rank b_asset_radio treat_ne b_asset_radio
+			rename id_resp_uid id_resp_uidB
+			gen resp_female = b_resp_female
+
+			/* Merge replacements and baseline attriters */
+			merge 1:1 id_village_n resp_female merge_rank using `temp_merged', gen(_merge_attriterid)
+			keep if _merge_attriterid == 3 | _merge_attriterid == 2 			// Keep successful matches and 
+			drop if b_asset_radio == 0											// Drop people in control group who were replacing 
+			keep id_resp_uidB id_resp_uidR  _merge_attriterid 					//treat_ne id_village_n merge_rank resp_female b_resp_female resp_name b_asset_radio asset_radio
+			rename id_resp_uidR id_resp_uid 
+			gen svy_replacement_nesample = 1 
+
+			
+			/* Merge with endline again */
+			merge 1:1 id_resp_uid using `temp_end', gen(merge_attriterid2)
+			replace id_resp_uid = id_resp_uidB + "R" if svy_replacement_nesample == 1
+		
+			/* Calculate total in need of replacement */
+			bys id_village_n: egen vill_baseline = total(b_baseline)
 
 /* Label ______________________________________________________________________*/
 
@@ -151,3 +198,18 @@ _______________________________________________________________________________*
 	
 	
 
+
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

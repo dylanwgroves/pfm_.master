@@ -16,7 +16,6 @@ version 15
 set maxvar 30000
 
 
-
 /* Load Data ________________________________________________________________*/
 
 use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
@@ -54,6 +53,7 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	gen ward_c = ward
 	gen district_c = district
 
+	
 	/* Survey Information */
 	rename audio_consent svy_consent_audio
 	rename consent svy_consent
@@ -71,6 +71,7 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	rename sex_q2_1 resp_female
 		recode resp_female (2=1)(1=0)
 		lab val resp_female yesno
+	
 	rename day_q2_2 resp_howudoin
 	
 	gen resp_goodday = resp_howudoin
@@ -79,6 +80,7 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	lab val resp_goodday yesnodkr
 
 	rename age_q2_3 resp_age
+	lab var resp_age "Age"
 
 	* Head of household
 	rename rel_q2_4 resp_hhrltn
@@ -456,12 +458,15 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	rename children_q8_2d ipv_rej_kids
 	rename housework_q8_2e ipv_rej_work
 	
-	foreach ipv of varlist ipv_rej* {
+	foreach ipv of varlist ipv_rej_gossip ipv_rej_cheats ipv_rej_kids ipv_rej_work {
 		replace `ipv' = .d if `ipv' == -999
 		replace `ipv' = .r if `ipv' == -888
 		recode `ipv' (1=0)(0=1)
 		lab val `ipv' reject	
 	}
+	
+	egen ipv_rej_index = rowmean(ipv_rej_gossip ipv_rej_cheats ipv_rej_kids ipv_rej_work)
+
 
 	rename hit_community_q8_3 ipv_norm_rej
 		recode ipv_norm_rej (0=1)(1=0)
