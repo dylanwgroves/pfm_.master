@@ -97,6 +97,7 @@ use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", clear
 	rename resp_name 		resp_name
 	
 	rename s2q0_female 		resp_female
+		recode resp_female (2=1)(1=0)
 		lab val resp_female female
 		
 	rename s2q1_ppe 		resp_ppe

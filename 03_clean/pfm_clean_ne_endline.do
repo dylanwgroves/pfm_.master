@@ -42,7 +42,7 @@ ________________________________________________________________________________
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
 	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
 	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
-
+	lab def vac_reject  1 "Children must never be beaten" 0 "Hitting a child is sometimes justified"
 
 
 /* Survey Info _________________________________________________________________*/
@@ -297,7 +297,11 @@ ________________________________________________________________________________
 		lab def gov_approval 0 "Don't Approve" 1 "Approve"
 		lab val ptixpref_local_approve gov_approval
 
-	rename s14q4  ptixpref_responsibility				
+	rename s14q4  ptixpref_responsibility		
+		gen ptixpref_resp_locgov = ptixpref_responsibility ==  2
+		gen ptixpref_resp_natgov = ptixpref_responsibility ==  3 | ptixpref_responsibility ==  4
+		gen ptixpref_resp_vill = ptixpref_responsibility ==  1 
+
 		
 	foreach var of varlist ptixpref_* {
 		cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
@@ -327,62 +331,86 @@ ________________________________________________________________________________
 			}
 	}
 
-		rename ge_1			ge_raisekids
-			recode ge_raisekids (1=1)(2=0)
-		rename ge_2			ge_earning												// Reversed
-			recode ge_earning (1=0)(2=1) 					
-		rename ge_3			ge_school					
-			recode ge_school (1=0)(2=1) 			
-		rename ge_4 		ge_work													// Reversed
-			recode ge_work (1=0)(2=1)
-		rename ge_5			ge_leadership
-			recode ge_leadership (1=1)(2=0)						
-		rename ge_6			ge_business
-			recode ge_business (1=1)(2=0)
-		rename ge_7			ge_autonomy												// Reversed
-			recode ge_autonomy (1=0)(2=1)	
-		rename ge_8			ge_adultery
-			recode ge_adultery (1=1)(2=0)
-		cap rename ge_9		ge_womanleave
-			cap recode ge_womanleave (1=1)(2=0)
-		cap rename ge_10	ge_womanspend											// Reversed
-			cap recode ge_womanspend (1=0)(2=1)
+		recode ge_1 		(2 = 0 "Equally raise kids") ///
+							(1 = 1 "Dont equally raise kids") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_raisekids) 
+		lab var ge_raisekids "A husband and wife should share equally in raising children."
 
-	lab val ge_raisekids agree
-	lab val ge_earning agree
-	lab val ge_school agree				
-	lab val ge_work agree	
-	lab val ge_leadership agree			
-	lab val ge_business agree	
-	lab val ge_autonomy agree	
-	lab val ge_adultery agree	
-	lab val ge_womanleave agree
-	lab val ge_womanspend agree
+			
+		recode ge_2 		(2 = 1 "Wont cause problems") ///
+							(1 = 0 "Will cause problems") /// 
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_earning) 
+			lab var ge_earning "[1 = NO] If a woman earns more money than her husband, it’s almost certain to cause problems"
 
-	lab var ge_raisekids "A husband and wife should share equally in raising children."
-	lab var ge_earning "[REVERSED] If a woman earns more money than her husband, it’s almost certain to cause problems"
-	lab var ge_school "[REVERSED] It is more important that a boy goes to school than a girl"
-	lab var ge_work "[REVERSED] When jobs are scarce, men should have more right to a job than women"
-	lab var ge_leadership "In general, women make equally good village leaders as men"
-	lab var ge_business "In general, women are just as able to run a successful business as men"
-	lab var ge_autonomy "[REVERSED] When a woman goes out to see a friend or neighbor, she should ask her husband for permission"
-	lab var ge_adultery "A wife is right to punish her husband if he brings home another woman."
-	cap lab var ge_womanleave "A woman should be able to leave her husband if he mistreats her"
-	cap lab var ge_womanspend "[REVERSED] Even if a woman has her own money, she should tell her husband before she spends it"
+
+		recode ge_3 		(2 = 1 "Not more important") ///
+							(1 = 0 "More important") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_school) 
+			lab var ge_school "[1 = NO] It is more important that a boy goes to school than a girl"
+		
+		recode ge_4			(2 = 1 "Men shoudl not get work first") ///
+							(1 = 0 "Men should get work first") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_work)
+			lab var ge_work "[1 = NO] When jobs are scarce, men should have more right to a job than women"
+	
+
+		recode ge_5 			(1 = 1 "Women can lead equally") ///
+							(2 = 0 "Women cannot lead equally") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_leadership)
+			lab var ge_leadership "In general, women make equally good village leaders as men"
+
+
+		recode ge_6 			(1 = 1 "Women can run biz equally") ///
+							(2 = 0 "Women cannot run biz equall") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_business)			
+			lab var ge_business "In general, women are just as able to run a successful business as men"
+
+		recode ge_7 			(2 = 1 "Doesnt need permission") ///
+							(1 = 0 "Does need permission") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_autonomy)
+			lab var ge_autonomy "[1 = NO] When a woman goes out to see a friend or neighbor, she should ask her husband for permission"
+
+							
+		recode ge_8 			(1 = 1 "Wife should punish cheater") ///
+							(2 = 0 "Wife shoudl not punish cheater") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_adultery)
+			lab var ge_adultery "A wife is right to punish her husband if he brings home another woman."
+
+							
+		recode ge_9 			(1 = 1 "Women can leave") ///
+							(2 = 0 "Woman cannot leave") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_womanleave)
+			cap lab var ge_womanleave "A woman should be able to leave her husband if he mistreats her"
+
+							
+		recode ge_10 			(2 = 1 "Woman does not have to tell husband") ///
+							(1 = 0 "Woman does have to tell husband") ///
+							(-999 = .d) (-888 = .r), ///
+							gen(ge_womanspend)
+			cap lab var ge_womanspend "[1 = NO] Even if a woman has her own money, she should tell her husband before she spends it"
+
 
 	foreach var of varlist ge_* {
 		recode `var' (-999 = .d) (-888 = .r)
 	}
 	
 	egen ge_index = rowmean(ge_raisekids ge_earning ge_school ge_work ge_leadership ge_business ge_autonomy ge_adultery ge_womanleave ge_womanspend)
-
 	
 
 /* Forced Marriage _____________________________________________________________*/
 
 	rename s8q1			fm_reject
 		recode fm_reject (1=0)(2=1)(-999 = .d)(-888 = .r)
-		lab var fm_reject "[REVERSED] A woman should not have a say in who she marries"
+		lab var fm_reject "A woman should not have a say in who she marries [Reject = 1]"
 		lab val fm_reject agree
 		
 	gen fm_reject_long = .
@@ -395,7 +423,7 @@ ________________________________________________________________________________
 								2 "Disagree" ///
 								3 "Strongly Disagree"
 		lab val fm_reject_long fm_reject_long
-		lab var fm_reject_long "[REVERSED, LONG] A woman shoudl not have a say in who she marries"
+		lab var fm_reject_long "A woman should not have a say in who she marries [Strong Reject = 3]"
 
 
 
@@ -430,7 +458,7 @@ ________________________________________________________________________________
 		
 	egen ptixpart_villmeet = rowmean(ptixpart_activ_villmeet ptixpart_activ_wardmeet)
 	egen ptixpart_vote = rowmean(ptixpart_activ_votenatl ptixpart_activ_votelocal)
-	egen ptixpart_collact = rowmax(ptixpart_activ_collact ptixpart_activ_creategroup)
+	egen ptixpart_collact = rowmean(ptixpart_activ_collact ptixpart_activ_creategroup)
 		
 	cap rename s15q7						ptixpart_contact_satisfied
 
@@ -439,7 +467,7 @@ ________________________________________________________________________________
 	
 /* Political Knowledge _________________________________________________________*/
 
-	* Popular Culture
+	/* Popular Culture */
 	destring s13q1, replace
 	destring s13q1_rand_cl, replace
 	gen ptixknow_pop_music = .
@@ -461,11 +489,14 @@ ________________________________________________________________________________
 											s13q1_rand_cl == 2
 		
 		lab val ptixknow_pop_sport correct
+		
+
 											
-	* Local Politics
+	/* Local Politics */
 	rename s13q2 	ptixknow_local_dc 
 
-	* National Politics
+	
+	/* National Politics */
 	gen ptixknow_natl_justice = s13q3 if s13q3_txt == "Ibrahim Hamis Juma"
 		recode ptixknow_natl_justice (4=1)(1=0)(2=0)(3=0)(-999=0)
 	gen ptixknow_natl_pm = s13q3 if s13q3_txt == "Majaliwa Kassim Majaliwa"
@@ -474,8 +505,8 @@ ________________________________________________________________________________
 		recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
 		
 	lab val ptixknow_natl_* correct
-
-	* Foreign Affairs
+		
+	/* Foreign Affairs */
 	gen ptixknow_fopo_trump = s13q4new if s13q4_txt_eng == "Donald Trump"
 		recode ptixknow_fopo_trump (-999 = 0) (-222 = 0) (2 = 0) (-888 = 0)
 	gen ptixknow_fopo_biden = s13q4new if s13q4_txt_eng == "Joe Biden"
@@ -484,7 +515,7 @@ ________________________________________________________________________________
 		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (2 = 1) (1 = 0) (-888 = 0)
 
 		lab val ptixknow_fopo_* correct
-		
+	
 	rename s13q5		ptixknow_em_aware
 
 	rename s13q6		ptixknow_sourcetrust
@@ -502,8 +533,12 @@ ________________________________________________________________________________
 		cap recode `var' (-999 = 0)(-222 = 0)
 	}
 
+	
+	egen ptixknow_pop_index = rowmax(ptixknow_pop_sport  ptixknow_pop_music)
+	egen ptixknow_natl_index = rowmax(ptixknow_natl_pm  ptixknow_natl_vp  ptixknow_natl_justice)
+	egen ptixknow_fopo_index = rowmax(ptixknow_fopo_trump  ptixknow_fopo_biden  ptixknow_fopo_kenyatta)
+
 	drop political_participation_*
-	egen ptixknow_index = rowmean(ptixknow_pop_music ptixknow_pop_sport ptixknow_natl_justice ptixknow_natl_pm ptixknow_natl_vp ptixknow_fopo_trump ptixknow_fopo_biden ptixknow_fopo_kenyatta)
 
 
 /* Women's Political Participation _____________________________________________
@@ -527,9 +562,11 @@ ________________________________________________________________________________
 		lab var wpp_norm_dum "Who should lead? Equal women or more women"
 		
 	rename s21q3	wpp_behavior
-	rename s21q4	wpp_nomalehhh
-		recode wpp_nomalehhh (0=1)(1=0)
-		lab var wpp_nomalehhh "[Reversed]: Agree or Disagree: A man should have final say in HH"
+	
+	recode s21q4 	(0=1 "Male should no have final say") ///
+					(1=0 "Male should have final say"), ///
+					gen(wpp_nomalehhh)
+		lab var wpp_nomalehhh "[NO = 1] Agree or Disagree: A man should have final say in HH"
 
 	foreach var of varlist wpp_* {
 		recode `var' (-888 = .r) (-999 = .d) (-222 = .d)
@@ -553,6 +590,7 @@ ________________________________________________________________________________
 
 	gen em_reject = 1 if em_allow == 2
 		replace em_reject = 0 if em_allow == 1 | em_allow == 3
+		lab val em_reject reject
 
 	rename s17q9		em_norm_reject
 		recode em_norm_reject (0=0)(1=2)(2=1)
@@ -599,7 +637,8 @@ ________________________________________________________________________________
 
 	gen em_record_accept = 1 if em_record_reject == 0 & em_record_any == 1
 		replace em_record_accept = 0 if em_record_any == 0
-		
+		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0
+
 	rename s17q10		em_record_name
 		replace em_record_name = 0 if em_record_reject != 1
 		replace em_record_name = 0 if em_record_any == 0
@@ -693,9 +732,10 @@ ________________________________________________________________________________
 		lab val `ipv' reject	
 	}
 
-	egen ipv_rej_index 	= rowmean(ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
+	egen ipv_rej_index 	= rowmean(ipv_rej_disobey ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
 	egen ipv_rej_all	= rowmax(ipv_rej_disobey ipv_rej_cheats ipv_rej_kids ipv_rej_work ipv_rej_gossip ipv_rej_elders)
-		lab val ipv_rej_all yesno
+		lab val ipv_rej_all reject 
+		lab val ipv_rej_index reject
 
 	* IPV Report
 	rename s9q3a		ipv_report_police
@@ -764,7 +804,8 @@ ________________________________________________________________________________
 	
 	recode hhlabor* (-999 = .d)(-888 = .r)	
 	
-	egen hhlabor_index = rowmean(hhlabor_water_dum hhlabor_laundry_dum hhlabor_kids_dum hhlabor_money_dum)
+	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
+		lab var hhlabor_index "Index of four HH labor questions"
 
 	
 /* HH Decisions _____________________________________________________________________*/
@@ -855,7 +896,6 @@ ________________________________________________________________________________
 */
 
 	** Define label
-	lab def vac_reject  1 "Children must never be beaten" 0 "Hitting a child is sometimes justified"
 
 	** VAC Attitudes
 	rename s10q1		vac_reject
@@ -888,10 +928,11 @@ ________________________________________________________________________________
 		lab val `var' yesno_rev
 	}
 	
-	egen vac_nopunish_index = rowmean(vac_nopunish_hithand vac_nopunish_hitobj)
+	egen vac_nopunish_index = rowmean(vac_nopunish_shout vac_nopunish_hithand vac_nopunish_hitobj)
 		
 	
 /* Media Consumption ___________________________________________________________*/
+
 	rename s4q2_listen_radio	radio_listen							
 		lab def s4q2_listen_radio 0 "Never", modify
 		lab val radio_listen s4q2_listen_radio
@@ -907,7 +948,7 @@ ________________________________________________________________________________
 									radio_listen == 5
 		recode radio_ever (-999 = .d) (-888 = .r)
 
-	* Favorite Radio Program Types
+	/* Favorite Radio Program Types */
 	rename s4q5_programs_sm				radio_type	
 		rename s4q5_programs_sm_1		radio_type_music
 		rename s4q5_programs_sm_2		radio_type_sports
@@ -921,7 +962,7 @@ ________________________________________________________________________________
 		replace `var' = 0 if radio_ever == 0
 	}
 
-	* Favorite Radio Stations
+	/* Favorite Radio Stations */
 	rename s4q6_listen_sm				radio_stations
 		rename s4q6_listen_sm_1			radio_stations_voa
 		rename s4q6_listen_sm_2			radio_stations_tbc
@@ -955,6 +996,10 @@ ________________________________________________________________________________
 		}
 		
 	egen radio_stations_nonpfm = rowmean(radio_stations_voa radio_stations_tbc ///
+										  radio_stations_rone radio_stations_uhuru ///
+										  radio_stations_tk)
+										  
+	egen radio_stations_nonpfm_any = rowmax(radio_stations_voa radio_stations_tbc ///
 										  radio_stations_rone radio_stations_uhuru ///
 										  radio_stations_tk)
 

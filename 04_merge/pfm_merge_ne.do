@@ -60,7 +60,7 @@ _______________________________________________________________________________*
 		save `temp_end', replace
 		
 		/* Village Sample */
-		use "${data}/01_raw_data/pfm_sample_ne.dta", clear
+		use "${data}/02_mid_data/pfm_ne_scoping_clean.dta", clear
 		drop village_id
 		save `temp_rand', replace 
 
