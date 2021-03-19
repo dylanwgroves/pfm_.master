@@ -99,16 +99,16 @@ _______________________________________________________________________________*
 
 	/* Merge Baseline */
 	
-		/* Baseline, Treatment Assignment */
+		/* Baseline, treatment assignment */
 		use `temp_allvills'
-		merge 1:n objectid using `temp_base', gen(merge_base)						// Baseline
+		merge 1:n objectid using `temp_base', gen(merge_base)					// Baseline
 			drop if merge_base==1
-		merge n:1 objectid using `temp_rand', gen(merge_base_rand)					// Village randomization
+		merge n:1 objectid using `temp_rand', gen(merge_base_rand)				// Village randomization
 		save `temp_base_rand', replace
 
-		/* Radio Randomization and Distribution */
-		use `temp_rd_rand', clear													// Radio randomization
-		merge 1:1 respid using `temp_rd_dist', gen(merge_rd)						// Radio distribution
+		/* Radio randomization and distribution */
+		use `temp_rd_rand', clear												// Radio randomization
+		merge 1:1 respid using `temp_rd_dist', gen(merge_rd)					// Radio distribution
 			drop if merge_rd == 2
 		
 		/*	NE and RD */
@@ -117,7 +117,7 @@ _______________________________________________________________________________*
 		/* RI */
 		merge 1:1 resp_id using `temp_rd_ri', gen(merge_rd_ri)
 	
-	/* Create Unique IDs */
+	/* Create unique ids */
 		gen id_resp_c = id
 			lab var id_resp_c "Respondent Code"
 				
@@ -148,7 +148,6 @@ _______________________________________________________________________________*
 		gen rand_merge = runiform()												// Merged
 		save `temp_end', replace
 
-		
 		/* Fix endline respondent IDs */
 			/* Prepare endline replacements */
 			use `temp_end', clear												// Randomly assign ID to replacement respondents
@@ -177,7 +176,6 @@ _______________________________________________________________________________*
 			rename id_resp_uidR id_resp_uid 
 			gen svy_replacement_nesample = 1 
 
-			
 			/* Merge with endline again */
 			merge 1:1 id_resp_uid using `temp_end', gen(merge_attriterid2)
 			replace id_resp_uid = id_resp_uidB + "R" if svy_replacement_nesample == 1
@@ -185,6 +183,19 @@ _______________________________________________________________________________*
 			/* Calculate total in need of replacement */
 			bys id_village_n: egen vill_baseline = total(b_baseline)
 
+			/* Expand village-level variables */
+			foreach var of varlist /// 	
+								v_cellpfm v_radiopfm v_cell v_cell_bar v_timetotown /// 
+								v_electricity v_muslim v_mixed v_noworship v_mosques ///
+								v_churches v_totworship v_villexec v_pop v_subvills ///
+								v_poplist v_poplist_final v_subvil_reachable ///
+								v_subvil_cell v_subvil_cellpfm v_subvil_radpfm {
+								
+				bys id_village_n : egen `var'_max = max(`var')
+				replace `var' = `var'_max
+				drop `var'_max
+			}
+			
 /* Label ______________________________________________________________________*/
 
 	rename * ne_*	
