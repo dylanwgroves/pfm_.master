@@ -909,6 +909,7 @@ ________________________________________________________________________________
 		lab var vac_reject_com "Which statement are others in your community most likely to agree with?"
 
 	rename s18q1			vac_report
+	stop
 		recode vac_report 2=0
 		lab val vac_report report
 		
@@ -922,6 +923,7 @@ ________________________________________________________________________________
 	rename s10q6_sm_4		vac_nopunish_hitobj
 		lab var vac_nopunish_hitobj "[1 = No] Have you hit children with stick or object in last month?"
 
+		
 	/* Reverse coding */
 	foreach var of varlist vac_nopunish_* {
 		recode `var' (1=0)(0=1)
