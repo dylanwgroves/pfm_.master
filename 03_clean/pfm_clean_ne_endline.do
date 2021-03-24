@@ -598,7 +598,7 @@ ________________________________________________________________________________
 		lab var em_norm_reject "Community Rejects Early Marraige"
 		
 	clonevar em_norm_reject_dum = em_norm_reject
-		recode em_norm_reject_dum (2=1)(1=0)(0=0)
+		recode em_norm_reject_dum (0=0)(1=0)(2=1)
 		lab val em_norm_reject_dum reject
 		lab var em_norm_reject_dum "(Dummy) Community rejects early marriage"
 		
@@ -607,7 +607,7 @@ ________________________________________________________________________________
 		lab val treat_pi treatment
 		lab var treat_pi "Pluralistic Ignorance Treatment"
 
-	rename s17q6			em_expected
+	rename s17q6	em_expected
 
 	rename s17q8a		em_reject_religion
 	rename s17q8b		em_reject_noschool
@@ -823,7 +823,7 @@ ________________________________________________________________________________
 		
 	recode hhdecision_school hhdecision_hhfix (-999 = .d)(-888 = .r)
 	
-	egen hhdecision_index = rowtotal(hhdecision_school_dum hhdecision_hhfix)
+	egen hhdecision_index = rowtotal(hhdecision_school_dum hhdecision_hhfix_dum)
 		lab var hhdecision_index "Index of two hhdecision questions"
 	
 	
@@ -909,7 +909,6 @@ ________________________________________________________________________________
 		lab var vac_reject_com "Which statement are others in your community most likely to agree with?"
 
 	rename s18q1			vac_report
-	stop
 		recode vac_report 2=0
 		lab val vac_report report
 		
@@ -931,7 +930,7 @@ ________________________________________________________________________________
 	}
 	
 	egen vac_nopunish_index = rowmean(vac_nopunish_shout vac_nopunish_hithand vac_nopunish_hitobj)
-		
+	egen vac_nopunish_index_hit = rowmean(vac_nopunish_hithand vac_nopunish_hitobj)
 	
 /* Media Consumption ___________________________________________________________*/
 
