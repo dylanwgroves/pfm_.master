@@ -937,6 +937,9 @@ ________________________________________________________________________________
 	rename s4q2_listen_radio	radio_listen							
 		lab def s4q2_listen_radio 0 "Never", modify
 		lab val radio_listen s4q2_listen_radio
+
+	gen radio_any = 1 if radio_listen > 0
+		replace radio_any = 0 if radio_listen == 0
 		
 	rename s4q2b_listen_radio_time	radio_listen_hrs
 		replace radio_listen_hrs = 0 if radio_listen == 0
