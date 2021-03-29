@@ -1,10 +1,10 @@
 
 /* Basics ______________________________________________________________________
 
-Project: Wellspring Tanzania, Audio Screening  
-Purpose: Import treatment assignment
-Author: dylan groves, dylanwgroves@gmail.com
-Date: 2020/08/19
+	Project: Wellspring Tanzania, Audio Screening  
+	Purpose: Import treatment assignment
+	Author: dylan groves, dylanwgroves@gmail.com
+	Date: 2020/08/19
 ________________________________________________________________________________*/
 
 
@@ -32,7 +32,11 @@ ________________________________________________________________________________
 				vil_mtaa_c vil_mtaa_n shape_leng shape_area vtreat match ///
 				q1_2_geopointlatitude q1_2_geopointlongitude q1_2_geopointaltitude ///
 				q1_2_geopointaccuracy q4_0_geopointlatitude q4_0_geopointlongitude ///
-				q4_0_geopointaltitude q4_0_geopointaccuracy v1
+				q4_0_geopointaltitude q4_0_geopointaccuracy v1 ///
+				vtreat_cel vtreat_rad cell cell_bar traveltime electricity rel_muslim ///
+				rel_mixed rel_noworship rel_mosques rel_churches rel_totworship ///
+				villexec dem_pop dem_subvil_tot poplist poplist_complete subvil_reach ///
+				subvil_cell svtreat_cel svtreat_rad 
 
 	rename region_cod region_c
 	rename region_nam region_n
@@ -71,4 +75,5 @@ ________________________________________________________________________________
 
 /* Export  _____________________________________________________________________*/
 
+	export delimited using "${data}/01_raw_data/pfm_sample_ne.csv", replace nolabel
 	save "${data}/01_raw_data/pfm_sample_ne.dta", replace
