@@ -1,0 +1,146 @@
+/* Basics ______________________________________________________________________
+
+Project: Wellspring Tanzania, Natural Experiment
+Purpose: Tables
+Author: dylan groves, dylanwgroves@gmail.com
+Date: 2020/12/23
+________________________________________________________________________________*/
+
+
+/* Introduction ________________________________________________________________*/
+	
+	clear all	
+	clear matrix
+	clear mata
+	set more off
+	global c_date = c(current_date)
+	tempfile dta_main 
+	tempfile dta_vill
+
+/* Run Prelim File _____________________________________________________________	
+
+	do "${code}/pfm_.master/00_setup/pfm_paths_master.do"
+	do "${code}/pfm_ne/pfm_ne_prelim.do"
+*/
+
+/* Load Data ___________________________________________________________________*/	
+
+	import excel "${as_tables}/pfm_as_analysis_main.xlsx", sheet("mid_gender") firstrow clear
+	save `dta_main', replace
+	
+	
+/* Sort Data ___________________________________________________________________*/
+
+	/* Individual Data */
+	sort pval
+	destring 	variable variablelabel coef se pval r2 N ///
+				lasso_coef lasso_se lasso_pval ripval lasso_ripval lasso_r2 lasso_N lasso_ctls lasso_ctls_num ///
+				treat_mean treat_sd ctl_mean ctl_sd vill_sd min max, replace
+	save `dta_main', replace
+
+
+/* Create Rank _________________________________________________________________*/
+
+	/* Individual Data */
+	# d ;
+	local sumstat_vars 	
+						m_ge_index
+						m_ge_earning
+						m_ge_school
+						m_ge_kid
+						;
+	#d cr 
+						
+						
+
+	gen rank = .
+	local i = 1
+	
+	foreach var of local sumstat_vars {
+		replace rank = `i' if variable == "`var'"
+		local i = `i' + 1
+	}		   
+
+	drop if rank == .
+	gsort rank
+
+
+/* Create variables ____________________________________________________________*/
+
+	count
+	global count = `r(N)'
+	
+	forval i = 1/$count {
+	
+		/* Drop pre-existing macros */
+		macro drop var`i' b`i' se`i' p`i' r2`i' n`i' ctl`i' c`i' sd`i' mn`i' mx`i'
+
+		global var`i' = variablelabel[`i']
+		
+		/* Normal */
+		global b`i' = strofreal(coef[`i'], "%6.3f")
+		global se`i' = strofreal(se[`i'], "%6.3f")
+		global p`i' = strofreal(pval[`i'], "%6.3f")
+		global r`i' = strofreal(r2[`i'], "%6.2f")
+		global n`i' = strofreal(N[`i'], "%6.0fc")
+		global ctl`i' = "No"
+		
+		/* Lasso */
+		global b`i'c = strofreal(lasso_coef[`i'], "%6.3f")
+		global se`i'c = strofreal(lasso_se[`i'], "%6.3f")
+		global p`i'c = strofreal(lasso_pval[`i'], "%6.3f")
+		global r`i'c = strofreal(lasso_r2[`i'], "%6.2f")
+		global n`i'c = strofreal(lasso_N[`i'], "%6.0fc")
+		global ctl`i'c = strofreal(lasso_ctls_num[`i'], "%6.0fc")
+		
+		/* Summary stats */
+		global c`i' = strofreal(ctl_mean[`i'], "%6.2f")
+		global sd`i' = strofreal(ctl_sd[`i'], "%6.2f")
+		global mn`i' = strofreal(min[`i'], "%6.0f")
+		global mx`i' = strofreal(max[`i'], "%6.0f")
+	
+	}
+	
+	
+	/* Assign stars and set p-value to <0.001 instead of 0.000 */
+	do "${code}/pfm_audioscreening/01_helpers/pfm_helper_stars.do"	
+	
+	
+	
+/* Make Table __________________________________________________________________*/
+
+texdoc init "${as_clean_tables}/pfm_as_tables_results_gender_mid.tex", replace nolog
+
+texdoc write 	{
+texdoc write 	\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+texdoc write 	\begin{tabular}{l*{9}{c}}
+texdoc write 	\Xhline{2\arrayrulewidth}\addlinespace[3pt]	
+
+texdoc write    &\multicolumn{2}{c}{$var1} 	&\multicolumn{2}{c}{$var2} &\multicolumn{2}{c}{$var3}  	&\multicolumn{2}{c}{$var4} 	\tstrut \bstrut \\ \cmidrule(r){2-3} \cmidrule(r){4-5} \cmidrule(r){6-7} \cmidrule(r){8-9}  
+
+texdoc write 	Radio Treat      			& $b1\sym{$s1}  	& $b1c\sym{$s1c} 	& $b2\sym{$s2} 	& $b2c\sym{$s2c} & $b3\sym{$s3} & $b3c\sym{$s3c}	& $b4\sym{$s4}	& $b4c\sym{$s4c} 	\\
+texdoc write    Standard Error 				& $se1				& $se1c				& $se2    		& $se2c  		& $se3 			& $se3c				& $se4 			& $se4c				\\
+texdoc write 	\hline
+texdoc write 	\$ p\$-value 				& $p1				& $p1c 				& $p2			& $p2c			& $p3  			& $p3c				& $p4			& $p4c				\\
+texdoc write 	Hypothesis					& +					& + 				& +				& + 			& +				& +					& +				& +					\\
+texdoc write 	Control Mean      			& $c1				& $c1				& $c2			& $c2			& $c3  			& $c3				& $c4			& $c4				\\
+texdoc write 	Control SD					& $sd1				& $sd1				& $sd2			& $sd2			& $sd3 			& $sd3				& $sd4			& $sd4				\\
+texdoc write	DV Range					& [$mn1-$mx1]		& [$mn1-$mx1]		& [$mn2-$mx2]	& [$mn2-$mx2]	& [$mn3-$mx3] 	& [$mn3-$mx3]		& [$mn4-$mx4]	& [$mn4-$mx4]		\\	
+texdoc write 	Blocked FE 					& Yes 				& Yes 				&  Yes   		& Yes  			& Yes			& Yes				& Yes			& Yes				\\
+texdoc write 	Controls 					& $ctl1 			& $ctl1c 			&  $ctl2   		& $ctl2c  		& $ctl3			& $ctl3c 			& $ctl4			& $ctl4c			\\
+texdoc write 	Adj-\$ R^2\$				& $r1 				& $r1c 				& $r2   		& $r2c 			& $r3			& $r3c				& $r4			& $r4c				\\
+texdoc write 	Observations      			& $n1 				& $n1c 				& $n2   		& $n2c 			& $n3			& $n3c				& $n4			& $n4c		  		\\
+texdoc write 	\Xhline{2\arrayrulewidth}
+texdoc write 	\end{tabular}
+texdoc write 	}
+
+texdoc close
+
+
+
+
+
+
+
+
+

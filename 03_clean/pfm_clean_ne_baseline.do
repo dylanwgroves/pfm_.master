@@ -232,7 +232,7 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	replace radio_listen = 0 if radio_listen == 6										// Change value of "None" from 6 to 0
 	replace radio_listen = . if radio_listen == -888 | radio_listen == -999
 	lab def radio_listen  0 "None", modify
-	stop
+
 	gen radio_any = 1 if radio_listen > 0
 		replace radio_any = 0 if radio_listen == 0
 

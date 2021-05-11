@@ -155,30 +155,30 @@ ________________________________________________________________________________
 	
 /* General Values ______________________________________________________________*/
 
-	rename s5q1 			values_conformity
-		lab def values_conformity 0 "Always do what you think is right" 1 "Pay attention to others"
-		lab val values_conformity values_conformity
 
-	rename s5q4				values_dontquestion
+	** Gender difference in support for urbanization
+	rename gender_txt		treat_values_urbangood_gender
+
+	recode s5q1 			(0 = 1 "Do what you think is right")(1 = 0 "Pay attention to others"), ///
+							gen(values_conformity)
+		lab var values_conformity "[1 = No conformity] People should pay attention others or do what they think is right"
 			
-		lab def values_dontquestion 0 "Question leaders" 1 "Respect authority"
-		lab val values_dontquestion values_dontquestion
+	recode s5q4				(0 = 1 "Question leaders")(1 = 0 "Respect authority"), ///
+							gen(values_questionauthority)
+		lab var values_questionauthority "[1 = Yes] People should question their leaders"
 		
-	rename s5q6				values_urbangood
-		recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
-		lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
-		lab val values_urbangood values_urbangood
-		
-	rename s3q20_tz_tribe		values_tzovertribe
-		gen values_tzovertribe_dum = (values_tzovertribe == 1 | values_tzovertribe == 2)
-		replace values_tzovertribe_dum = . if values_tzovertribe == -888 | values_tzovertribe == .
-		lab val values_tzovertribe_dum tzovertribe
+	recode s5q6				(1 = 0 "Support the family") (0 = 1 "Good to go to town") ///
+							(-999 = .d) (-888 = .r), gen(values_urbangood)
+		lab var values_urbangood "[1 = City] Should child go to town or stay in village after school?"
 
+	recode s3q20_tz_tribe	(1 2 = 1 "TZ > Tribe") (3 4 5 .d = 0 "TZ <= Tribe") (-888 = .r "Refuse"), ///
+							gen(values_tzovertribe_dum)
+		lab var values_tzovertribe "[1 = TZ] Which feels more important to you, being a Tanzanian or being a ${tribe_txt}"
 
+	rename s3q20_tz_tribe values_tzovertribe
+	
 	/* Recode */
 	recode values_* (-999 = .d) (-888 = .r)
-
-	
 
 /* Efficacy ____________________________________________________________________*/
 
@@ -344,13 +344,16 @@ ________________________________________________________________________________
 		lab def gov_approval 0 "Don't Approve" 1 "Approve"
 		lab val ptixpref_local_approve gov_approval
 		
-
-	rename s14q4  ptixpref_responsibility				
+	rename s14q4  ptixpref_responsibility
+		gen ptixpref_resp_locgov = ptixpref_responsibility ==  2
+		gen ptixpref_resp_natgov = ptixpref_responsibility ==  3 | ptixpref_responsibility ==  4
+		gen ptixpref_resp_vill = ptixpref_responsibility ==  1 
 		
 	foreach var of varlist ptixpref_* {
 		cap recode `var' (-999 = .d)(-888 = .r)(-4995 = .d)
 	}
 
+	
 /* Election ____________________________________________________________________*/
 
 	/* Code Outcomes for Screening Experiments */
@@ -358,14 +361,14 @@ ________________________________________________________________________________
 		recode em_elect (2=0)(1=1)
 		lab val em_elect em_elect 
 		
-		recode s3q4a_2 (2=1)(1=0), gen(s3q4a_2_reverse)												// Reversed order for randomly selected 1/2 of respondents
+		recode s3q4a_2 (2=1)(1=0), gen(s3q4a_2_reverse)							// Reversed order for randomly selected 1/2 of respondents
 		replace em_elect = s3q4a_2_reverse if rand_order_1st_txt == "second"
 
 	gen hiv_elect = s3q4b_1		
 		recode hiv_elect (2=0)(1=1)
 		lab val hiv_elect hiv_elect
 		
-		recode s3q4b_2	(2=1)(1=0), gen(s3q4b_2_reverse)											// Reversed order for randomly selected 1/2 of respondents
+		recode s3q4b_2	(2=1)(1=0), gen(s3q4b_2_reverse)						// Reversed order for randomly selected 1/2 of respondents
 		replace hiv_elect = s3q4b_2_reverse if rand_order_2nd_txt == "second"
 
 		
@@ -374,7 +377,7 @@ ________________________________________________________________________________
 	
 		/* Religion */
 		gen cand`i'_muslim = 1 if 			rand_cand`i'_txt == "Mr. Salim" | ///
-											rand_cand`i'_txt == "Mrs. Mwanaidi"					// There were issues with this - check with Martin
+											rand_cand`i'_txt == "Mrs. Mwanaidi"	// There were issues with this - check with Martin
 		replace cand`i'_muslim = 0 if 		rand_cand`i'_txt == "Mr. John" | ///
 											rand_cand`i'_txt == "Mrs. Rose"	
 		
@@ -515,8 +518,8 @@ We are coding that higher is always "more gender equality"
 	lab val ge_leadership agree			
 	lab val ge_business agree	
 
-	lab var ge_school "[REVERSED] It is more important that a boy goes to school than a girl"
-	lab var ge_work "[REVERSED] When jobs are scarce, men should have more right to a job than women"
+	lab var ge_school "[1 = No] It is more important that a boy goes to school than a girl"
+	lab var ge_work "[1 = No] When jobs are scarce, men should have more right to a job than women"
 	lab var ge_leadership "In general, women make equally good village leaders as men"
 	lab var ge_business "In general, women are just as able to run a successful business as men"
 		
@@ -556,7 +559,7 @@ We are coding that higher is always "more gender equality"
 
 	rename s8q5			fm_reject
 		recode fm_reject (1=0)(2=1)(-999 = .d)(-888 = .r)
-		lab var fm_reject "[REVERSED] A woman should not have a say in who she marries"
+		lab var fm_reject "[1 = No] A woman should not have a say in who she marries"
 		lab val fm_reject agree
 		
 	gen fm_reject_long = .
@@ -735,40 +738,31 @@ We are coding that higher is always "more gender equality"
 
 /* Political Knowledge _________________________________________________________*/
 
-	* Popular Culture
-	/*
+	/* Popular Culture */
 	gen ptixknow_pop_music = .
-		replace ptixknow_pop_music = 1 if (s13q1 == 4 | s13q1 == 3) & s13q1_rand_cl == "1"
-		replace ptixknow_pop_music = 1 if (s13q2 == 4 | s13q2 == 3) & s13q2_rand_cl == "1"
-		replace ptixknow_pop_music = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "1"
-		replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
-		replace ptixknow_pop_music = 0 if (s13q1 == 1 | s13q1 == 2) & s13q1_rand_cl == "1"	
-		replace ptixknow_pop_music = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "1"
+		replace ptixknow_pop_music = 1 if (s13q1a == 4 | s13q1a == 3) 
+		replace ptixknow_pop_music = 0 if (s13q1a == 5 | s13q1a == -999 | s13q1a == .d | s13q1a == 1) 
 		lab val ptixknow_pop_music correct
 
 	gen ptixknow_pop_sport = .
-		replace ptixknow_pop_sport = 1 if (s13q1 == 1) & s13q1_rand_cl == "2"
-		replace ptixknow_pop_sport = 1 if (s13q2 == 1) & s13q2_rand_cl == "2"
-		replace ptixknow_pop_sport = 0 if (s13q1 == 5 | s13q1 == -999) & s13q1_rand_cl == "2"
-		replace ptixknow_pop_sport = 0 if (s13q2 == 5 | s13q2 == -999) & s13q2_rand_cl == "2"
-		replace ptixknow_pop_sport = 0 if (s13q1b == 3 | s13q1b == 4 | s13q1b == 2) & s13q1_rand_cl == "2"		
-		replace ptixknow_pop_sport = 0 if (s13q2 == 3 | s13q2 == 4 | s13q2 == 2) & s13q2_rand_cl == "2"		
-		lab val ptixknow_pop_sport correct	
-	*/
+		replace ptixknow_pop_sport = 1 if (s13q1b == 1 | s13q1a == 2) 
+		replace ptixknow_pop_sport = 0 if (s13q1b == 4 | s13q1b ==  5 | s13q1b == .d) 
+		lab val ptixknow_pop_sport correct
+	
 	rename s13q2 	ptixknow_local_dc 
 
 	/* National Politics */
 	rename s13q3a	 ptixknow_natl_pm 
 		recode ptixknow_natl_pm (2=1)(1=0)(4=0)(3=0)(-999=0)
 
-	rename s13q3b	ptixknow_natl_vp
-		recode ptixknow_natl_vp (3=1)(1=0)(2=0)(4=0)(-999=0)
+	rename s13q3b	ptixknow_natl_justice
+		recode ptixknow_natl_justice (3=0)(1=0)(2=0)(4=1)(-999=0)
 
 	lab val ptixknow_natl_* correct
 
 	/* Foreign Affairs */
 	rename s13q4new ptixknow_fopo_kenyatta 
-		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 2) (1 = 1) 
+		recode ptixknow_fopo_kenyatta (-999 = 0) (-222 = 0) (-888 = 0) (2 = 1) (1 = 0) 
 		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
 
 	rename s13q5		ptixknow_em_aware
@@ -791,18 +785,23 @@ We are coding that higher is always "more gender equality"
 	}
 	
 
-	
+		
 /* Health Knowledge ____________________________________________________________*/
 
-	rename s23q1		healthknow_notradmed
-		recode healthknow_notradmed (0=1)(1=0)									// Check on translation
-		lab var healthknow_notradmed "[Reversed] Prayer and traditional medicine can help cure disease"
-	rename s23q2		healthknow_vaccines
-	rename s23q3		healthknow_vaccines_imp
-		replace healthknow_vaccines_imp = 0 if healthknow_vaccines == 0
-	rename s23q4		healthknow_nowitchcraft
-		recode healthknow_nowitchcraft (0=1)(1=0)
-		lab var healthknow_nowitchcraft "[Reversed] Believe in witchcraft?"
+	recode s23q1 			(0=1 "Cant cure disease") (1 .d =0 "Can cure disease / don't know"),	///
+							gen(healthknow_notradmed)
+	lab var healthknow_notradmed "[1 = No] Can payer and trad. medicine help cure disease?"
+
+	rename s23q2			healthknow_vaccines
+	
+	recode s23q3			(0 1 .d = 0 "Not very important") (2 = 1 "Very important"), ///
+							gen(healthknow_vaccines_imp)
+	lab var healthknow_vaccines_imp "[2 = very important] In your opinion, how important is it for a healthy young child to receive vaccine?"
+	replace healthknow_vaccines_imp = 0 if healthknow_vaccines == 0
+		
+	recode s23q4			(0 = 1 "Withcraft does not exist") (1 .d = 0 "Witchraft does exist / don't know"), ///
+							gen(healthknow_nowitchcraft)
+	lab var healthknow_nowitchcraft "[1 = No] Believe in witchcraft?"
 
 	foreach var of varlist healthknow_* {
 		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
@@ -877,9 +876,9 @@ We are coding that higher is always "more gender equality"
 	rename s9q2 			ipv_norm_rej
 		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
 		lab val ipv_norm_rej ipv
-		
+
 	rename s9q3		ipv_report
-		recode ipv_report (2=0)(1=1)
+		recode ipv_report (2=0)(1=1)	
 		lab var ipv_report "Report IPV to police?"
 		lab val ipv_report report
 		
@@ -906,7 +905,7 @@ We are coding that higher is always "more gender equality"
 		lab val hhlabor_laundry_dum hh_dum
 		lab var hhlabor_laundry_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
 		
-	egen hhlabor_chores_dum = rowmean(hhlabor_water hhlabor_laundry)
+	egen hhlabor_chores_dum = rowmean(hhlabor_water_dum hhlabor_laundry_dum)
 		lab val hhlabor_chores_dum hh_dum
 		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
 	
@@ -922,7 +921,6 @@ We are coding that higher is always "more gender equality"
 
 
 /* HH Decisions _____________________________________________________________________*/
-
 
 	/* HH Decision-making (actual) */
 	rename s12q12_1		hhdecision_health
@@ -1104,21 +1102,7 @@ We are coding that higher is always "more gender equality"
 	rename s30q5		rd_working
 	rename s30q6		rd_working_whynot
 
-	rename s30q7		rd_uses
-		cap rename s30q7_1 rd_uses_self
-		cap rename s30q7_2 rd_uses_spouse
-		cap rename s30q7_3 rd_uses_child
-		cap rename s30q7_4 rd_uses_othfam
-		cap rename s30q7_5 rd_uses_friends
-		cap rename s30q7_6 rd_uses_cowork
-		
-		/*
-		foreach var of varlist rd_uses_* {
-			cap lab val `var' yesno
-		}
-		*/
-
-	cap rename s30q8		rd_controls
+	cap rename s30q7		rd_controls
 	cap rename s30q9		rd_problems
 	cap rename s30q10		rd_challenge
 		cap rename s30q10_1 	rd_challenge_jealous
@@ -1126,7 +1110,7 @@ We are coding that higher is always "more gender equality"
 		cap rename s30q10_3		rd_challenge_fight
 		cap rename s30q10_oth	rd_challenge_oth
 	
-	
+
 /* Audio Screening Compliance __________________________________________________*/
 
 	rename s31q1		comply_topic
@@ -1341,8 +1325,6 @@ We are coding that higher is always "more gender equality"
 	rename s20q4_sm				svy_others_who
 
 
-	
-		
 	
 /* Export ______________________________________________________________________*/
 

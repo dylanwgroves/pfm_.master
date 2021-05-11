@@ -25,12 +25,33 @@
 /* Clean Data  _________________________________________________________________*/
 
 	* Labels
-	lab def yesnodk 0 "No" 1 "Yes" -999 "Dont Know" -888 "Refuse"
+	lab def yesno 0 "No" 1 "Yes"
+	lab def female 0 "Male" 1 "Female"
+	lab def agree 0 "Disagree" 1 "Agree"
+	lab def reject 0 "Accept" 1 "Reject"
+	lab def report 1 "Report" 0 "Dont Report"
+	lab def agree_likert_backwards 1 "Strongly Agree" 2 "Agree" 3 "Neither" 4 "Disagree" 5 "Strongly Disagree"
+	lab def agree_likert 1 "Strongly Disagree" 2 "Disagree" 3 "Neither" 4 "Agree" 5 "Strongly Agree"
+	lab def correct	0 "Incorrect" 1 "Correct"
+	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
+	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
+	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+	lab def em_elect 0 "Vote Against EM Candidate" 1 "Vote For EM Candidate"
+	lab def hiv_elect 0 "Vote Against HIV Candidate" 1 "Vote for HIV Candidate"
+	lab def treatment 0 "Control" 1 "Treatment" 
+	lab def elect_topic 1 "EFM" 2 "HIV" 3 "Roads" 4 "Crime"
+	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
+	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
+	lab def hhlabor 1 "Mother" 2 "Father" 3 "Both"
+	lab def hhdecision 1 "Mother" 2 "Father" 3 "Both" 4 "Other man" 5 "Other woman"
+	lab def hh_dum 0 "Woman" 1 "Man or balanced"
+	lab def hh_dum_rev 0 "Man" 1 "Woman or balanced"
 
 	* Converting don't know/refuse/other to extended missing values
 	qui ds, has(type numeric)
 	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
+	
 /* General Information  ________________________________________________________*/
 
 	rename s1q1 svy_date
@@ -47,6 +68,7 @@
 
 
 /* Respondent Info _____________________________________________________________*/
+
 	rename s2q1 resp_gender
 	rename s2q2 resp_howudoin
 	rename s2q4 resp_villageleader
@@ -78,8 +100,9 @@
 	egen s2q4_discussions_total = rowtotal(s2q4_discussions_*)
 	lab var s2q4_discussions_total "Total discussions"
 
-* Section 3 - Civic Engagment --------------------------------------------------
-	rename s3q1 s3q1_ptix_interest=
+/* Section 3 - Civic Engagment _________________________________________________*/
+	
+	rename s3q1 s3q1_ptix_interest
 	rename s3q2 s3q2_ptix_contact
 
 	* Political Contacts
@@ -100,14 +123,14 @@
 	lab var s3q2_ptix_contact_total "Total political contacts"
 
 	* Priorities
-	rename s3q3_a s3q3_prior_food
-	rename s3q3_b s3q3_prior_fm
-	rename s3q3_c s3q3_prior_road
-	rename s3q3_e s3q3_prior_elect
-	rename s3q3_f s3q3_prior_crime
-	rename s3q3_g s3q3_prior_hiv
+	rename s3q3_a food_priority_list
+	rename s3q3_b em_priority_list
+	rename s3q3_c road_priority_list
+	rename s3q3_e elect_priority_list
+	rename s3q3_f crime_priority_list
+	rename s3q3_g hiv_priority_list
 
-	foreach var in s3q3_prior_food s3q3_prior_fm s3q3_prior_road s3q3_prior_elect s3q3_prior_crime s3q3_prior_hiv {
+	foreach var in *_priority_list {
 		recode `var' (. = 0)
 	}
 
@@ -115,11 +138,35 @@
 	lab def vote 1 "1st Candidate" 2 "2nd Candidate"
 	lab def vote_male 1 "Male" 0 "Female"
 	lab def vote_islam 1 "Islam" 0 "Christian"
+	
+	rename s3q4a vote_1
+	rename s3q4b vote_2
+	
+	gen vote_fmhiv = .
+		replace vote_fmhiv = 1 if rand_promise1_txt == "fight against child marriage" & rand_promise2_txt == "make hiv-aids treatment more available"
+		replace vote_fmhiv = 1 if rand_promise2_txt == "fight against child marriage" & rand_promise1_txt == "make hiv-aids treatment more available"
+		replace vote_fmhiv = 1 if rand_promise3_txt == "fight against child marriage" & rand_promise4_txt == "make hiv-aids treatment more available"
+		replace vote_fmhiv = 1 if rand_promise4_txt == "fight against child marriage" & rand_promise3_txt == "make hiv-aids treatment more available"
 
-	foreach num of numlist 1/2 {
+	gen em_elect = 0
+		replace em_elect = 1 if vote_1 == 1 & rand_promise1_txt == "fight against child marriage"
+		replace em_elect = 1 if vote_1 == 2 & rand_promise2_txt == "fight against child marriage"
+		replace em_elect = 1 if vote_2 == 1 & rand_promise3_txt == "fight against child marriage"
+		replace em_elect = 1 if vote_2 == 2 & rand_promise4_txt == "fight against child marriage"
+		replace em_elect = . if vote_fmhiv == 1
+		
+	gen hiv_elect = 0
+		replace hiv_elect = 1 if vote_1 == 1 & rand_promise1_txt == "make hiv-aids treatment more available"
+		replace hiv_elect = 1 if vote_1 == 2 & rand_promise2_txt == "make hiv-aids treatment more available"
+		replace hiv_elect = 1 if vote_2 == 1 & rand_promise3_txt == "make hiv-aids treatment more available"
+		replace hiv_elect = 1 if vote_2 == 2 & rand_promise4_txt == "make hiv-aids treatment more available"
+		replace hiv_elect = . if vote_fmhiv == 1
 
-	gen s3q4_vote1_male`num' = 1 if rand_cand`num'_txt == "Mr. John" | rand_cand`num'_txt == "Mr. Salim"
-	replace s3q4_vote1_male`num' = 0 if rand_cand`num'_txt == "Mrs. Mwanaidi" | rand_cand`num'_txt == "Mrs. Neema"
+/*
+ 	foreach num of numlist 1/2 {
+
+	gen vote1_male`num' = 1 if rand_cand`num'_txt == "Mr. John" | rand_cand`num'_txt == "Mr. Salim"
+	replace vote1_male`num' = 0 if rand_cand`num'_txt == "Mrs. Mwanaidi" | rand_cand`num'_txt == "Mrs. Neema"
 
 	gen s3q4_vote1_islam`num' = 1 if rand_cand`num'_txt == "Mr. Salim" | rand_cand`num'_txt == "Mrs. Mwanaidi" 
 	replace s3q4_vote1_islam`num' = 0 if rand_cand`num'_txt == "Mr. John" | rand_cand`num'_txt == "Mrs. Neema"
@@ -159,9 +206,6 @@
 
 	}
 
-	rename s3q4a s3q4_vote1_choice
-	rename s3q4b s3q4_vote2_choice 
-	 
 	lab var s3q4_vote1_choice "Vote for in Election 1"
 	lab def vote1 1 "1st Candidate" 2 "2nd Candidate"
 	lab val s3q4_vote1_choice vote1
@@ -185,71 +229,86 @@
 	replace votehiv_2 = 0 if votehiv_2 == .
 	replace votehiv_2 = . if (s3q4_vote2_fm3 == 1 & s3q4_vote2_hiv4 != 1) | (s3q4_vote2_hiv3 == 1 & s3q4_vote2_fm4 != 1)
 	gen votehiv_tot = votehiv_1 + votehiv_2
-
+*/
 
 * Section 4 - Child Marriage ---------------------------------------------------
 	destring randomdraw78or79, replace												// Changed Prices 
 
 	* Generate Treatment Variables for Survey Experiment
-	gen s4q1_fm_t_scen = 1 if randomdraw78or79 <= 0.5
-	replace s4q1_fm_t_scen = 0 if randomdraw78or79 > 0.5
+	gen treat_efmvig_scen = 1 if randomdraw78or79 <= 0.5
+	replace treat_efmvig_scen = 0 if randomdraw78or79 > 0.5
 	lab def moneyprobs 1 "Money problem" 0 "Daughter problem"
-	lab val s4q1_fm_t_scen  moneyprobs
-	lab var s4q1_fm_t_scen "[Randomized] Money problem or daughter problem situation"
+	lab val treat_efmvig_scen  moneyprobs
+	lab var treat_efmvig_scen "[Randomized] Money problem or daughter problem situation"
 
-	gen s4q1_fm_t_inout = 0 if txt2_eng == "in their village"																
-	replace s4q1_fm_t_inout  = 1 if txt2_eng == "outside their village"
-	lab def inout_vill 0 "In Village" 1 "Outside Village"
-	lab val s4q1_fm_t_inout inout_vill 
-	lab var s4q1_fm_t_inout "[Randomized] Husband from inside or outside village"
+	gen treat_efmvig_out = 0 if txt2_eng == "in their village"																
+	replace treat_efmvig_out = 1 if txt2_eng == "outside their village"
+	lab def treat_efmvig_out 0 "In Village" 1 "Outside Village"
+	lab val treat_efmvig_out inout_vill 
+	lab var treat_efmvig_out "[Randomized] Husband from inside or outside village"
 
-	gen s4q1_fm_t_amnt = txt3
-	lab var s4q1_fm_t_amnt "[Randomized] Amount offered"
+	gen treat_efmvig_offer = txt3
+	lab var treat_efmvig_offer "[Randomized] Amount offered"
 
-	gen s4q1_fm_t_son = 0 if txt4_eng == "him"
-	replace s4q1_fm_t_son = 1 if txt4_eng == "his son"
+	gen treat_efmvig_son = 0 if txt4_eng == "him"
+	replace treat_efmvig_son = 1 if txt4_eng == "his son"
 	lab def son 0 "Father" 1 "Son"
-	lab val s4q1_fm_t_son son
-	lab var s4q1_fm_t_son "[Randomized] Husband is father or son"
+	lab val treat_efmvig_son son
+	lab var treat_efmvig_son "[Randomized] Husband is father or son"
 
-	gen s4q1_fm_t_age= txt1
-	lab var s4q1_fm_t_age "[Randomized] Age of daughter"
+	gen treat_efmvig_age = txt1
+	lab var treat_efmvig_age "[Randomized] Age of daughter"
 
-	rename s6q6a s4q1_fm_yesself													// Merge responses to two scenarios, since scenario is just another randomization
-	replace s4q1_fm_yesself = s6q6c if randomdraw78or79 > 0.5
-	recode s4q1_fm_yesself (2 = 0)													
-	lab def s6q6a 0 "Statement 2: Yes, under these circumstances the family should marry their daughter even though she is ${txt1} years old", add
-
-	rename s6q6b s4q1_fm_yescomm
-	replace s4q1_fm_yescomm = s6q6d if randomdraw78or79 > 0.5
-	recode s4q1_fm_yescomm (2 = 0)
-	lab def s6q6b 0 "Statement 2: Yes, under these circumstances the family should marry their daughter even though she is ${txt1} years old", add
+	rename s6q6a em_reject													// Merge responses to two scenarios, since scenario is just another randomization
+	replace em_reject = s6q6c if randomdraw78or79 > 0.5
+	recode em_reject 	(2 = 0 "Accept") (1 = 1 "Reject"), ///
+						gen(em_reject_story)
+		drop em_reject
+		lab var em_reject_story "[1 = Reject] Reject EM, story"
+		
+	replace s6q6b = s6q6d if randomdraw78or79 > 0.5
+	recode s6q6b 		(2 = 0 "Accept") (1 = 1 "Reject"), ///
+						gen(em_reject_norm)
+		lab var em_reject_norm "[1 = Reject] Community reject EM, story"
 
 	rename s6q7 s4q2_fm_lawpref
 
-	rename s6q8 s4q3_fm_reportself
-	rename s6q9 s4q3_fm_reportcomm
+	** Reporting
+	rename s6q8			em_report 
+	
+	rename s6q9			em_report_norm
 
 
 * Section 5 - Gender Hierarchy -------------------------------------------------
+
 	* Recoded to positive = more equality
-	rename s6q1 s5q1_gh_eqkid
+	rename s6q1 	ge_kid
 
-	rename s6q2 s5q2_gh_marry
-	recode s5q2_gh_marry (0 = 1) (1 = 0)
-	lab var s5q2_gh_marry "[REVERSED] A girl should not have a say in who she marries; it is best if her father selects a suitable husband for her"
+	recode s6q3 	(0 = 1 "Equal earning ok") (1 = 0 "Equal earning bad"), ///
+					gen(ge_earning) 
+		lab var ge_earn "[1 = OK] If a woman earns more money than her husband, it's almost certain to cause problems"
 
-	rename s6q3 s5q3_gh_earn 
-	recode s5q3_gh_earn  (0 = 1) (1 = 0)
-	lab var s5q3_gh_earn "[REVERSED] If a woman earns more money than her husband, it's almost certain to cause problems"
+	recode s5q4 	(0 = 1 "Equal school") (1 = 0 "Boys in school"), ///
+					gen(ge_school)
+		lab var ge_school "[REVERSED] 6.6) It is more important for a boy to go to school than a girl"
 
-	rename s5q4 s5q4_gh_school
-	recode s5q4_gh_school (0 = 1) ///
-						  (1 = 0)
-	lab var s5q4_gh_school "[REVERSED] 6.6) It is more important for a boy to go to school than a girl"
+	egen ge_index = rowmean(ge_kid ge_earning ge_school)
+	
+	
+/* Forced Marriage _____________________________________________________________*/
 
+	recode s6q2 	(0 = 1 "Reject") (1 = 0 "Accept"), ///
+					gen(fm_reject)
+		lab var fm_reject  "[1 = Reject] A girl should not have a say in who she marries; it is best if her father selects a suitable husband for her"
 
-* Section 6 - Migration Attitudes ----------------------------------------------
+	
+	recode s9q2 	(0 = 1 "Reject") (1 = 0 "Accept"), ///
+					gen(fm_reject_18)
+		lab var fm_reject_18 "[1 = Reject] An 18 year old girl should accept the husband her father selects for her"
+		
+		
+* Section 6 - Migration Attitudes ______________________________________________*/
+
 	gen s6q1_mg_t_male = 1 if gender_txt == "boy"
 	replace s6q1_mg_t_male = 0 if gender_txt == "girl"
 	lab def male 0 "Girl" 1 "Boy"
@@ -303,7 +362,8 @@
 	lab var s15q2_mg_supdaught "If their ${order_txt} daughter decides to move to the ${town_txt} to look for work, her parents should ${support_txt} her."
 
 
-* Section 7 - IPV Reporting ----------------------------------------------------
+/* Section 7 - IPV Reporting ___________________________________________________*/
+	
 	gen s16q1a_ipv_t_alt = 1 if s7q1a_1 !=. | s7q1a_2 !=.  
 	replace s16q1a_ipv_t_alt = 2 if s7q1a_3 != . | s7q1a_4 !=.
 	replace s16q1a_ipv_t_alt = 3 if s7q1a_5 != . | s7q1a_6 !=. 
@@ -321,40 +381,41 @@
 	lab val s16q1b_ipv_t_alt alternative
 	lab val s16q1c_ipv_t_alt alternative
 
-	rename s7q1a_1 s16q1_ipv_police
-	replace s16q1_ipv_police = s7q1a_2 if s16q1_ipv_police == .
-	replace s16q1_ipv_police = s7q1a_3 if s16q1_ipv_police == .
-	replace s16q1_ipv_police = s7q1a_4 if s16q1_ipv_police == .
-	replace s16q1_ipv_police = s7q1a_5 if s16q1_ipv_police == .
-	replace s16q1_ipv_police = s7q1a_6 if s16q1_ipv_police == .
-	recode s16q1_ipv_police (2 = 0)
+	rename s7q1a_1 ipv_report_police
+	replace ipv_report_police = s7q1a_2 if ipv_report_police == .
+	replace ipv_report_police = s7q1a_3 if ipv_report_police == .
+	replace ipv_report_police = s7q1a_4 if ipv_report_police == .
+	replace ipv_report_police = s7q1a_5 if ipv_report_police == .
+	replace ipv_report_police = s7q1a_6 if ipv_report_police == .
+	recode ipv_report_police (2 = 0)
 
-	rename s7q1b_1 s16q1_ipv_vc
-	replace s16q1_ipv_vc = s7q1b_2 if s16q1_ipv_vc == .
-	replace s16q1_ipv_vc = s7q1b_3 if s16q1_ipv_vc == .
-	replace s16q1_ipv_vc = s7q1b_4 if s16q1_ipv_vc == .
-	replace s16q1_ipv_vc = s7q1b_5 if s16q1_ipv_vc == .
-	replace s16q1_ipv_vc = s7q1b_6 if s16q1_ipv_vc == .
-	recode s16q1_ipv_vc (2 = 0)
+	rename s7q1b_1 ipv_report_vc
+	replace ipv_report_vc = s7q1b_2 if ipv_report_vc == .
+	replace ipv_report_vc = s7q1b_3 if ipv_report_vc == .
+	replace ipv_report_vc = s7q1b_4 if ipv_report_vc == .
+	replace ipv_report_vc = s7q1b_5 if ipv_report_vc == .
+	replace ipv_report_vc = s7q1b_6 if ipv_report_vc == .
+	recode ipv_report_vc (2 = 0)
 
-	rename s7q1c_1 s16q1_ipv_parents
-	replace s16q1_ipv_parents = s7q1c_2 if s16q1_ipv_parents == .
-	replace s16q1_ipv_parents = s7q1c_3 if s16q1_ipv_parents == .
-	replace s16q1_ipv_parents = s7q1c_4 if s16q1_ipv_parents == .
-	replace s16q1_ipv_parents = s7q1c_5 if s16q1_ipv_parents == .
-	replace s16q1_ipv_parents = s7q1c_6 if s16q1_ipv_parents == .
-	recode s16q1_ipv_parents (2 = 0)
-
-	lab def report 1 "Report" 0 "Dont Report"
-	lab val s16q1_ipv_police report
-	lab val s16q1_ipv_vc report
-	lab val s16q1_ipv_parents report
-
-	gen ipv_conatt_report = s16q1_ipv_police + s16q1_ipv_vc + s16q1_ipv_parents
-	lab var ipv_conatt_report "[Sum of 3] Would you report instance of abuse?"
+	rename s7q1c_1 ipv_report_parents
+	replace ipv_report_parents = s7q1c_2 if ipv_report_parents == .
+	replace ipv_report_parents = s7q1c_3 if ipv_report_parents == .
+	replace ipv_report_parents = s7q1c_4 if ipv_report_parents == .
+	replace ipv_report_parents = s7q1c_5 if ipv_report_parents == .
+	replace ipv_report_parents = s7q1c_6 if ipv_report_parents == .
+	recode ipv_report_parents (2 = 0)
 
 
-* Section 8 - IPV Attitudes ----------------------------------------------------
+	foreach var of varlist ipv_report_* {
+		lab val `var' report
+	}
+
+	gen ipv_report = (ipv_report_police + ipv_report_vc + ipv_report_parents)/3
+	lab var ipv_report "[Mean of 3] Would you report instance of abuse?"
+
+
+/* Section 8 - IPV Attitudes ___________________________________________________*/
+
 	gen s8q2_ipv_t_prime = 0 if s7q9a == .
 	replace s8q2_ipv_t_prime = 1 if s7q9a != .
 	replace s8q2_ipv_t_prime = 2 if s7q9b != .
@@ -371,24 +432,24 @@
 	lab var s8q2b_ipv_manhead manhead
 	lab var s8q2b_ipv_manhead "A man should be the head of his household"
 
-	rename s7q10a s8q3a_ipv_disobey
+	rename s7q10a ipv_rej_disobey
 
-	rename s7q10a_1 s8q3a1_ipv_hithard
-	replace s8q3a1_ipv_hithard = 0 if s8q3a_ipv_disobey == 0
-	recode s8q3a1_ipv_hithard (1 = 0) (2 = 1)
-	lab def hithard 0 "Slapped or less" 1 "More force"
-	lab val s8q3a1_ipv_hithard hithard
+	rename s7q10a_1 ipv_rej_hithard
+		recode ipv_rej_hithard (2=0)(1=1)(-999 = .d)(-888 = .r)	
+		replace ipv_rej_hithard = 1 if ipv_rej_disobey == 0
+		lab val ipv_rej_hithard reject
 
-	rename s7q10a_2 s8q3a2_ipv_persists											// this has been missing for early varibales
-	replace s8q3a2_ipv_persists = 1 if s8q3a_ipv_disobey == 1
+	rename s7q10a_2 ipv_rej_persists											// this has been missing for early varibales
+		replace ipv_rej_persists = 1 if ipv_rej_disobey == 1
+		
+	rename s7q10b ipv_rej_cheats												// Added one
+	rename s7q10c ipv_rej_kids
+	rename s7q10d ipv_rej_elders
 
-	lab def persists 0 "No" 1 "Yes"
-	lab val s8q3a1_ipv_hithard persists
-	lab var s8q3a1_ipv_hithard "Ok to hit wife if she disobeys OR persists in disobeying"
-
-	rename s7q10b s8q3b_ipv_cheats													// Added one
-	rename s7q10c s8q3c_ipv_kids
-	rename s7q10d s8q3d_ipv_elders
+	foreach var of varlist ipv_rej_disobey ipv_rej_persists ipv_rej_cheats ipv_rej_kids ipv_rej_elders {
+		recode `var' (1=0)(0=1)(.d=0)
+		lab val `var' reject
+	}
 
 	destring s7q10yes_eligible, replace
 	destring s7q10no_eligible, replace
@@ -405,9 +466,10 @@
 	lab var s8q3_ipv_t_contradict "[Randomized] Assigned Contradiction]"
 
 	rename s7q11 s8q3e_ipv_contradict 
-	rename s8q12 s8q3f_ipv_gossip
+	rename s8q12 ipv_rej_gossip
 
-* Section 9 - HIV / AIDS Knowledge + Stigma ------------------------------------
+/* Section 9 - HIV / AIDS Knowledge + Stigma ___________________________________*/
+	
 	gen s9q5a_hiv_knowdrug = s8aq1 
 	replace s9q5a_hiv_knowdrug = 0 if s9q5a_hiv_knowdrug == -999
 	lab val s9q5a_hiv_knowdrug yesnodk
@@ -455,22 +517,27 @@
 	}
 
 
-* Section 10 - Victim Response --------------------------------------------------
+/* Section 10 - Victim Response ________________________________________________*/
 	rename s9q1 s10q1_ipv_tolerate	
 	lab def tolerate 0 "Disagree" 1 "Agree"
 	lab val s10q1_ipv_tolerate	 tolerate
 		
-	rename s9q2 s10q2_fm_accept
-	lab val s10q2_fm_accept	tolerate
 
 
-* Section 10 - IPV Norms -------------------------------------------------------
-	rename s8q14 s11q1_ipv_hitnorm
-	rename s8q15 s11q2_ipv_responsenorm
+
+/* Section 10 - IPV Norms ______________________________________________________*/
+	rename s8q14 ipv_norm_rej
+		recode ipv_norm_rej (0=1)(1=0)
+		lab val ipv_norm_rej reject
+		
+	recode s8q15 	(3=1 "Outrage")(2 1 .d = 0 "No outrage"), ///
+					gen(ipv_norm_outrage)
+		lab val ipv_norm_outrage outrage
+	
 	rename s8q16 s11q3_ipv_knowlaw
 
 
-/* Section 11 - Migration History -----------------------------------------------
+/* Section 11 - Migration History ----------------------------------------------
 rename s10bq0 s10bq0_hhhage
 lab var s10bq0_hhhage "Age of head of household"
 
@@ -553,8 +620,10 @@ rename s10bq16_`num' mig_remituse_other_`num'
 }
 */
 *drop s10*
+drop s10* 
 
-* Section 13 - Political Knowledge ---------------------------------------------
+/* Section 13 - Political Knowledge ____________________________________________*/
+
 	lab define knowledge 0 "Don't Know" 1 "Know" -999 "Missing" 
 
 	rename s11_1 s13q1_knw_president
@@ -581,7 +650,8 @@ rename s10bq16_`num' mig_remituse_other_`num'
 	lab val s13q4_knw_mp knowledge
 
 		
-* Section 12 - Compliance ------------------------------------------------------
+/* Section 12 - Compliance _____________________________________________________*/
+
 	rename s12q1 comply_attend
 	rename s12q2 comply_topic													// Need to match to treatment assignment
 	rename s12q5 comply_disc
@@ -602,7 +672,8 @@ rename s10bq16_`num' mig_remituse_other_`num'
 	gen comply_disc_cuz = 1 if strpos(s3q2_ptix_contact, "9")
 	gen comply_disc_comlead = 1 if strpos(s3q2_ptix_contact, "other cm")
 
-* Section 13 - Conclusion ------------------------------------------------------
+/* Section 13 - Conclusion _____________________________________________________*/
+
 	rename s13q1 s13q1_followup
 	rename s13q3 s13q4_otherspresent
 
@@ -612,7 +683,8 @@ rename s10bq16_`num' mig_remituse_other_`num'
 	drop times*
 	
 
-* Save -------------------------------------------------------------------------
-save  "${data}/01_raw_data/pfm_as_midline_clean.dta", replace
+/* Save ________________________________________________________________________*/
+
+	save  "${data}/01_raw_data/pfm_as_midline_clean.dta", replace
 
 

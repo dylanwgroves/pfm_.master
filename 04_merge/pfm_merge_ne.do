@@ -25,6 +25,7 @@ _______________________________________________________________________________*
 	tempfile temp_rd_rand
 	tempfile temp_rand
 	tempfile temp_rd_ri
+	tempfile temp_end_partner
 
 
 /* Import Data _________________________________________________________________
@@ -59,6 +60,14 @@ _______________________________________________________________________________*
 		gen endline = 1
 		save `temp_end', replace
 		
+		/* Partner Endline */
+		use "${data}/02_mid_data/pfm_ne_endline_partner_clean.dta", clear
+		rename * p_*			
+		gen id_resp_uid = subinstr(p_id_resp_uid,"_p","",.)						// Create matching unique respondent id
+			replace id_resp_uid =subinstr(id_resp_uid,"_P","",.)
+			duplicates drop id_resp_uid, force
+		save `temp_end_partner'
+
 		/* Village Sample */
 		use "${data}/02_mid_data/pfm_ne_scoping_clean.dta", clear
 		drop village_id
@@ -137,6 +146,7 @@ _______________________________________________________________________________*
 			lab var id_objectid "(TZ Census) Object ID"
 			
 		save `temp_base', replace
+		
 			
 		/* Merge endline */
 		merge 1:1 id_resp_uid using `temp_end', gen(merge_end)
@@ -146,6 +156,9 @@ _______________________________________________________________________________*
 		gen svy_attrition = 1 if b_baseline ==1 & endline != 1					// Create attrition variable
 			replace svy_attrition = 0 if b_baseline == 1 & endline == 1
 		gen rand_merge = runiform()												// Merged
+
+		/* Merge Partner */
+		merge 1:1 id_resp_uid using `temp_end_partner', gen(merge_end_part)
 		save `temp_end', replace
 
 		/* Fix endline respondent IDs */
@@ -157,7 +170,7 @@ _______________________________________________________________________________*
 			keep id_resp_uid id_village_n resp_female merge_rank treat_ne resp_name asset_radio
 			rename id_resp_uid id_resp_uidR
 			save `temp_merged', replace
-			
+		
 			/* Prepare basleine attriters */
 			use `temp_end', clear												// Randomly assign ID to respondents who needed to be replaced
 			keep if svy_attrition == 1 											// Only assign to attriters

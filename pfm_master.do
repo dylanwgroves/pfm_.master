@@ -119,8 +119,8 @@ Tasks: Clean, and generate variables
 				
 		/* Natural Experiment */
 		
-			do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
-			do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
+		do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
+		do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
 
 		
 	/* Part 3: Merge _______________________________________________________________
