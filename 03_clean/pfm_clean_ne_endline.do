@@ -155,32 +155,28 @@ ________________________________________________________________________________
 	
 /* General Values ______________________________________________________________*/
 
-	rename s5q1 			values_conformity
-		lab def values_conformity 0 "Always do what you think is right" 1 "Pay attention to others"
-		lab val values_conformity values_conformity
+	** Gender difference in support for urbanization
+	rename gender_txt		treat_values_urbangood_gender
 
-		
 	rename s5q2				values_trynew
 		lab def values_trynew 0 "Do things as always done" 1 "Try new things"
 		lab val values_trynew values_trynew
 		
 	rename s5q3				values_mediagood
 
-	rename s5q4				values_dontquestion
-		lab def values_dontquestion 0 "Question leaders" 1 "Respect authority"
-		lab val values_dontquestion values_dontquestion
+	recode s5q4				(0 = 1 "Question leaders")(1 = 0 "Respect authority"), ///
+							gen(values_questionauthority)
+	lab var values_questionauthority "[1 = Yes] People should question their leaders"
 		
-	rename s5q6				values_urbangood
-		recode values_urbangood (-999 = .d) (-888 = .r) (1 = 0) (0 = 1)
-		lab def values_urbangood 1 "Good to go to town" 0 "Support the family"
-		lab val values_urbangood values_urbangood
+	recode s5q6				(1 = 0 "Support the family") (0 = 1 "Good to go to town") ///
+							(-999 = .d) (-888 = .r), gen(values_urbangood)
+	lab var values_urbangood "[1 = City] Should child go to town or stay in village after school?"
 		
-	rename s3q20_tz_tribe		values_tzortribe
-		gen values_tzortribe_dum = (values_tzortribe == 1 | values_tzortribe == 2)
-		replace values_tzortribe_dum = . if values_tzortribe == -888 | values_tzortribe == .
-
-	** Gender difference in support for urbanization
-	rename gender_txt		treat_values_urbangood_gender
+	recode s3q20_tz_tribe	(1 2 = 1 "TZ > Tribe") (3 4 5 .d = 0 "TZ <= Tribe") (-888 = .r "Refuse"), ///
+							gen(values_tzovertribe_dum)
+		lab var values_tzovertribe "[1 = TZ] Which feels more important to you, being a Tanzanian or being a ${tribe_txt}"
+		
+	rename s3q20_tz_tribe values_tzovertribe
 
 	
 /* Prejudice ______________________________________________________________*/
@@ -673,15 +669,20 @@ ________________________________________________________________________________
 	
 /* Health Knowledge ____________________________________________________________*/
 
-	rename s23q1		healthknow_notradmed
-		recode healthknow_notradmed (0=1)(1=0)									// Check on translation
-		lab var healthknow_notradmed "[Reversed] Prayer and traditional medicine can help cure disease"
-	rename s23q2		healthknow_vaccines
-	rename s23q3		healthknow_vaccines_imp
-		replace healthknow_vaccines_imp = 0 if healthknow_vaccines == 0
-	rename s23q4		healthknow_nowitchcraft
-		recode healthknow_nowitchcraft (0=1)(1=0)
-		lab var healthknow_nowitchcraft "[Reversed] Believe in witchcraft?"
+	recode s23q1 		(0=1 "Cant cure disease") (1 .d =0 "Can cure disease / don't know"),	///
+							gen(healthknow_notradmed)
+	lab var healthknow_notradmed "[1 = No] Can payer and trad. medicine help cure disease?"
+
+	rename s23q2			healthknow_vaccines
+	
+	recode s23q3			(0 1 .d = 0 "Not very important") (2 = 1 "Very important"), ///
+							gen(healthknow_vaccines_imp)
+	lab var healthknow_vaccines_imp "[2 = very important] In your opinion, how important is it for a healthy young child to receive vaccine?"
+	replace healthknow_vaccines_imp = 0 if healthknow_vaccines == 0
+		
+	recode s23q4			(0 = 1 "Withcraft does not exist") (1 .d = 0 "Witchraft does exist / don't know"), ///
+							gen(healthknow_nowitchcraft)
+	lab var healthknow_nowitchcraft "[1 = No] Believe in witchcraft?"
 
 	foreach var of varlist healthknow_* {
 		cap recode `var' (-999 = 0)(-222 = 0)(-888 = .r)
@@ -1133,7 +1134,7 @@ ________________________________________________________________________________
 		rename s30q7_4 rd_uses_othfam
 		rename s30q7_5 rd_uses_friends
 		rename s30q7_6 rd_uses_cowork
-		
+
 		foreach var of varlist rd_uses_* {
 			lab val `var' yesno
 		}
@@ -1146,7 +1147,6 @@ ________________________________________________________________________________
 		rename s30q10_3		rd_challenge_fight
 		rename s30q10_oth	rd_challenge_oth
 		
-
 /* Conclusion __________________________________________________________________*/
 
 	rename s20q1				svy_followupok

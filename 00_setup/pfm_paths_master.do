@@ -56,6 +56,7 @@ ______________________________________________________________________________*/
 /* Importing and Cleaning _______________________________________________________*/
 				
 		/* IPA source files */
+		
 			/* Natural Experiment */
 			global ipa_ne "${userboxcryptor}/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
 			global ipa_ne_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
@@ -71,6 +72,7 @@ ______________________________________________________________________________*/
 
 		
 /* Analysis ____________________________________________________________________*/
+
 
 		/* Natural Experiment */
 		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
@@ -120,6 +122,7 @@ ______________________________________________________________________________*/
 		
 /* Clean Tables and Figures ____________________________________________________*/
 
+
 	/* Natural Experiment */
 	global ne_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
 	global ne_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
@@ -128,12 +131,20 @@ ______________________________________________________________________________*/
 	global wpp_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Tables"
 	global wpp_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Figures"
 
+	/* Radio Distribtuion */
+	global rd_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Tables"
+	global rd_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Figures"
 	
-		
+	/* EFM Audio Screening */
+	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Tables"
+	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Figures"
+	
+	
 /* Set Date _____________________________________________________________________*/
 
 	global date : di %tdDNCY daily("$S_DATE", "DMY")
 
+	
 /* Indicate whether the globals have been set __________________________________*/
 
 	global globals_set "yes"
