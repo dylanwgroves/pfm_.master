@@ -121,10 +121,14 @@ ______________________________________________________________________________*/
 /* Clean Tables and Figures ____________________________________________________*/
 
 	/* Natural Experiment */
-	global ne_clean_tables "X:/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
-	global ne_clean_figures "X:/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
+	global ne_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
+	global ne_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
 
+	/* WPP Experiment */
+	global wpp_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Tables"
+	global wpp_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Figures"
 
+	
 		
 /* Set Date _____________________________________________________________________*/
 
