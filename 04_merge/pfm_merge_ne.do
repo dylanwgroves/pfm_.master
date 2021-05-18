@@ -205,11 +205,11 @@ _______________________________________________________________________________*
 			order id_resp_uid id_resp_uidB id_resp_uidR id_village_n 
 			sort id_village_n
 			*drop svy_replacement_nesample
-			duplicates tag id_resp_uid, gen(SB)
-			keep if SB == 1
+			*duplicates tag id_resp_uid, gen(SB)
+			*keep if SB == 1
 			order resp_female svy_replacement_nesample
 			sort id_village_n id_resp_uid
-			
+
 			/* Do some hand-fixes to avoid duplicates */
 			replace id_resp_uid = "8_111_3_36R" if id_resp_uidR == "8_111_3_36R"
 			replace id_resp_uid = "3_221_4_200R" if id_resp_uidR == "3_221_4_2 R"
