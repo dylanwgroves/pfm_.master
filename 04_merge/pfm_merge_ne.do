@@ -215,7 +215,8 @@ _______________________________________________________________________________*
 			replace id_resp_uid = "3_221_4_200R" if id_resp_uidR == "3_221_4_2 R"
 			replace id_resp_uid = "2_31_2_151R" if id_resp_uidR == "2_31_2_151R"
 			replace id_resp_uid = "3_221_2_8R" if id_resp_uidR == "3_221_2_8R"
-			replace id_resp_uid = "1_411_4_63R" if id_resp_uidR == "1_411_4_63R"
+			replace id_resp_uid = "1_411_4_67R" if id_resp_uidR == "1_411_4_63R"
+
 			
 			/* Calculate total in need of replacement */
 			bys id_village_n: egen vill_baseline = total(b_baseline)
@@ -233,6 +234,13 @@ _______________________________________________________________________________*
 				drop `var'_max
 			}
 			
+			/* Fill in Village ID */
+			bysort id_village_n : replace id_village_uid = id_village_uid[_n-1] if missing(id_village_uid)
+			replace id_village_uid = "8_111_3" if id_village_n == "Kwekuyu" & id_village_uid == ""
+			replace id_village_uid = "3_231_3" if id_village_n == "Kwezitu" & id_village_uid == ""
+			replace id_village_uid = "2_41_5" if id_village_n == "Makaburini" & id_village_uid == ""
+			replace id_village_uid = "3_211_5" if id_village_n == "Mashewa" & id_village_uid == ""
+
 /* Label ______________________________________________________________________*/
 
 	rename * ne_*	
