@@ -45,6 +45,8 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 
 	drop deviceid subscriberid simid devicephonenum starttime endtime skipto* idstring time_*
 
+	gen ne_baseline = 1
+	
 /* Survey Information __________________________________________________________*/
 
 	/* Identifier */

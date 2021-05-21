@@ -51,6 +51,7 @@
 	qui ds, has(type numeric)
 	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
+	gen as_midline = 1
 	
 /* General Information  ________________________________________________________*/
 
