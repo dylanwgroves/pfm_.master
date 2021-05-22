@@ -235,7 +235,7 @@ _______________________________________________________________________________*
 			}
 			
 			/* Fill in Village ID */
-			bysort id_village_n : replace id_village_uid = id_village_uid[_n-1] if missing(id_village_uid)
+				bysort id_village_n : replace id_village_uid = id_village_uid[_n-1] if missing(id_village_uid)
 			replace id_village_uid = "8_111_3" if id_village_n == "Kwekuyu" & id_village_uid == ""
 			replace id_village_uid = "3_231_3" if id_village_n == "Kwezitu" & id_village_uid == ""
 			replace id_village_uid = "2_41_5" if id_village_n == "Makaburini" & id_village_uid == ""
