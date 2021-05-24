@@ -118,8 +118,12 @@ ______________________________________________________________________________*/
 		/* Socialization */
 		global data_socialization "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/01_data"
 		global socialization_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/03_output"
-
 		
+		/* HetFX */
+		global data_hetfx "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HetFX/01 Data"
+		global hetfx_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HetFX/03 Tables and Figures"
+
+			
 /* Clean Tables and Figures ____________________________________________________*/
 
 
@@ -141,6 +145,12 @@ ______________________________________________________________________________*/
 
 	/* Pluralistic Ignorance */
 	global pi_clean_tables   "${user}/Dropbox/Apps/Overleaf/Pluralistic Ignorance Report/Tables"
+	
+	/* HetFX */
+	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
+	global hetfx_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Figures" 
+	
+	
 	
 	
 /* Set Date _____________________________________________________________________*/
