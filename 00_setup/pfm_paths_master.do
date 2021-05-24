@@ -100,7 +100,7 @@ ______________________________________________________________________________*/
 		global wpp_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Womens Political Participation/03_tables"
 		
 		/* Pluralistic Ignorance */
-		global data_pi "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
+		global data_pi   "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
 		global pi_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/03_output"
 		
 		/* Enumerator Effects */
@@ -138,6 +138,9 @@ ______________________________________________________________________________*/
 	/* EFM Audio Screening */
 	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Tables"
 	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Figures"
+
+	/* Pluralistic Ignorance */
+	global pi_clean_tables   "${user}/Dropbox/Apps/Overleaf/Pluralistic Ignorance Report/Tables"
 	
 	
 /* Set Date _____________________________________________________________________*/

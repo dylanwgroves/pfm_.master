@@ -287,7 +287,41 @@ ________________________________________________________________________________
 		rename ptixpref_rank_9		ptixpref_rank_health
 
 	rename s14q2_oth		ptixpref_other
-	 
+
+	
+	/* HIV Ranking */
+	gen ptixpref_hiv = ptixpref_rank_health
+		replace ptixpref_hiv = ptixpref_hiv + 1 if ptixpref_rank_efm > ptixpref_rank_health
+		lab var ptixpref_hiv "Rank of HIV/Health, Adjusted for EFM"
+		
+	gen ptixpref_hiv_first = (ptixpref_hiv == 9)
+		lab var ptixpref_hiv_first "Ranked HIV First"
+	
+	gen ptixpref_hiv_topthree = (ptixpref_hiv == 9 | ///
+								ptixpref_hiv == 8  | ///
+								ptixpref_hiv == 7)
+		lab var ptixpref_hiv_topthree "Ranked HIV Top Three"
+								
+	gen ptixpref_hiv_notlast = (ptixpref_hiv != 2)
+		lab var ptixpref_hiv_notlast "Did not rank HIV last"
+
+	/* EFM Ranking */	
+	gen ptixpref_efm = ptixpref_rank_efm
+		replace ptixpref_efm = ptixpref_efm + 1 if ptixpref_rank_health > ptixpref_rank_efm
+		lab var ptixpref_efm "Rank of EFM, Adjusted for HIV"
+		
+	gen ptixpref_efm_first = (ptixpref_efm == 9)
+		lab var ptixpref_efm_first "Ranked EFM First"
+	
+	gen ptixpref_efm_topthree = (ptixpref_efm == 9 | ///
+								ptixpref_efm == 8  | ///
+								ptixpref_efm == 7)
+	lab var ptixpref_efm_topthree "Ranked EFM Top Three Preferences"
+								
+	gen ptixpref_efm_notlast = (ptixpref_efm != 2)
+		lab var ptixpref_efm_notlast "Did not rank EFM Last"
+	
+	* Local government
 	rename s14q3  ptixpref_local_approve				
 		recode ptixpref_local_approve (1 = 0) (0 = 1)
 		lab def gov_approval 0 "Don't Approve" 1 "Approve"
@@ -631,9 +665,11 @@ ________________________________________________________________________________
 	rename s17q13 		em_record_reject
 		replace em_record_reject = 0 if em_record_any == 0
 
-	gen em_record_accept = 1 if em_record_reject == 0 & em_record_any == 1
+	/*gen em_record_accept = 1         if em_record_reject == 0 & em_record_any == 1
 		replace em_record_accept = 0 if em_record_any == 0
-		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0
+		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0 */		
+	 gen em_record_accept = (em_record_reject == 0)
+		replace em_record_accept = . if em_record_reject == . 
 
 	rename s17q10		em_record_name
 		replace em_record_name = 0 if em_record_reject != 1
@@ -705,6 +741,8 @@ ________________________________________________________________________________
 		recode ipv_rej_persists (0 = 1)(1 = 0)(-999 = .d)(-888 = .r)	
 		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
 		lab val ipv_rej_persists ipv
+		
+	egen ipv_rej_index_v0 	= rowmean(ipv_rej_disobey ipv_rej_hithard ipv_rej_persists)
 		
 	gen fixed = 1
 
@@ -791,7 +829,7 @@ ________________________________________________________________________________
 		
 	egen hhlabor_chores_dum = rowmean(hhlabor_water hhlabor_laundry)
 		lab val hhlabor_chores_dum hh_dum
-		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
+		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for chores?"
 	
 	recode couples_labor_3 	(2 3 4 6 = 1 "Equal/Progressive") ///
 							(1 5 = 0 "Conservative"), ///

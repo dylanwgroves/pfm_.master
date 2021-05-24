@@ -338,7 +338,8 @@ ________________________________________________________________________________
 	rename s14q2_partner	ptixpref_partner_rank
 		gen ptixpref_partner_hiv = (ptixpref_partner_rank == 9)
 		gen ptixpref_partner_efm = (ptixpref_partner_rank == 3)
-		
+	
+	* Local government
 	rename s14q3  ptixpref_local_approve				
 		recode ptixpref_local_approve (1 = 0) (0 = 1)
 		lab def gov_approval 0 "Don't Approve" 1 "Approve"
@@ -693,10 +694,12 @@ We are coding that higher is always "more gender equality"
 	rename s17q9 		em_record_reject
 		replace em_record_reject = 0 if em_record_any == 0
 
-	gen em_record_accept = 1 if em_record_reject == 0 & em_record_any == 1
+	/*gen em_record_accept = 1         if em_record_reject == 0 & em_record_any == 1
 		replace em_record_accept = 0 if em_record_any == 0
-		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0
-
+		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0 */	
+	 gen em_record_accept = (em_record_reject == 0)
+	 		replace em_record_accept = . if em_record_reject == . 
+	
 		
 	rename s17q10		em_record_name
 		replace em_record_name = 0 if em_record_reject != 1
@@ -783,6 +786,9 @@ We are coding that higher is always "more gender equality"
 	foreach var of varlist ptixknow_* {
 		cap recode `var' (-999 = 0)(-222 = 0)
 	}
+
+	egen ptixknow_pop_index = rowmax(ptixknow_pop_sport  ptixknow_pop_music)
+	egen ptixknow_natl_index = rowmax(ptixknow_natl_pm   ptixknow_natl_justice)
 	
 
 		
@@ -873,6 +879,8 @@ We are coding that higher is always "more gender equality"
 		replace ipv_rej_persists = 0 if ipv_rej_disobey == 0
 		lab val ipv_rej_persists ipv
 
+	egen ipv_rej_index_v0 	= rowmean(ipv_rej_disobey ipv_rej_hithard ipv_rej_persists)
+		
 	rename s9q2 			ipv_norm_rej
 		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
 		lab val ipv_norm_rej ipv
@@ -907,7 +915,7 @@ We are coding that higher is always "more gender equality"
 		
 	egen hhlabor_chores_dum = rowmean(hhlabor_water_dum hhlabor_laundry_dum)
 		lab val hhlabor_chores_dum hh_dum
-		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
+		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for chores?"
 	
 	recode hhlabor_kids (2=1)(3=1)(1=0), gen(hhlabor_kids_dum)
 		lab val hhlabor_kids_dum hh_dum
@@ -915,9 +923,12 @@ We are coding that higher is always "more gender equality"
 	
 	recode hhlabor_money (2=0)(3=1)(1=1), gen(hhlabor_money_dum)
 		lab val hhlabor_money_dum hh_dum_rev
-		lab var hhlabor_money_dum "[1 = prog/bal] Who in HH is responsible for kids?"
+		lab var hhlabor_money_dum "[1 = prog/bal] Who in HH is responsible for money?"
 	
 	recode hhlabor* (-999 = .d)(-888 = .r)		
+
+	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
+	lab var hhlabor_index "Index of four HH labor questions"
 
 
 /* HH Decisions _____________________________________________________________________*/
@@ -946,6 +957,9 @@ We are coding that higher is always "more gender equality"
 	
 	recode hhdecision* (-999 = .d)(-888 = .r)		
 
+	egen hhdecision_index = rowtotal(hhdecision_school_dum hhdecision_hhfix_dum)
+		lab var hhdecision_index "Index of two hhdecision questions"
+	
 	
 /* Relationships _______________________________________________________________*/
 
@@ -988,6 +1002,9 @@ We are coding that higher is always "more gender equality"
 	rename s4q2_listen_radio	radio_listen							
 		lab def s4q2_listen_radio 0 "Never", modify
 		lab val radio s4q2_listen_radio
+
+	gen radio_any = 1 if radio_listen > 0
+	replace radio_any = 0 if radio_listen == 0
 		
 	rename s4q2b_listen_radio_time	radio_listen_hrs
 		replace radio_listen_hrs = 0 if radio_listen == 0
