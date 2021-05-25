@@ -130,6 +130,15 @@
 	rename s3q3_e elect_priority_list
 	rename s3q3_f crime_priority_list
 	rename s3q3_g hiv_priority_list
+	
+	/* Fix rank orderings to account for effec ton other side */
+	replace em_priority_list = 0 if em_priority_list == -1
+	replace em_priority_list = 2 if em_priority_list == 1 & hiv_priority_list > 1
+	replace em_priority_list = 3 if em_priority_list == 2 & hiv_priority_list > 2
+	
+	replace hiv_priority_list = 0 if hiv_priority_list == -1
+	replace hiv_priority_list = 2 if hiv_priority_list == 1 & em_priority_list > 1
+	replace hiv_priority_list = 3 if hiv_priority_list == 2 & em_priority_list > 2
 
 	foreach var in *_priority_list {
 		recode `var' (. = 0)
@@ -280,7 +289,7 @@
 	rename s6q9			em_report_norm
 
 
-* Section 5 - Gender Hierarchy -------------------------------------------------
+/* Section 5 - Gender Hierarchy _________________________________________________*/
 
 	* Recoded to positive = more equality
 	rename s6q1 	ge_kid
@@ -504,18 +513,20 @@
 
 	rename s8b1q6 s9q11_hiv
 
-	gen s9q11_hiv_sharespouse = 1 if strpos(s9q11_hiv, "1")				// NEED TO
-	gen s9q11_hiv_sharefam = 1 if strpos(s9q11_hiv, "2")
-	gen s9q11_hiv_sharefriend = 1 if strpos(s9q11_hiv, "3")
-	gen s9q11_hiv_sharecowork = 1 if strpos(s9q11_hiv, "4")
-	gen s9q11_hiv_sharenone = 1 if strpos(s9q11_hiv, "5") 	
+	gen hivdisclose_sharespouse = 1 if strpos(s9q11_hiv, "1")					// NEED TO
+	gen hivdisclose_fam = 1 if strpos(s9q11_hiv, "2")
+	gen hivdisclose_friend = 1 if strpos(s9q11_hiv, "3")
+	gen hivdisclose_cowork = 1 if strpos(s9q11_hiv, "4")
+	gen hivdisclose_none = 1 if strpos(s9q11_hiv, "5") 	
 
 	lab def hiv_share 1 "Share" 0 "Don't share"
 
-	foreach var of varlist s9q11_hiv_share* {
+	foreach var of varlist hivdisclose_* {
 		replace `var' = 0 if `var' == .
 		lab val `var' hiv_share
 	}
+	
+	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
 
 
 /* Section 10 - Victim Response ________________________________________________*/
