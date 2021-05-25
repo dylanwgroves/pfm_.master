@@ -665,11 +665,11 @@ ________________________________________________________________________________
 	rename s17q13 		em_record_reject
 		replace em_record_reject = 0 if em_record_any == 0
 
-	/*gen em_record_accept = 1         if em_record_reject == 0 & em_record_any == 1
+	gen em_record_accept = 1         if em_record_reject == 0 & em_record_any == 1
 		replace em_record_accept = 0 if em_record_any == 0
-		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 0 */		
-	 gen em_record_accept = (em_record_reject == 0)
-		replace em_record_accept = . if em_record_reject == . 
+		replace em_record_accept = 0 if em_record_any == 1 & em_record_reject == 1 		
+	 /*gen em_record_accept = (em_record_reject == 0)
+		replace em_record_accept = . if em_record_reject == . */
 
 	rename s17q10		em_record_name
 		replace em_record_name = 0 if em_record_reject != 1
