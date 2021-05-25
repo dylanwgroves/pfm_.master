@@ -117,28 +117,28 @@ Tasks: Clean, and generate variables
 		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
 
 					
-			/* Natural Experiment */
-			
-			do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
-			do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
+	/* Natural Experiment */
+	
+		do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
+		do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
+
+	
+/* Part 3: Merge _______________________________________________________________
+
+	Tasks: Merge different samples into one dta 								 */
+ 
+		/* Main Files */
+
+			do "${code}/pfm_.master/04_merge/pfm_merge_ne.do" 								// Natural Experiment
+			do "${code}/pfm_.master/04_merge/pfm_merge_as.do" 								// Audio Screening
+
+
+		/* Append Together */
+		
+			do "${code}/pfm_.master/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
+
 
 			
-		/* Part 3: Merge _______________________________________________________________
-
-			Tasks: Merge different samples into one dta 								 */
-		 
-				/* Main Files */
-
-					do "${code}/pfm_.master/04_merge/pfm_merge_ne.do" 								// Natural Experiment
-					do "${code}/pfm_.master/04_merge/pfm_merge_as.do" 								// Audio Screening
-
-
-				/* Append Together */
-				
-					do "${code}/pfm_.master/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
-
-
-					
 
 			
 /* Part 4: New Vars ____________________________________________________________
