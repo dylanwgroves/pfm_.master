@@ -100,13 +100,13 @@ ______________________________________________________________________________*/
 		global wpp_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Womens Political Participation/03_tables"
 		
 		/* Pluralistic Ignorance */
-		global data_pi   "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
+		global data_pi "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
 		global pi_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/03_output"
 		
 		/* Enumerator Effects */
 		global data_enumeffects "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Enumerator Effects/01_data"
 		global enumeffects_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Enumerator Effects/03_tables"
-	
+		
 		/* Election */
 		global data_election "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
 		global election_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/03_tables"
@@ -142,13 +142,16 @@ ______________________________________________________________________________*/
 	/* EFM Audio Screening */
 	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Tables"
 	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Figures"
-
-	/* Pluralistic Ignorance */
-	global pi_clean_tables   "${user}/Dropbox/Apps/Overleaf/Pluralistic Ignorance Report/Tables"
 	
 	/* HetFX */
 	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
 	global hetfx_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Figures" 
+	
+	/* Court */
+	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
+	global hetfx_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Figures" 
+	
+	
 	
 	
 	
