@@ -131,6 +131,24 @@
 	rename s3q3_f crime_priority_list
 	rename s3q3_g hiv_priority_list
 	
+	
+	* As in endline: 
+	
+				/* HIV Ranking */
+			gen ptixpref_hiv_topthree = (hiv_priority_list == 1 | ///
+										hiv_priority_list == 2  | ///
+										hiv_priority_list == 3)
+				lab var ptixpref_hiv_topthree "Ranked HIV Top Three"
+										
+			/* EFM Ranking */	
+			gen ptixpref_efm_topthree = (em_priority_list == 1 | ///
+										em_priority_list == 2  | ///
+										em_priority_list == 3)
+				lab var ptixpref_efm_topthree "Ranked EFM Top Three Preferences"
+
+										
+	* Only for midline
+	
 	/* Fix rank orderings to account for effec ton other side */
 	replace em_priority_list = 0 if em_priority_list == -1
 	replace em_priority_list = 2 if em_priority_list == 1 & hiv_priority_list > 1
@@ -144,6 +162,7 @@
 		recode `var' (. = 0)
 	}
 
+	
 	* Election
 	lab def vote 1 "1st Candidate" 2 "2nd Candidate"
 	lab def vote_male 1 "Male" 0 "Female"
