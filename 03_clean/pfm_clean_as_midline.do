@@ -145,7 +145,6 @@
 										em_priority_list == 2  | ///
 										em_priority_list == 3)
 				lab var ptixpref_efm_topthree "Ranked EFM Top Three Preferences"
-
 										
 	* Only for midline
 	
