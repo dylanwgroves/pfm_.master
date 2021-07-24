@@ -1,3 +1,4 @@
+
 *-------------------------------------------------------------------------------
 * Project: Pangani FM 2
 * File: FollowUp Pilot Import and Cleaning
@@ -321,7 +322,7 @@
 		lab var ge_school "[REVERSED] 6.6) It is more important for a boy to go to school than a girl"
 
 	egen ge_index = rowmean(ge_kid ge_earning ge_school)
-	
+	stop
 	
 /* Forced Marriage _____________________________________________________________*/
 
@@ -469,7 +470,7 @@
 
 	rename s7q10a_2 ipv_rej_persists											// this has been missing for early varibales
 		replace ipv_rej_persists = 1 if ipv_rej_disobey == 1
-		
+	
 	rename s7q10b ipv_rej_cheats												// Added one
 	rename s7q10c ipv_rej_kids
 	rename s7q10d ipv_rej_elders
@@ -478,6 +479,15 @@
 		recode `var' (1=0)(0=1)(.d=0)
 		lab val `var' reject
 	}
+	
+	** Create extended measure
+	gen ipv_rej_disobey_long = .
+		replace ipv_rej_disobey_long = 0 if ipv_rej_hithard == 0 & ipv_rej_disobey == 0
+		replace ipv_rej_disobey_long = 1 if ipv_rej_hithard == 1 & ipv_rej_disobey == 0
+		replace ipv_rej_disobey_long = 2 if ipv_rej_persists == 0 & ipv_rej_disobey == 1
+		replace ipv_rej_disobey_long = 3 if ipv_rej_persists == 1 & ipv_rej_disobey == 1
+		lab def ipv_rej_long 0 "Hit, hard" 1 "Hit, not hard" 2 "Dont hit, unless persists" 3 "Dont hit, even if persists"
+		lab val ipv_rej_disobey_long ipv_rej_long
 
 	destring s7q10yes_eligible, replace
 	destring s7q10no_eligible, replace

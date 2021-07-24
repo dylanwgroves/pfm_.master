@@ -884,6 +884,15 @@ We are coding that higher is always "more gender equality"
 	rename s9q2 			ipv_norm_rej
 		recode ipv_norm_rej (1=0)(0=1)(-999 = .d)(-888 = .r)	
 		lab val ipv_norm_rej ipv
+		
+	** Create extended measure
+	gen ipv_rej_disobey_long = .
+		replace ipv_rej_disobey_long = 0 if ipv_rej_hithard == 0 & ipv_rej_disobey == 0
+		replace ipv_rej_disobey_long = 1 if ipv_rej_hithard == 1 & ipv_rej_disobey == 0
+		replace ipv_rej_disobey_long = 2 if ipv_rej_persists == 0 & ipv_rej_disobey == 1
+		replace ipv_rej_disobey_long = 3 if ipv_rej_persists == 1 & ipv_rej_disobey == 1
+		lab def ipv_rej_long 0 "Hit, hard" 1 "Hit, not hard" 2 "Dont hit, unless persists" 3 "Dont hit, even if persists"
+		lab val ipv_rej_disobey_long ipv_rej_long
 
 	rename s9q3		ipv_report
 		recode ipv_report (2=0)(1=1)	
