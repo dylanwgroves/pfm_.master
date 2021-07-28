@@ -122,6 +122,10 @@ ________________________________________________________________________________
 		/* HetFX */
 		global data_hetfx "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HetFX/01 Data"
 		global hetfx_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HetFX/03 Tables and Figures"
+		
+		/* Spillovers */
+		global data_spill "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/01 Data"
+		global spill_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/03 Tables and Figures"
 
 			
 /* Clean Tables and Figures ____________________________________________________*/
@@ -148,12 +152,14 @@ ________________________________________________________________________________
 	global hetfx_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Figures" 
 	
 	/* Court */
-	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
-	global hetfx_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Figures" 
+	global court_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Tables"
+	global court_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Figures" 
 	
-	
-	
-	
+	/* Spillovers */
+	global spill_clean_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/Tables"
+	global spill_clean_figures "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/Figures"
+
+
 	
 	
 /* Set Date _____________________________________________________________________*/

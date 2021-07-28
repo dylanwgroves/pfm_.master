@@ -24,7 +24,7 @@ ________________________________________________________________________________
 
 use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", clear
 
-	
+
 /* Labels _______________________________________________________________________*/
 
 	lab def yesno 0 "No" 1 "Yes"
@@ -122,7 +122,7 @@ use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", clear
 	
 	rename s3q7				resp_evercity
 			
-	rename s3q8				resp_visitcity
+	rename s3q8				resp_urbanvisit
 	
 	rename s3q9				resp_edu
 	
@@ -210,10 +210,10 @@ We are coding that higher is always "more gender equality"
 
 */
 
-	rename s3q12				em_idealkids
-	rename s2q21				em_idealage
+	rename s3q12				ge_kids_idealnum
+	rename s2q21				ge_kids_idealage
 
-	foreach var of varlist em_idealkids em_idealage {
+	foreach var of varlist ge_kids_idealnum ge_kids_idealage {
 		recode `var' (-999 = .d)(-888 = .r)
 	}
 
@@ -388,9 +388,11 @@ rename s8q5c		fm_friend_reject
 
 /* Early Marriage ______________________________________________________________*/
 
+	rename s17q1_intro	ptixknow_em_aware
+		replace ptixknow_em_aware = s13q5 if ptixknow_em_aware == .
 
 	rename s17_txt_treat	treat_court
-	
+
 	gen treat_court_all = 1 if treat_court == "treat_both" | treat_court == "treat_court"
 	replace treat_court_all = 0 if treat_court== "control"
 	
@@ -770,7 +772,6 @@ rename s8q5c		fm_friend_reject
 
 	rename s_hiv_stigma2		hivstigma_yesbus
 
-	rename s_disclose_family_a	hivdisclose_fam
 	rename s_disclose_family_b	hivdisclose_friend
 	rename s_disclose_family_c	hivdisclose_cowork
 	

@@ -852,13 +852,12 @@ We are coding that higher is always "more gender equality"
 		recode hivdisclose_nosecret (0=1)(1=0)
 		lab var hivdisclose_nosecret "[Reverse] Prefer family member keep HIV secret?"
 
-	rename s_disclose_family_a	hivdisclose_fam
 	rename s_disclose_family_b	hivdisclose_friend
 	rename s_disclose_family_c	hivdisclose_cowork
 	
 	recode hivdisclose_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
+	egen hivdisclose_index = rowmean(hivdisclose_friend hivdisclose_cowork hivdisclose_nosecret)
 
 
 /* Intimate Partner Violence __________________________________________________*/

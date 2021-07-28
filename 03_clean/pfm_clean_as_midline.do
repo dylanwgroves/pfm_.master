@@ -322,7 +322,7 @@
 		lab var ge_school "[REVERSED] 6.6) It is more important for a boy to go to school than a girl"
 
 	egen ge_index = rowmean(ge_kid ge_earning ge_school)
-	stop
+
 	
 /* Forced Marriage _____________________________________________________________*/
 

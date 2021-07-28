@@ -118,9 +118,11 @@ ________________________________________________________________________________
 		
 	gen resp_rltn_age_yr = 2020 - resp_rltn_age 
 
+	gen resp_married = 1 // Everyone married
+	
 	gen resp_married_yr = year(s3q5)
 		recode resp_married_yr (-999 = .d)
-
+	
 	gen resp_married_age = resp_married_yr - resp_age_yr
 	gen resp_rltn_married_age = resp_married_yr - resp_rltn_age_yr
 
@@ -494,7 +496,6 @@ rename s5q9				efficacy_speakout
 		recode `var' (-999 = .d)(-888 = .r)
 	}
 
-
 	rename s6q1			ge_school	
 		recode ge_school (1=0)(2=1) 	
 	rename s6q2			ge_work
@@ -638,7 +639,7 @@ rename s5q9				efficacy_speakout
 		replace ptixknow_em_aware = "1" if ptixknow_em_aware == "Ndiyo, nafahamu"
 		replace ptixknow_em_aware = "0" if ptixknow_em_aware != "0" & ptixknow_em_aware != "1" 
 		destring ptixknow_em_aware, replace
-
+		
 	rename s13q6		ptixknow_sourcetrust
 	
 	gen ptixknow_trustloc = 1 if ptixknow_sourcetrust == 1
@@ -687,6 +688,8 @@ rename s5q9				efficacy_speakout
 
 /* Early Marriage ______________________________________________________________*/
 
+	rename s17_txt_treat		treat_court
+	
 	rename s17q1	em_bestage
 		recode em_bestage (-888 = .r) (-999 = .d)
 
@@ -717,8 +720,6 @@ rename s5q9				efficacy_speakout
 	rename s17q5d		em_hearddiscussed_often
 		replace em_hearddiscussed_often = 0 if em_hearddiscussed == 0
 		
-	rename s17_txt_treat		treat_court
-
 	gen treat_court_dum = 1 if treat_court == "treat_court" | treat_court == "treat_both"
 		replace treat_court_dum = 0 if treat_court == "control"
 
@@ -844,13 +845,12 @@ rename s5q9				efficacy_speakout
 		recode hivdisclose_nosecret (0=1)(1=0)
 		lab var hivdisclose_nosecret "[Reverse] Prefer family member keep HIV secret?"
 
-	rename s_disclose_family_a	hivdisclose_fam
 	rename s_disclose_family_b	hivdisclose_friend
 	rename s_disclose_family_c	hivdisclose_cowork
 	
 	recode hivdisclose_* (-999 = .d)(-888 = .r)(-222 = .o)
 
-	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
+	egen hivdisclose_index = rowmean(hivdisclose_friend hivdisclose_cowork hivdisclose_nosecret)
 
 
 /* Intimate Partner Violence __________________________________________________*/
