@@ -66,6 +66,8 @@ ________________________________________________________________________________
 			global ipa_as_midline "${userboxcryptor}/Box Sync/19_Community Media Endlines/04_Research Design/04 Randomization & Sampling"
 			global ipa_as_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
 			global ipa_as_endline_spill "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
+			global ipa_leader "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/09_leaders/03 Data Flow/02_imported/"
+
 
 		global ipa_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines"
 
@@ -94,6 +96,10 @@ ________________________________________________________________________________
 		/* Court */
 		global data_court "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Court/01_data"
 		global court_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Court/03_tables"
+		
+		/* Development News */
+		global data_devnews "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Development News/01_data"
+		global devnews_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Development News/03_tables"
 		
 		/* Womens Political Participation */
 		global data_wpp "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Womens Political Participation/01_data"
@@ -130,7 +136,6 @@ ________________________________________________________________________________
 			
 /* Clean Tables and Figures ____________________________________________________*/
 
-
 	/* Natural Experiment */
 	global ne_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
 	global ne_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
@@ -154,6 +159,10 @@ ________________________________________________________________________________
 	/* Court */
 	global court_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Tables"
 	global court_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Figures" 
+	
+	/* Development News */
+	global devnews_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Tables"
+	global devnews_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Figures" 
 	
 	/* Spillovers */
 	global spill_clean_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/Tables"

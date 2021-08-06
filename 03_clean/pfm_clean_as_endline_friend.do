@@ -650,8 +650,6 @@ rename s8q5c		fm_friend_reject
 		rename cand3_female cand1_female_2
 		rename cand4_female cand2_female_2
 	
-
-	
 		/* Issue */
 			/* First Election */
 			gen cand1_topic_1 = 1 if 	 rand_order_1st_txt == "first"
@@ -722,8 +720,15 @@ rename s8q5c		fm_friend_reject
 	egen dev_electdev = rowmax(sdev_election_vf sdev_election_f sdev_election_n sdev_election_vn)
 		lab val dev_electdev gov_votedev
 		
-	rename sdevq3	dev_responsibility
 
+		gen electdev_dist = 0 if sdev_election_vf != .
+			replace electdev_dist = 1 if sdev_election_f != .
+			replace electdev_dist = 2 if sdev_election_n != .
+			replace electdev_dist = 3 if sdev_election_vn != .
+		lab def electdev_dist 0 "very far" 1 "far" 2 "near" 3 "very near"
+		lab val electdev_dist electdev_dist 
+		
+	rename sdevq3	dev_responsibility
 	
 	/* Recode */
 	recode dev_localapprove dev_trust dev_electdev (-999 = .d) (-888 = .r)

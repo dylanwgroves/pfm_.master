@@ -137,9 +137,8 @@ Tasks: Clean, and generate variables
 		
 			do "${code}/pfm_.master/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
 
-
-			
-
+	
+		
 			
 /* Part 4: New Vars ____________________________________________________________
 

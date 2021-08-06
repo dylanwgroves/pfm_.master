@@ -40,6 +40,7 @@ tempfile temp_as
 	use "${data}/03_final_data/pfm_as_merged.dta", clear
 		rename as_rd_treat_* rd_treat_*
 		save `temp_as'
+
 		
 
 /* Export with Prefix __________________________________________________________

@@ -23,6 +23,7 @@ ________________________________________________________________________________
 	tempfile temp_end_partner
 	tempfile temp_end_friend
 	tempfile temp_end_kid
+	tempfile temp_leader
 	
 	tempfile temp_rd_dist
 	tempfile temp_rd_rand
@@ -89,6 +90,12 @@ ________________________________________________________________________________
 		rename * k_*		
 		rename k_id_resp_uid id_resp_uid
 		save `temp_end_kid'
+		
+		/* Leader Information */
+		use "${data}/01_raw_data/pfm_leader.dta", clear
+		*gen id_village_uid = subinstr(l_id_village_uid, "_", "-",.) 
+		gen id_village_uid = l_id_village_uid
+		save `temp_leader'
 
 	/* Randomization */
 	
@@ -165,8 +172,10 @@ ________________________________________________________________________________
 		merge 1:1 id_resp_uid using `temp_end_partner', gen(merge_end_part)
 		merge 1:1 id_resp_uid using `temp_end_friend', gen(merge_end_friend)
 		merge 1:1 id_resp_uid using `temp_end_kid', gen(merge_end_kid)
-		
-		
+		merge n:1 id_village_uid using `temp_leader', gen(merge_leader)
+			drop if merge_leader == 2
+	
+
 /* Label ______________________________________________________________________*/
 
 	rename * as_*	
