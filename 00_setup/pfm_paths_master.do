@@ -160,6 +160,10 @@ ________________________________________________________________________________
 	global court_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Tables"
 	global court_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Figures" 
 	
+	/* Pluralistic Ignorance */
+	global pi_clean_tables "${user}/Dropbox/Apps/Overleaf/Pluralistic Ignorance Report/Tables"
+	
+	
 	/* Development News */
 	global devnews_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Tables"
 	global devnews_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Figures" 
