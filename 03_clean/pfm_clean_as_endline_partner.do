@@ -819,6 +819,12 @@ rename s5q9				efficacy_speakout
 	gen hivknow_arv_nospread = .
 		replace hivknow_arv_nospread = 1 if strpos(s_hiv_nospread, "1")
 		replace hivknow_arv_nospread = 0 if s_hiv_nospread != "" & hivknow_arv_nospread != 1
+		
+	gen hivknow_arv_any = .
+		replace hivknow_arv_any = 1 if strpos(s_hiv_livelong, "1") 
+		replace hivknow_arv_any = 1 if strpos(s_hiv_nospread, "1")
+		replace hivknow_arv_any = 1 if s_hiv_antiretroviral == 1
+		replace hivknow_arv_any = 0 if s_hiv_antiretroviral == 0
 
 	recode  s_hiv_transmitted (1=0 "Yes")(0=1 "No"), gen(hivknow_transmit)
 		lab var hivknow_transmit "[Reversed] Can HIV be spread to other people?"
@@ -1116,9 +1122,10 @@ rename s5q9				efficacy_speakout
 		
 /* Audio Screening Compliance __________________________________________________*/
 
-	rename s31q1		comply_topic
+	rename s31q1		comply_know
 	rename s31q2		comply_discuss
-	rename s31q3		comply_discuss_who	
+		replace comply_discuss = 0 if comply_know == 0
+	rename s31q3		comply_discuss_topic	
 
 
 /* Conclusion __________________________________________________________________*/

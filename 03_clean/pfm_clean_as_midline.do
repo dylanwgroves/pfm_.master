@@ -135,17 +135,28 @@
 	
 	* As in endline: 
 	
-				/* HIV Ranking */
+			/* HIV Ranking */
 			gen ptixpref_hiv_topthree = (hiv_priority_list == 1 | ///
 										hiv_priority_list == 2  | ///
 										hiv_priority_list == 3)
 				lab var ptixpref_hiv_topthree "Ranked HIV Top Three"
+				
+			/* HIV Ranked First */
+			gen ptixpref_hiv_first = (hiv_priority_list ==3)
+				replace ptixpref_hiv_first = 1 if hiv_priority_list == 2 & em_priority_list == 3
+			
 										
 			/* EFM Ranking */	
 			gen ptixpref_efm_topthree = (em_priority_list == 1 | ///
 										em_priority_list == 2  | ///
 										em_priority_list == 3)
-				lab var ptixpref_efm_topthree "Ranked EFM Top Three Preferences"
+			lab var ptixpref_efm_topthree "Ranked EFM Top Three Preferences"
+			
+			/* EFM Ranked First */
+			gen ptixpref_efm_first = (em_priority_list ==3)
+				replace ptixpref_efm_first = 1 if em_priority_list == 2 & hiv_priority_list == 3
+			
+			
 										
 	* Only for midline
 	
@@ -508,44 +519,50 @@
 
 /* Section 9 - HIV / AIDS Knowledge + Stigma ___________________________________*/
 	
-	gen s9q5a_hiv_knowdrug = s8aq1 
-	replace s9q5a_hiv_knowdrug = 0 if s9q5a_hiv_knowdrug == -999
-	lab val s9q5a_hiv_knowdrug yesnodk
+	gen hivknow_drug = s8aq1 
+		replace hivknow_drug = 0 if hivknow_drug == -999
+		lab val hivknow_drug yesnodk
 
-	gen s9q5c_hiv_knowarv = s8aq2 
-	recode s9q5c_hiv_knowarv (2 = 0)
-	replace s9q5c_hiv_knowarv = 0 if s9q5a_hiv_knowdrug == 0						// Dont know ARV if never heard of the drug
-	lab def arv 0 "Don't Know ARV (no prompt)" 1 "Know ARV (no prompt)"
-	lab val s9q5c_hiv_knowarv arv
+	gen hivknow_arv = s8aq2 
+		recode hivknow_arv (2 = 0)
+		replace hivknow_arv = 0 if hivknow_drug == 0						// Dont know ARV if never heard of the drug
+		lab def arv 0 "Don't Know ARV (no prompt)" 1 "Know ARV (no prompt)"
+		lab val hivknow_arv arv
 
-	gen s9q5b_hiv_knowarv_prompt = s8aq3 
-	replace s9q5b_hiv_knowarv_prompt = 1 if s9q5c_hiv_knowarv == 1					// If you know ARVs unprompted then know prompted
-	replace s9q5b_hiv_knowarv_prompt = 0 if s9q5b_hiv_knowarv_prompt == -999
-	lab def arv_prompt 0 "Dont Know ARV (prompt)" 1 "Know ARV (prompt)" -999 "Don't Know"
-	lab val s9q5b_hiv_knowarv_prompt arv_prompt
+	gen hivknow_arv_prompt = s8aq3 
+		replace hivknow_arv_prompt = 1 if hivknow_arv == 1					// If you know ARVs unprompted then know prompted
+		replace hivknow_arv_prompt = 0 if hivknow_arv_prompt == -999
+		lab def arv_prompt 0 "Dont Know ARV (prompt)" 1 "Know ARV (prompt)" -999 "Don't Know"
+		lab val hivknow_arv_prompt arv_prompt
 
-	rename s8aq4 s9q6_hiv_knowpreg
-	replace s9q6_hiv_knowpreg = 0 if s9q6_hiv_knowpreg == -999
-	lab val s9q6_hiv_knowpreg yesnodk
-	lab var s9q6_hiv_knowpreg "Can HIV be transmitted from a mother to her baby during pregnancy?"
+	rename s8aq4 hivknow_preg
+		replace hivknow_preg = 0 if hivknow_preg == -999
+		lab val hivknow_preg yesnodk
+		lab var hivknow_preg "Can HIV be transmitted from a mother to her baby during pregnancy?"
 
-	rename s8aq5 s9q7_hiv_spirit
-	replace s9q7_hiv_spirit = 0 if s9q7_hiv_spirit == -999
-	lab var s9q7_hiv_spirit "Do you believe spiritual efforts like prayer and traditional medicine are effective at treating HIV?"
+	rename s8aq5 hivknow_spirit
+		replace hivknow_spirit = 0 if hivknow_spirit == -999
+		lab var hivknow_spirit "Do you believe spiritual efforts like prayer and traditional medicine are effective at treating HIV?"
 
-	rename s8b1q1 s9q8_hiv_famshare
-	rename s8b1q2 s9q9_hiv_boy
-	rename s8b1q3 s9q9_hiv_house
-	rename s8b1q4 s9q10_hiv_workself
-	rename s8q5 s9q10_hiv_workcomm
+	rename s8b1q1 hivdisclose_nosecret
+		recode hivdisclose_nosecret (1 = 0)(0 = 1)
+		lab var hivdisclose_nosecret "HIV no secret"
+	rename s8b1q2 hivstigma_boy
+		lab var hivstigma_boy "HIV stigma - boy"
+	rename s8b1q3 hivstigma_house
+		lab var hivstigma_boy "HIV stigma - house"
+	rename s8b1q4 hivstigma_workself
+		lab var hivstigma_workself "HIV stigma - workself"
+	rename s8q5 hivstigma_norm_workcomm
+		lab var hivstigma_norm_workcomm "HIV stigma - work comm"
 
-	rename s8b1q6 s9q11_hiv
+	rename s8b1q6 s_hivdisclose
 
-	gen hivdisclose_sharespouse = 1 if strpos(s9q11_hiv, "1")					// NEED TO
-	gen hivdisclose_fam = 1 if strpos(s9q11_hiv, "2")
-	gen hivdisclose_friend = 1 if strpos(s9q11_hiv, "3")
-	gen hivdisclose_cowork = 1 if strpos(s9q11_hiv, "4")
-	gen hivdisclose_none = 1 if strpos(s9q11_hiv, "5") 	
+	gen hivdisclose_sharespouse = 1 if strpos(s_hivdisclose, "1")					// NEED TO
+	gen hivdisclose_fam = 1 if strpos(s_hivdisclose, "2")
+	gen hivdisclose_friend = 1 if strpos(s_hivdisclose, "3")
+	gen hivdisclose_cowork = 1 if strpos(s_hivdisclose, "4")
+	gen hivdisclose_none = 1 if strpos(s_hivdisclose, "5") 	
 
 	lab def hiv_share 1 "Share" 0 "Don't share"
 
@@ -554,9 +571,10 @@
 		lab val `var' hiv_share
 	}
 	
-	egen hivdisclose_index = rowmean(hivdisclose_fam hivdisclose_friend hivdisclose_cowork)
+	egen hivdisclose_index = rowmean(hivdisclose_friend hivdisclose_cowork hivdisclose_nosecret)
+	egen hivknow_index = rowmean(hivknow_spirit hivknow_preg hivknow_arv hivknow_arv_prompt hivknow_drug)
 
-
+	
 /* Section 10 - Victim Response ________________________________________________*/
 	rename s9q1 s10q1_ipv_tolerate	
 	lab def tolerate 0 "Disagree" 1 "Agree"

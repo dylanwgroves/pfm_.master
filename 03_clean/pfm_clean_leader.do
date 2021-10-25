@@ -132,12 +132,12 @@ ________________________________________________________________________________
 
 	forval i = 1/9 {
 		gen ptixpref_rank_`i' = .
-		replace ptixpref_rank_`i' = 1 if pref_a == `i'
-		replace ptixpref_rank_`i' = 2 if pref_b == `i'
-		replace ptixpref_rank_`i' = 3 if pref_c == `i'
-		replace ptixpref_rank_`i' = 4 if pref_d == `i'
-		replace ptixpref_rank_`i' = 5 if pref_e == `i'
-		replace ptixpref_rank_`i' = 6 if pref_f == `i'
+		replace ptixpref_rank_`i' = 6 if pref_a == `i'
+		replace ptixpref_rank_`i' = 5 if pref_b == `i'
+		replace ptixpref_rank_`i' = 4 if pref_c == `i'
+		replace ptixpref_rank_`i' = 3 if pref_d == `i'
+		replace ptixpref_rank_`i' = 2 if pref_e == `i'
+		replace ptixpref_rank_`i' = 1 if pref_f == `i'
 	}
 	
 		drop ptixpref_rank_1 ptixpref_rank_2
@@ -164,10 +164,12 @@ ________________________________________________________________________________
 	
 	gen svy_leader = 1
 	rename * l_*
-	
 
+	/* Save */
+	save "${data}/01_raw_data/pfm_leader_long.dta", replace
+
+	/* Reshape */
 	reshape wide l_ptixpref_rank_* l_budget_* l_vill_* l_resp_*, i(l_id_village_uid) j(l_rank)
-
 	
 	* Within folder
 	save "${data}/01_raw_data/pfm_leader.dta", replace

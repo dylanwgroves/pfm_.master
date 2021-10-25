@@ -769,21 +769,23 @@ rename s8q5c		fm_friend_reject
 
 /* HIV _________________________________________________________________________*/
 
-
+	rename s_hiv_livelong hiv_livelong
 	gen hivknow_arv_survive = .
-		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "1") 
-		replace hivknow_arv_survive = 1 if strpos(s_hiv_livelong, "2") 	
-		replace hivknow_arv_survive = 0 if s_hiv_livelong != "" & hivknow_arv_survive != 1 
+		replace hivknow_arv_survive = 1 if strpos(hiv_livelong, "1") 
+		replace hivknow_arv_survive = 1 if strpos(hiv_livelong, "2") 	
+		replace hivknow_arv_survive = 0 if hiv_livelong != "" & hivknow_arv_survive != 1 
 
 	rename s_hiv_stigma2		hivstigma_yesbus
 
 	rename s_disclose_family_b	hivdisclose_friend
 	rename s_disclose_family_c	hivdisclose_cowork
 	
+	rename s_hiv_antiretroviral hivknow_arv_any
+	
 	recode hivdisclose_* (-999 = .d)(-888 = .r)(-222 = .o)
 
 	egen hivdisclose_index = rowmean(hivdisclose_friend hivdisclose_cowork)
-	
+
 	recode hivknow_* hivstigma_* (-999 = .d)(-888 = .r)(-222 = .o)
 	
 	

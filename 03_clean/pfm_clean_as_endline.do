@@ -301,21 +301,24 @@ ________________________________________________________________________________
 		rename ptixpref_rank_9		ptixpref_rank_health
 		
 	rename s14q2_oth		ptixpref_other
-		
+	
 	/* HIV Ranking */
 	gen ptixpref_hiv = ptixpref_rank_health
 		replace ptixpref_hiv = ptixpref_hiv + 1 if ptixpref_rank_efm > ptixpref_rank_health
 		lab var ptixpref_hiv "Rank of HIV/Health, Adjusted for EFM"
 		
 	gen ptixpref_hiv_first = (ptixpref_hiv == 9)
+		replace ptixpref_hiv_first = . if ptixpref_hiv == .
 		lab var ptixpref_hiv_first "Ranked HIV First"
 	
 	gen ptixpref_hiv_topthree = (ptixpref_hiv == 9 | ///
 								ptixpref_hiv == 8  | ///
 								ptixpref_hiv == 7)
+		replace ptixpref_hiv_topthree = . if ptixpref_hiv == .
 		lab var ptixpref_hiv_topthree "Ranked HIV Top Three"
 								
 	gen ptixpref_hiv_notlast = (ptixpref_hiv != 2)
+		replace ptixpref_hiv_notlast = . if ptixpref_hiv_notlast == .
 		lab var ptixpref_hiv_notlast "Did not rank HIV last"
 
 	/* EFM Ranking */	
@@ -823,15 +826,19 @@ We are coding that higher is always "more gender equality"
 	gen hivknow_arv_nospread = .
 		replace hivknow_arv_nospread = 1 if strpos(s_hiv_nospread, "1")
 		replace hivknow_arv_nospread = 0 if s_hiv_nospread != "" & hivknow_arv_nospread != 1
-
+		
+	gen hivknow_arv_any = .
+		replace hivknow_arv_any = 1 if strpos(s_hiv_livelong, "1") 
+		replace hivknow_arv_any = 1 if strpos(s_hiv_nospread, "1")
+		replace hivknow_arv_any = 1 if s_hiv_antiretroviral == 1
+		replace hivknow_arv_any = 0 if s_hiv_antiretroviral == 0
+		
 	recode  s_hiv_transmitted (1=0 "Yes")(0=1 "No"), gen(hivknow_transmit)
 		lab var hivknow_transmit "[Reversed] Can HIV be spread to other people?"
 		
 	cap recode hivknow_* (-999 = 0)(-222 = 0)(-888 = .r)
 
 	egen hivknow_index = rowmean(hivknow_arv_survive hivknow_arv_nospread hivknow_transmit)
-
-
 
 /* HIV Stigma _______________________________________________________________*/
 

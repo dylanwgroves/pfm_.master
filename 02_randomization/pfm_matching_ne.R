@@ -112,7 +112,7 @@ df.new <- df.t[df.t$OBJECTID %in% df.short$objectid,]
 # Sekhon GenMatch
 #--------------------------------------------------
 
-attach(df.alt)
+attach(df.new)
 
 
 X <- cbind(Shape_Area, q1_2_geopoint.Longitude, q1_2_geopoint.Latitude,

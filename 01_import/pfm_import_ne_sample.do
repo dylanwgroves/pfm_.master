@@ -15,28 +15,34 @@ ________________________________________________________________________________
 	clear mata
 	set more off
 	version 15 
-	set maxvar 30000
+	set maxvar 30000	
 
 /* Import  _____________________________________________________________________*/
 
-	import delimited "${ipa_ne}/2 - Final Data/genmatch_sample_2018.08.02.csv", encoding(ISO-8859-1) clear
+	import delimited "${ipa_ne}/2 - Final Data/genmatch_sample_2018.08.01.csv", encoding(ISO-8859-1) clear
 
 	
 /* Basic Cleaning ______________________________________________________________*/
 
-	drop *y
-	drop x
-	rename *x *
+	cap drop *y
+	cap drop x
+	cap rename *x *
 
 	keep objectid region_cod region_nam district_c district_n ward_code ward_name ///
 				vil_mtaa_c vil_mtaa_n shape_leng shape_area vtreat match ///
 				q1_2_geopointlatitude q1_2_geopointlongitude q1_2_geopointaltitude ///
-				q1_2_geopointaccuracy q4_0_geopointlatitude q4_0_geopointlongitude ///
-				q4_0_geopointaltitude q4_0_geopointaccuracy v1 ///
-				vtreat_cel vtreat_rad cell cell_bar traveltime electricity rel_muslim ///
+				q4_0_geopointlatitude q4_0_geopointlongitude ///
+				q4_0_geopointaltitude  v1 ///
+				vtreat_cel vtreat_rad cell cell_bar traveltime rel_muslim ///
 				rel_mixed rel_noworship rel_mosques rel_churches rel_totworship ///
 				villexec dem_pop dem_subvil_tot poplist poplist_complete subvil_reach ///
 				subvil_cell svtreat_cel svtreat_rad 
+				
+				/* 
+				q1_2_geopointaccuracy 
+				q4_0_geopointaccuracy
+				electricity
+				*/
 
 	rename region_cod region_c
 	rename region_nam region_n

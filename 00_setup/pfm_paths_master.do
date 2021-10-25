@@ -165,8 +165,8 @@ ________________________________________________________________________________
 	global devnews_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Figures" 
 	
 	/* Spillovers */
-	global spill_clean_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/Tables"
-	global spill_clean_figures "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/Figures"
+	global spill_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Spillovers/Tables"
+	global spill_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Spillovers/Figures"
 
 
 	
