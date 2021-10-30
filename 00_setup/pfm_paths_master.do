@@ -82,8 +82,8 @@ ________________________________________________________________________________
 		
 		/* Audio Screening */	
 			/* FM */
-			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/01 Data"
-			global as_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (endline)/03 Tables and Figures"
+			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/01 Data"
+			global as_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/03 Tables and Figures"
 			
 			/* HIV Results */
 			global data_hiv "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/01 Data"
@@ -149,8 +149,8 @@ ________________________________________________________________________________
 	global rd_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Figures"
 	
 	/* EFM Audio Screening */
-	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Tables"
-	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Figures"
+	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (efm)/Tables"
+	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (efm)/Figures"
 	
 	/* HetFX */
 	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
