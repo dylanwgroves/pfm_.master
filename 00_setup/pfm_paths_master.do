@@ -149,8 +149,8 @@ ________________________________________________________________________________
 	global rd_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Figures"
 	
 	/* EFM Audio Screening */
-	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Tables"
-	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (FM)/Figures"
+	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (efm)/Tables"
+	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (efm)/Figures"
 	
 	/* HetFX */
 	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
