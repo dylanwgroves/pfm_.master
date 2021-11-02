@@ -86,7 +86,7 @@ experiment was generated using GenMatch											*/
 	/* Audio Screening */
 
 		do "${code}/pfm_.master/02_randomization/pfm_randomization_as.do" 					// Randomization
-	
+
 	/* Natural Experiment */
 	
 		* No Randomization for Natural Experiment 								
