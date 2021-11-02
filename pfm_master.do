@@ -1,23 +1,27 @@
 /*______________________________________________________________________________
 	
-	Purpose: Run dofiles from cleaning to analysis for the Pangani FM project
+	Purpose: Set globals for Pangani FM project
 			 
-	Stata version: 16
 	Author: Dylan Groves, dylanwgroves@gmail.com 
-	Date created: 2020/08/19
-	Date last modified: 											
+	Date created: 2020/08/19 											
 ________________________________________________________________________________*/
 
 
-/* Stata Prep __________________________________________________________________*/	
-  
-  clear all 
-  clear matrix
-  clear mata		
-  set more off 
- 
+/* Stata Prep ___________________________________________________________________*/
 
-/* Part 0: Set Globals _________________________________________________________*/
+	clear all 	
+	clear matrix
+	clear mata
+	set more off 
+	set maxvar 30000
+
+
+/* Set Seed ___________________________________________________________*/
+
+	set seed 1956
+
+ 
+/* Set Globals _________________________________________________________*/
 
 	foreach user in  "X:" "/Users/BeatriceMontano" "/Users/Bardia" {
 					capture cd "`user'"
@@ -27,129 +31,155 @@ ________________________________________________________________________________
 	global user `dir'
 	display "${user}"
 
-	cap assert "$`{globals_set}'" == "yes"
-	if _rc!=0 {   
-		do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"	
-		}
-	else { 
-		di "Globals have already been set."
-	}
+	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" "/Volumes/Secomba/Bardia/Boxcryptor" {
+					capture cd "`user'"
+					if _rc == 0 macro def path `user'
+				}
+	local dir `c(pwd)'
+	global userboxcryptor `dir'
+	display "${userboxcryptor}"	
 
 	
-/* Part 1: Import ______________________________________________________________*/
+	
+/* Main folders ________________________________________________________________*/
 
-* Tasks: Import files from Box, remove PII
-* Note: This can only be run by authors with Boxcryptor Access
-
-	/* Radio Distribution */
-
-		do "${code}/pfm_.master/01_import/pfm_import_rd_distribution_as.do" // Distribution - Audio Screening
-		do "${code}/pfm_.master/01_import/pfm_import_rd_distribution_ne.do" // Distribution - Natural Experiment
+		/* Main */
+		global code "${user}/Documents"
+		global data "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data"
 		
-	/* Audio Screening */
+		/* Output */
+		global output "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
+		global output_final "${user}/Dropbox/Apps/Overleaf"
 
-		do "${code}/pfm_.master/01_import/pfm_import_as_sample.do" 							// Randomization
-		do "${code}/pfm_.master/01_import/pfm_import_as_baseline.do" 						// Baseline
-		do "${code}/pfm_.master/01_import/pfm_import_as_midline.do" 						// Midline
-		do "${code}/pfm_.master/01_import/pfm_import_as_endline.do" 						// Endline
-		do "${code}/pfm_.master/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
-		do "${code}/pfm_.master/01_import/pfm_import_as_endline_friend.do" 					// Endline (Friend)
-		do "${code}/pfm_.master/01_import/pfm_import_as_endline_kid.do" 					// Endline (Kid)
-
-	/* Natural Experiment */
 	
-		do "${code}/pfm_.master/01_import/pfm_import_ne_sample.do" 							// Sample
-		do "${code}/pfm_.master/01_import/pfm_import_ne_baseline.do" 						// Baseline
-		do "${code}/pfm_.master/01_import/pfm_import_ne_endline.do" 						// Endline
 
-	/* Village Master */
-	
-		do "${code}/pfm_.master/01_import/pfm_import_villagemaster.do" // Tanzania census of all villages
-
-
-
+/* Importing and Cleaning _______________________________________________________*/
+				
+		/* IPA source files */
 		
+			/* Natural Experiment */
+			global ipa_ne "${userboxcryptor}/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis"
+			global ipa_ne_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
 		
-/* Part 2: Randomization ________________________________________________________
-
-Note that only radio distribution and audio screening are randomized, the natural
-experiment was generated using GenMatch											*/
-
-
-	/* Radio Distribution */
-		
-		do "${code}/pfm_.master/02_randomization/pfm_randomization_rd_as.do" 				// Randomization - Audio screening
-		do "${code}/pfm_.master/02_randomization/pfm_randomization_rd_ne.do" 				// Randomization - Natural experiment
-		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_as.do"
-		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_ne.d	o"
-
-	/* Audio Screening */
-
-		do "${code}/pfm_.master/02_randomization/pfm_randomization_as.do" 					// Randomization
-
-	/* Natural Experiment */
-	
-		* No Randomization for Natural Experiment 								
+			/* Audio Screening */
+			global ipa_as "${userboxcryptor}/Box Sync/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
+			global ipa_as_midline "${userboxcryptor}/Box Sync/19_Community Media Endlines/04_Research Design/04 Randomization & Sampling"
+			global ipa_as_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
+			global ipa_as_endline_spill "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
+			global ipa_leader "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/09_leaders/03 Data Flow/02_imported/"
 
 
+		global ipa_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines"
 
-
-
-/* Part 2: Cleaning ____________________________________________________________
-
-Tasks: Clean, and generate variables 
-	Note: Preliminary data collection and PII removal occurs in Box Folders
-		  Need to go back and do recoding throughout 							*/
-
-	/* Radio Distribution */
-	
-		do "${code}/pfm_.master/03_clean/pfm_clean_rd_distribution_as.do" 					// Distribution - Audio Screening
-		do "${code}/pfm_.master/03_clean/pfm_clean_rd_distribution_ne.do" 					// Distribution - Natural Experiment
 
 		
-	/* Audio Screening */
+/* Analysis ____________________________________________________________________*/
 
-		do "${code}/pfm_.master/03_clean/pfm_clean_as_baseline.do" 							// Baseline	
-		do "${code}/pfm_.master/03_clean/pfm_clean_as_midline.do" 							// Midline
-		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline.do" 							// Endline
-		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
-		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Friend)		
-		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
-
-					
-	/* Natural Experiment */
-	
-		do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
-		do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
-
-	
-	
-/* Part 3: Merge _______________________________________________________________
-
-	Tasks: Merge different samples into one dta 								 */
- 
-		/* Main Files */
-
-			do "${code}/pfm_.master/04_merge/pfm_merge_ne.do" 								// Natural Experiment
-			do "${code}/pfm_.master/04_merge/pfm_merge_as.do" 								// Audio Screening
-
-
-		/* Append Together */
+		/* Natural Experiment */
+		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
+		global ne_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/03 Tables and Figures"
 		
-			do "${code}/pfm_.master/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening
-
-	
-		
+		/* Audio Screening */	
+			/* FM */
+			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/01 Data"
+			global as_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/03 Tables and Figures"
 			
-/* Part 4: New Vars ____________________________________________________________
+			/* HIV Results */
+			global data_hiv "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/01 Data"
+			global hiv_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/03 Tables and Figures"
 
-	CONSIDERING GETTING RID OF NEW VARS
-		The thinking is that we should do new variables before cleaning/merging
-		And anything necessary for a specific analysis that doenst affect
-		the other projects can just be done with a "prelim" file in that project's
-		folder
+		/* Radio Distribution */
+		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
+		global rd_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/03 Tables and Figures"
+		
+		/* Court */
+		global data_court "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Court/01_data"
+		global court_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Court/03_tables"
+		
+		/* Development News */
+		global data_devnews "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Development News/01_data"
+		global devnews_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Development News/03_tables"
+		
+		/* Womens Political Participation */
+		global data_wpp "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Womens Political Participation/01_data"
+		global wpp_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Womens Political Participation/03_tables"
+		
+		/* Pluralistic Ignorance */
+		global data_pi "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/01_data"
+		global pi_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/03_output"
+		
+		/* Enumerator Effects */
+		global data_enumeffects "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Enumerator Effects/01_data"
+		global enumeffects_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Enumerator Effects/03_tables"
+		
+		/* Election */
+		global data_election "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/01_data"
+		global election_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania  - Election/03_tables"
 
-	*do "${code}/pfm_.master/05_newvars/pfm_newvars.do" 									
+		/* Household roles */
+		global data_hhroles "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/01_data"
+		global hhroles_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HH Roles/03_output"
+		
+		/* Socialization */
+		global data_socialization "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/01_data"
+		global socialization_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Socialization/03_output"
+		
+		/* HetFX */
+		global data_hetfx "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HetFX/01 Data"
+		global hetfx_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - HetFX/03 Tables and Figures"
+		
+		/* Spillovers */
+		global data_spill "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/01 Data"
+		global spill_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Spillovers/03 Tables and Figures"
 
-																				*/
+			
+/* Clean Tables and Figures ____________________________________________________*/
+
+	/* Natural Experiment */
+	global ne_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
+	global ne_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
+
+	/* WPP Experiment */
+	global wpp_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Tables"
+	global wpp_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Figures"
+
+	/* Radio Distribtuion */
+	global rd_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Tables"
+	global rd_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Figures"
+	
+	/* EFM Audio Screening */
+	global as_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (efm)/Tables"
+	global as_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (efm)/Figures"
+	
+	/* HetFX */
+	global hetfx_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Tables"
+	global hetfx_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Heterogeneous Treatment Effects/Figures" 
+	
+	/* Court */
+	global court_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Tables"
+	global court_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Court/Figures" 
+	
+	/* Pluralistic Ignorance */
+	global pi_clean_tables "${user}/Dropbox/Apps/Overleaf/Pluralistic Ignorance Report/Tables"
+	
+	
+	/* Development News */
+	global devnews_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Tables"
+	global devnews_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Development News/Figures" 
+	
+	/* Spillovers */
+	global spill_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Spillovers/Tables"
+	global spill_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Spillovers/Figures"
+
+
+	
+	
+/* Set Date _____________________________________________________________________*/
+
+	global date : di %tdDNCY daily("$S_DATE", "DMY")
+
+	
+/* Indicate whether the globals have been set __________________________________*/
+
+	global globals_set "yes"
 

@@ -1127,7 +1127,6 @@ rename s5q9				efficacy_speakout
 		replace comply_discuss = 0 if comply_know == 0
 	rename s31q3		comply_discuss_topic	
 
-
 /* Conclusion __________________________________________________________________*/
 
 	rename s20q1				svy_followupok
