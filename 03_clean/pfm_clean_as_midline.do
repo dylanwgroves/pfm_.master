@@ -271,7 +271,7 @@
 	gen votehiv_tot = votehiv_1 + votehiv_2
 */
 
-* Section 4 - Child Marriage ---------------------------------------------------
+* Section 4 - Early Marriage ---------------------------------------------------
 	destring randomdraw78or79, replace												// Changed Prices 
 
 	* Generate Treatment Variables for Survey Experiment
@@ -579,8 +579,7 @@
 	rename s9q1 s10q1_ipv_tolerate	
 	lab def tolerate 0 "Disagree" 1 "Agree"
 	lab val s10q1_ipv_tolerate	 tolerate
-		
-
+	
 
 
 /* Section 10 - IPV Norms ______________________________________________________*/
