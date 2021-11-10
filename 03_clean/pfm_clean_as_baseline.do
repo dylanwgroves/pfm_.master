@@ -437,8 +437,10 @@ _______________________________________________________________________________*
 	recode s9q1_mob_trustaccusers (-999 = .d)
 	lab val s9q1_mob_trustaccusers mobaccuse
 	lab var s9q1_mob_trustaccusers "9.1) [Which statement do you agree with] If most people in a community think that a person is a criminal..."
+	clonevar mob_trustaccuse = s9q1_mob_trustaccusers
 
 	rename s9q2 s9q2_mob_falseaccuse
+	clonevar mob_falseaccuse = s9q2_mob_falseaccuse
 
 	destring s9_q3_4_rand, replace
 	gen s9q3_mob_treat_male = 1 if s9_q3_4_rand < 0.5
@@ -452,6 +454,7 @@ _______________________________________________________________________________*
 	lab var s9q3_mob_accuseresponse  "9.3a) Imagine the following: A [man/woman] from your community is blowing the whistle, because [she/he] saw someone stealing food and a box of cold drinks from his yard. The neighbors come running and one them gets hold of the thief. Again, which of the following do you believe the neighbors should do?"
 	lab def mob_neighbor 1 "The neighbors should beat the thief there and then" 2 "The neighbors should call the police and leave it to them to deal with the thief."
 	lab val s9q3_mob_accuseresponse mob_neighbor 
+	clonevar mob_accuseresponse = s9q3_mob_accuseresponse 
 
 
 /* Section 10: Witchcraft  _____________________________________________________*/

@@ -1,3 +1,4 @@
+
 /*______________________________________________________________________________
 	
 	Purpose: Set globals for Pangani FM project
@@ -83,7 +84,7 @@ ________________________________________________________________________________
 		/* Audio Screening */	
 			/* FM */
 			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/01 Data"
-			global as_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/03 Tables and Figures"
+			global as_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/03 Tables and Figures"
 			
 			/* HIV Results */
 			global data_hiv "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/01 Data"
@@ -183,4 +184,3 @@ ________________________________________________________________________________
 /* Indicate whether the globals have been set __________________________________*/
 
 	global globals_set "yes"
-
