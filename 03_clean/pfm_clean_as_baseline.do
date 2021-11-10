@@ -90,6 +90,7 @@ _______________________________________________________________________________*
 	lab val resp_goodday yesnodkr
 
 	rename s2q3 resp_age
+
 																
 	rename s2q4 resp_hhrltn
 
@@ -351,7 +352,6 @@ _______________________________________________________________________________*
 	replace radio_call_ever = 1 if radio_call_ever == .
 	lab var radio_call_ever "Ever call or text radio programs?"
 	lab val radio_call_ever yesnodkr
-
 			
 * Section 5: General Values ____________________________________________________*/
 
@@ -530,8 +530,10 @@ _______________________________________________________________________________*
 	rename s13q4 svy_otherspresent	
 		
 	rename s13q3 asset_livingconditions
+		recode asset_livingconditions (6 = .d)
 	
-	gen asset_worseconditions = 1 if asset_livingconditions	== 1 | 	asset_livingconditions == 2						
+	gen asset_worseconditions = 1 if asset_livingconditions	== 1 | 	asset_livingconditions == 2	
+		replace asset_worseconditions = 0 if asset_worseconditions == .
 
 * Fix Unique ID_________________________________________________________________*/
 
