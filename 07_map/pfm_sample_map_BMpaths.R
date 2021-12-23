@@ -31,7 +31,7 @@ ggmap::register_google(key = "")
 # Load Data ---------------------------------------------------------------
 ne_sample <- read.csv("/Users/BeatriceMontano/Boxcryptor/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/genmatch sample_2018.02.17_west.csv")
 uzi_sample <- read.csv("/Users/BeatriceMontano/Boxcryptor/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/uzikwasa_survey_2021.02.23.csv")
-as_sample <- read.dta13("/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening/01 Data/pfm2_randomized_vills.dta")
+as_sample <- read.dta13("/Users/BeatriceMontano/Boxcryptor/Box Sync/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening/01 Data/pfm2_randomized_vills.dta")
 
 vills <- readOGR(dsn = "/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/02_publicdata/01_GIS/01_villages/Tanzania/TZvillages.shp")
 
@@ -150,11 +150,11 @@ ggsave("/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/wellspring_01_
 
 # Both AS and NE villages as areas
 map_asne_areas <- map_main +
-  geom_polygon(data=sp.ne_vills, aes(x=long, y=lat, group=group), fill="dodgerblue3", size=.2, color="dodgerblue3", alpha=0.5) +
-  geom_polygon(data=sp.as_vills, aes(x=long, y=lat, group=group), fill="darkorange3", size=.2, color="darkorange3", alpha=0.5) +
+  geom_polygon(data=sp.ne_vills, aes(x=long, y=lat, group=group), fill="#FFC72C", size=.2, color="#FFC72C", alpha=0.5) +
+  geom_polygon(data=sp.as_vills, aes(x=long, y=lat, group=group), fill="#FFC72C", size=.2, color="#FFC72C", alpha=0.5) +
   ylab("") +
   xlab("")
-ggsave("/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs/pfm_sample_map_asne_areas.png", 
+ggsave("/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Pluralistic Ignorance/03_output/pfm_sample_map_areas.png", 
          plot = map_asne_areas, width = 12, height = 8, units = "in")
   
 
