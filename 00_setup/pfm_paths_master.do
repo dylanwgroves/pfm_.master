@@ -2,7 +2,6 @@
 /*______________________________________________________________________________
 	
 	Purpose: Set globals for Pangani FM project
-			 
 	Author: Dylan Groves, dylanwgroves@gmail.com 
 	Date created: 2020/08/19 											
 ________________________________________________________________________________*/
