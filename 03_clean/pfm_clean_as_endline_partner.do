@@ -583,7 +583,6 @@ rename s5q9				efficacy_speakout
 		recode ptixpart_interest (1=3)(2=2)(3=1)(4=0)
 		lab val ptixpart_interest interest
 		
-
 	/* Participation Activities	 */													
 	rename s15q2a	ptixpart_vote
 	rename s15q2b	ptixpart_villmeet

@@ -388,7 +388,7 @@ ________________________________________________________________________________
 			lab var ge_work "[1 = NO] When jobs are scarce, men should have more right to a job than women"
 	
 
-		recode ge_5 			(1 = 1 "Women can lead equally") ///
+		recode ge_5 		(1 = 1 "Women can lead equally") ///
 							(2 = 0 "Women cannot lead equally") ///
 							(-999 = .d) (-888 = .r), ///
 							gen(ge_leadership)
@@ -486,14 +486,17 @@ ________________________________________________________________________________
 
 		lab val ptixpart_activ_* yesno
 		
-	egen ptixpart_villmeet = rowmean(ptixpart_activ_villmeet ptixpart_activ_wardmeet)
-	egen ptixpart_vote = rowmean(ptixpart_activ_votenatl ptixpart_activ_votelocal)
-	egen ptixpart_collact = rowmean(ptixpart_activ_collact ptixpart_activ_creategroup)
+		egen ptixpart_villmeet = rowmean(ptixpart_activ_villmeet ptixpart_activ_wardmeet ptixpart_activ_villmeet_share)
+		egen ptixpart_vote = rowmean(ptixpart_activ_voteregister ptixpart_activ_votenatl ptixpart_activ_votelocal ptixpart_activ_workparty ptixpart_activ_rally)
+		egen ptixpart_collact = rowmean(ptixpart_activ_collact ptixpart_activ_creategroup ptixpart_activ_talknatlgov)
 		
-	cap rename s15q7						ptixpart_contact_satisfied
+		cap rename s15q7						ptixpart_contact_satisfied
 
-	egen ptixpart_index = rowmean(ptixpart_activ_*)
-
+		egen ptixpart_index = rowmean(ptixpart_villmeet ptixpart_vote ptixpart_collact)
+		
+		egen ptixpart_index_2 = rowmean(ptixpart_activ_voteregister ptixpart_activ_votenatl ptixpart_activ_votelocal ptixpart_activ_votetalk ptixpart_activ_workparty ptixpart_activ_rally ptixpart_activ_villmeet ptixpart_activ_wardmeet ptixpart_activ_talknatlgov ptixpart_activ_collact ptixpart_activ_creategroup)
+		
+	
 	
 /* Political Knowledge _________________________________________________________*/
 

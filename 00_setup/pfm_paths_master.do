@@ -78,8 +78,8 @@ ________________________________________________________________________________
 
 		/* Natural Experiment */
 		global data_ne "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/01 Data"
-		global ne_tables	"${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/03 Tables and Figures"
-		
+		global ne_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Natural Experiment/03 Tables and Figures"
+
 		/* Audio Screening */	
 			/* FM */
 			global data_as "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (efm)/01 Data"
@@ -135,7 +135,9 @@ ________________________________________________________________________________
 	/* Natural Experiment */
 	global ne_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Tables"
 	global ne_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment/Figures"
-
+	global ne_clean_tables_new "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment Research Note/Tables"
+	global ne_clean_figures_new "${user}/Dropbox/Apps/Overleaf/Tanzania - Natural Experiment Research Note/Figures"
+	
 	/* WPP Experiment */
 	global wpp_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Tables"
 	global wpp_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - WPP/Figures"
