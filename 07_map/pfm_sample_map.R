@@ -30,10 +30,18 @@ ggmap::register_google(key = "")
 
 # Load Data ---------------------------------------------------------------
 ne_sample <- read.csv("X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/genmatch sample_2018.02.17_west.csv")
-uzi_sample <- read.csv("X:/Box Sync/08_PanganiFM/PanganiFM/2 - Data and Analysis/2 - Final Data/uzikwasa_survey_2021.02.23.csv")
-as_sample <- read.dta13("X:/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening/01 Data/pfm2_randomized_vills.dta")
+uzi_sample <- read.dta13("X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/02_mid_data/uzi_sample_villages.dta")
+as_sample <- read.dta13("X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/02_mid_data/as_sample_villages.dta")
 
 vills <- readOGR(dsn = "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/02_publicdata/01_GIS/01_villages/Tanzania/TZvillages.shp")
+writeOGR(vills, 
+         layer = "main",
+         "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/villages_tanga.shp",
+         driver="ESRI Shapefile", overwrite_layer=TRUE)
+
+# Save Vills
+df_vills <- fortify(vills)
+write.csv(vills@data, "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/tanga_villages.csv")
 
 
 
@@ -49,10 +57,19 @@ df.ne_IDsample <- ne_sample$OBJECTID
 sp.ne_vills <- sp.projarea[sp.projarea@data$OBJECTID %in% df.ne_IDsample,]
 sp.ne_vills@data$id <- rownames(sp.ne_vills@data)
 sp.ne_vills@data <- join(sp.ne_vills@data, ne_sample, by="OBJECTID")
+
+sp.ne_vills_short <- sp.ne_vills[,-(9:165)] #remove columns 1 to 5
+writeOGR(sp.ne_vills_short, 
+         layer = "main",
+         "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/ne_sample_villages.shp",
+         driver="ESRI Shapefile", overwrite_layer=TRUE)
+
 df.ne_vills <- fortify(sp.ne_vills)
 df.ne_vills <- join(df.ne_vills,sp.ne_vills@data, by="id")
+
 write.csv(df.ne_vills, "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/02_mid_data/ne_sample_villages_latlong.csv")
 
+names(sp.ne_vills@data)
 
 sp.ne_villstreat <- sp.projarea[sp.projarea@data$OBJECTID %in% df.ne_IDsample[ne_sample$v.treat == 1],]
 df.ne_villstreat <- fortify(sp.ne_villstreat)
@@ -60,13 +77,24 @@ sp.ne_villscontrol <- sp.projarea[sp.projarea@data$OBJECTID %in% df.ne_IDsample[
 df.ne_villscontrol <- fortify(sp.ne_villscontrol)
 
 # Uzi Sample
-df.uzi_IDsample <- uzi_sample$OBJECTID
+df.uzi_IDsample <- uzi_sample$objectid
+uzi_sample$OBJECTID <- uzi_sample$objectid
 
 sp.uzi_vills <- sp.projarea[sp.projarea@data$OBJECTID %in% df.uzi_IDsample,]
 sp.uzi_vills@data$id <- rownames(sp.uzi_vills@data)
 sp.uzi_vills@data <- join(sp.uzi_vills@data, uzi_sample, by="OBJECTID")
+
+sp.uzi_vills_short <- sp.uzi_vills[,-(10:14)] #remove columns 1 to 5
+writeOGR(sp.uzi_vills_short, 
+         layer = "main",
+         "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/uzi_sample_villages.shp",
+         driver="ESRI Shapefile", overwrite_layer=TRUE)
+
+
 df.uzi_vills <- fortify(sp.uzi_vills)
 df.uzi_vills <- join(df.uzi_vills,sp.uzi_vills@data, by="id")
+
+
 write.csv(df.uzi_vills, "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/02_mid_data/uzi_sample_villages_latlong.csv")
 
 sp.uzi_villstreat <- sp.projarea[sp.projarea@data$OBJECTID %in% df.uzi_IDsample[uzi_sample$Selection == 1],]
@@ -81,6 +109,16 @@ as_sample_treat <- fortify(as_sample_treat)
 as_sample_control <- merge[merge$treat==0,]
 as_sample_control <- fortify(as_sample_control)
 sp.as_vills <- merge[merge$treat==1 | merge$treat==0,]
+
+View(sp.as_vills@data)
+sp.as_vills_short <- sp.as_vills[,-(9:35)] #remove columns 1 to 5
+
+writeOGR(sp.as_vills_short, 
+         layer = "main",
+         "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/as_sample_villages.shp",
+         driver="ESRI Shapefile", overwrite_layer=TRUE)
+
+
 df.as_vills <- fortify(sp.as_vills)
 
 # Set colors ---------------------------------------------------------------
