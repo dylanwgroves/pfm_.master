@@ -81,8 +81,12 @@
                          sp.towns@data$fclass == "town",]
   sp.towns_tanga <- sp.towns[sp.vills,]
   
-  
 
+# Pangani -----------------------------------------------------------------
+
+  sp.pangani <- sp.towns_tanga[sp.towns_tanga@data$name == "Pangani",]
+
+  
 # Remove Townships --------------------------------------------------------
 
   sp.sample <- sp.vills[sp.vills$District_N != 'Handeni Township Authority',]
@@ -106,7 +110,11 @@
   sp.sample@data$dist_towns <- 100*apply(gDistance(sp.sample, sp.towns_tanga, byid=TRUE), 2, min)
   sp.sample <- sp.sample[sp.sample@data$dist_towns > 7,]    
 
-  
+
+# Remove Pangani ----------------------------------------------------------
+
+  sp.sample@data$dist_pangani <- 100*apply(gDistance(sp.sample, sp.pangani, byid=TRUE), 2, min)
+  sp.sample <- sp.sample[sp.sample@data$dist_road > 70,]    
 
 # Export ------------------------------------------------------------------
 
@@ -115,4 +123,4 @@
            "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/as2_sample.shp",
            driver="ESRI Shapefile", overwrite_layer=TRUE)
 
-plot(sp.sample)
+
