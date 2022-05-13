@@ -174,6 +174,7 @@ ________________________________________________________________________________
 		merge 1:1 id_resp_uid using `temp_end_kid', gen(merge_end_kid)
 		merge n:1 id_village_uid using `temp_leader', gen(merge_leader)
 			drop if merge_leader == 2
+			drop if id_village_uid == ""
 	
 
 /* Label ______________________________________________________________________*/

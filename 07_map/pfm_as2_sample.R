@@ -18,6 +18,7 @@
   library(RColorBrewer)
   library(sf)
   library(sp)
+  library(spatialEco)
   library(spData)
   library(tidyverse)
   library(foreign)
@@ -54,7 +55,8 @@
   sp.roads <- readOGR(dsn = "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/02_publicdata/01_GIS/02_roads/TZroads.shp")
   sp.towns <- readOGR(dsn = "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/01_raw_data/02_publicdata/01_GIS/03_openmap/gis.osm_places_free_1.shp")
 
-
+  df.as2_select <- read.csv(file = 'C:/Users/dylan/Google Drive/PanganiFM 4_Audio Screening/05_sample/pfm4_village sample.csv')
+  
 # Set CRS -----------------------------------------------------------------
 
   longlatcrs <- CRS("+init=epsg:4326 +proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0")
@@ -65,6 +67,29 @@
   sp.ne_sample <- spTransform(sp.ne_sample, longlatcrs)
   sp.uzi_sample <- spTransform(sp.uzi_sample, longlatcrs)
   sp.as_sample <- spTransform(sp.as_sample, longlatcrs)
+  
+
+# Merge in Hand-Selected Sample -------------------------------------------
+
+  df.as2_select$OBJECTID <- df.as2_select$object_id 
+  df.as2_select$select <- 1
+  df.as2_select_short <- df.as2_select %>%
+      dplyr::select(OBJECTID, select)
+  
+  sp.as2_sample <- merge(sp.vills, df.as2_select_short, by='OBJECTID', stringsAsFactors = FALSE, duplicateGeoms = TRUE)
+  
+
+  #sp.as2_sample <- sp.na.omit(sp.as2_sample, col.name = NULL, margin = 1)
+  sp.as2_sample$select <- ifelse(is.na(sp.as2_sample$select), 0, 1)
+  
+  sp.as2_sample <- sp.as2_sample[sp.as2_sample@data$select==1,]
+
+  
+# Sample Choice -------------------------------------------------------------------
+  
+  # sp.roads <- sp.roads[sp.roads@data$RTT_DESCRI == "Primary Route" | 
+  #                  sp.roads@data$RTT_DESCRI == "Secondary Route",]
+  sp.roads_tanga <- sp.roads[sp.vills,]
   
   
 # Roads -------------------------------------------------------------------
@@ -114,13 +139,22 @@
 # Remove Pangani ----------------------------------------------------------
 
   sp.sample@data$dist_pangani <- 100*apply(gDistance(sp.sample, sp.pangani, byid=TRUE), 2, min)
-  sp.sample <- sp.sample[sp.sample@data$dist_road > 70,]    
+  sp.sample <- sp.sample[sp.sample@data$dist_pangani > 65,]    
 
 # Export ------------------------------------------------------------------
 
   writeOGR(sp.sample, 
            layer = "main",
-           "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/as2_sample.shp",
+           "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/as2_sample_options.shp",
            driver="ESRI Shapefile", overwrite_layer=TRUE)
 
-
+  writeOGR(sp.as2_sample, 
+           layer = "main",
+           "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/03_final_data/as2_sample_final.shp",
+           driver="ESRI Shapefile", overwrite_layer=TRUE)
+  
+  writeOGR(sp.as2_sample, 
+           layer = "main",
+           "X:/Box Sync/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/03 Baseline/05_data/05_gis/as2_sample_final.shp",
+           driver="ESRI Shapefile", overwrite_layer=TRUE)
+  

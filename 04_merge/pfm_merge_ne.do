@@ -20,6 +20,7 @@ _______________________________________________________________________________*
 	tempfile temp_base
 	tempfile temp_end
 	tempfile temp_end_merge
+	tempfile temp_leader
 	tempfile temp_merged
 	tempfile temp_base_rand
 	tempfile temp_rd_dist
@@ -73,6 +74,14 @@ _______________________________________________________________________________*
 		use "${data}/02_mid_data/pfm_ne_scoping_clean.dta", clear
 		drop village_id
 		save `temp_rand', replace 
+		
+		/* Leader Information */
+		use "${data}/01_raw_data/pfm_leader.dta", clear
+		*gen id_village_uid = subinstr(l_id_village_uid, "_", "-",.) 
+		gen id_village_uid = l_id_village_uid
+		drop if id_village_uid == ""
+		drop if id_village_uid == "183"
+		save `temp_leader'
 
 	/* Radio Distribution */
 	
@@ -235,11 +244,18 @@ _______________________________________________________________________________*
 			}
 			
 			/* Fill in Village ID */
-				bysort id_village_n : replace id_village_uid = id_village_uid[_n-1] if missing(id_village_uid)
+			bysort id_village_n : replace id_village_uid = id_village_uid[_n-1] if missing(id_village_uid)
 			replace id_village_uid = "8_111_3" if id_village_n == "Kwekuyu" & id_village_uid == ""
 			replace id_village_uid = "3_231_3" if id_village_n == "Kwezitu" & id_village_uid == ""
 			replace id_village_uid = "2_41_5" if id_village_n == "Makaburini" & id_village_uid == ""
 			replace id_village_uid = "3_211_5" if id_village_n == "Mashewa" & id_village_uid == ""
+			
+			/* Merge in village leaders */
+			merge n:1 id_village_uid using `temp_leader', gen(merge_leader)
+			drop if merge_leader == 2
+			duplicates drop id_village_uid, force
+			stop
+			
 
 /* Label ______________________________________________________________________*/
 

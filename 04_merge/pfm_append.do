@@ -87,8 +87,10 @@ tempfile temp_as
 	use `temp_as', clear
 		rename as_* *
 		rename treat treat_as
+		gen survey = "as"
 
 	append using `temp_ne_new', force
+		replace survey = "ne" if survey != "as"
 	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
 
 	
