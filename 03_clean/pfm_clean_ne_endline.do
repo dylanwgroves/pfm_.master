@@ -489,7 +489,7 @@ ________________________________________________________________________________
 		egen ptixpart_villmeet = rowmean(ptixpart_activ_villmeet ptixpart_activ_wardmeet ptixpart_activ_villmeet_share)
 		egen ptixpart_vote = rowmean(ptixpart_activ_voteregister ptixpart_activ_votenatl ptixpart_activ_votelocal ptixpart_activ_workparty ptixpart_activ_rally)
 		egen ptixpart_collact = rowmean(ptixpart_activ_collact ptixpart_activ_creategroup ptixpart_activ_talknatlgov)
-		
+	stop	
 		cap rename s15q7						ptixpart_contact_satisfied
 
 		egen ptixpart_index = rowmean(ptixpart_villmeet ptixpart_vote ptixpart_collact)
