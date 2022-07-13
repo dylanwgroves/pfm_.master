@@ -122,7 +122,7 @@ _______________________________________________________________________________*
 
 	rename s2q12 resp_yrsvill																										
 
-	rename s2q13 resp_villknow
+	rename s2q13 resp_villknow													// THIS NEEDS TO BE REVERSE CODED! NOW, HIGHER VALUES = LESS PEOPLE KNOWN.
 	gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
 	replace resp_villknow_all = 0 if resp_villknow_all  == .
 
