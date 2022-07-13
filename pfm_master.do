@@ -27,6 +27,14 @@ ________________________________________________________________________________
 	global user `dir'
 	display "${user}"
 
+	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" "/Volumes/Secomba/Bardia/Boxcryptor" {
+					capture cd "`user'"
+					if _rc == 0 macro def path `user'
+				}
+	local dir `c(pwd)'
+	global userboxcryptor `dir'
+	display "${userboxcryptor}"	
+
 	cap assert "$`{globals_set}'" == "yes"
 	if _rc!=0 {   
 		do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"	
@@ -34,7 +42,6 @@ ________________________________________________________________________________
 	else { 
 		di "Globals have already been set."
 	}
-
 	
 /* Part 1: Import ______________________________________________________________*/
 

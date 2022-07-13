@@ -67,10 +67,11 @@ ________________________________________________________________________________
 			global ipa_as_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
 			global ipa_as_endline_spill "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
 			global ipa_leader "${userboxcryptor}/Box Sync/19_Community Media Endlines/07_Questionnaires & Data/09_leaders/03 Data Flow/02_imported/"
+			global ipa_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines"
 
-
-		global ipa_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines"
-
+			/* Audio Screening 2*/
+			global ipa_as2 "${userboxcryptor}/Box Sync/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/03 Baseline/05_data/02_survey/3 clean"
+			global ipa_as2_midline "${userboxcryptor}/Box Sync/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/04 Midline/05_data/02_survey/03_clean"
 
 		
 /* Analysis ____________________________________________________________________*/
@@ -90,6 +91,11 @@ ________________________________________________________________________________
 			global data_hiv "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/01 Data"
 			global hiv_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/03 Tables and Figures"
 
+			/* Boda Bora */
+			global data_bb "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (gbv)/01 Data"
+			global bb_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (gbv)/03 Tables"
+			
+			
 		/* Radio Distribution */
 		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
 		global rd_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/03 Tables and Figures"
@@ -167,7 +173,9 @@ ________________________________________________________________________________
 	global spill_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Spillovers/Tables"
 	global spill_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Spillovers/Figures"
 
-
+	/* BodaBora - Audio Screening 2 */
+	global bb_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (bodabora)/01_Tables"
+	global bb_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (bodabora)/02_Figures"
 	
 	
 /* Set Date _____________________________________________________________________*/
