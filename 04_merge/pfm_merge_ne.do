@@ -250,12 +250,12 @@ _______________________________________________________________________________*
 			replace id_village_uid = "2_41_5" if id_village_n == "Makaburini" & id_village_uid == ""
 			replace id_village_uid = "3_211_5" if id_village_n == "Mashewa" & id_village_uid == ""
 			
-			/* Merge in village leaders */
+			/* Merge in village leaders 
 			merge n:1 id_village_uid using `temp_leader', gen(merge_leader)
 			drop if merge_leader == 2
 			duplicates drop id_village_uid, force
 			stop
-			
+			*/
 
 /* Label ______________________________________________________________________*/
 
