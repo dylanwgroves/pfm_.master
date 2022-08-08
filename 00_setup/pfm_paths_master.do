@@ -95,6 +95,9 @@ ________________________________________________________________________________
 			global data_bb "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (gbv)/01 Data"
 			global bb_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (gbv)/03 Tables"
 			
+		/* Political Priorities */
+		global data_priorities "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Political Priorities/01_data"
+		global priorities_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Political Priorities/03_tables"
 			
 		/* Radio Distribution */
 		global data_rd "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Radio Distribution/01 Data"
@@ -176,6 +179,10 @@ ________________________________________________________________________________
 	/* BodaBora - Audio Screening 2 */
 	global bb_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (bodabora)/01_Tables"
 	global bb_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Audio Screening (bodabora)/02_Figures"
+	
+	/* Political Priorities */
+	global priorities_clean_tables "${user}/Dropbox/Apps/Overleaf/Tanzania - Political Priorities/01_Tables"
+	global priorities_clean_figures "${user}/Dropbox/Apps/Overleaf/Tanzania - Political Priorities/02_Figures"
 	
 	
 /* Set Date _____________________________________________________________________*/

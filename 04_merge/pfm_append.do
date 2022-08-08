@@ -71,7 +71,6 @@ tempfile temp_as
 	append using `temp_ne_new', force
 	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
 
-	
 
 	
 /* Export without Prefixes _____________________________________________________
