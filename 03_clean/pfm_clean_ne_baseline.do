@@ -501,7 +501,7 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	rename elders_q9_2a values_elders
 
 	rename property_q9_2b values_property										// This is a hierarchy question
-stop
+
 	/* Civic Enagement */
 	rename comgov_q9_3a ptixpart_collact
 	rename contgov_q9_3b ptixpart_contactgov
