@@ -92,8 +92,8 @@ ________________________________________________________________________________
 			global hiv_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv)/03 Tables and Figures"
 
 			/* Boda Bora */
-			global data_bb "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (gbv)/01 Data"
-			global bb_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (gbv)/03 Tables"
+			global data_bb "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening 2 (gbv)/01_data"
+			global bb_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening 2 (gbv)/03_tables"
 			
 		/* Political Priorities */
 		global data_priorities "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Political Priorities/01_data"
