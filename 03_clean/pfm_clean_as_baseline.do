@@ -198,7 +198,7 @@ _______________________________________________________________________________*
 									resp_religion == 5 | resp_religion == 6 | ///
 									resp_religion == 7 | resp_religion == 8 | ///
 									resp_religion == 9 | resp_religion == 10
-	replace resp_muslim = 0 if resp_muslim == .
+	replace resp_muslim = 1 if resp_muslim == .
 	lab var resp_muslim "Muslim?"
 	lab def religion 1 "Muslim" 0 "Christian"
 	lab val resp_muslim religion

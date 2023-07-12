@@ -151,16 +151,16 @@ ________________________________________________________________________________
 		lab val resp_christian yesno
 		
 	gen resp_muslim = 0
-	replace resp_muslim = 1 if resp_religion == 3 | ///						
-								  resp_religion == 12 | ///
-							      resp_religion == 13 | ///
-							      resp_religion == 14 | ///
-							      resp_religion == 15					
-	replace resp_muslim = . if resp_religion == -222 | ///
-							   resp_religion == -999 | ///
-							   resp_religion == -888
+	replace resp_muslim = 1 if 	resp_religion == 3 | ///						
+								resp_religion == 12 | ///
+							    resp_religion == 13 | ///
+							    resp_religion == 14 | ///
+							    resp_religion == 15					
+	replace resp_muslim = . if 	resp_religion == -222 | ///
+								resp_religion == -999 | ///
+								resp_religion == -888
 		lab val resp_muslim yesno
-
+		
 	gen resp_christmuslim = 0 if resp_muslim == 1
 	replace resp_christmuslim = 1 if resp_christian == 1
 	replace resp_christmuslim = . if resp_religion == -222 | ///
@@ -749,10 +749,10 @@ ________________________________________________________________________________
 	
 /* Remove Remaining Variables __________________________________________________*/
 
-	drop rand_* simid subscriberid devicephone* duration username ///
+	drop simid subscriberid devicephone* duration username ///
 	caseid *_pull enum_oth s1* int_* txt_* choices_* ///
-	s0* s3* s4* s6* s20* s8* ///
-	ranked_* *_cl *_count *_rand *_sw *_txt scouples_* v4* v5* ///	
+	s0* s4* s6* s20* s8* ///
+	ranked_* *_cl *_count *_rand *_sw scouples_* v4* v5* ///	
 	scouplesq4 scouplesq5 section_*_start section_*_end /// 
 	s_* section_* ///
 	district_name enum_name ward_name village_name deviceid  ///
@@ -761,6 +761,7 @@ ________________________________________________________________________________
 /* Export Long __________________________________________________________________*/
 
 	save "${data}/01_raw_data/pfm_as_endline_clean_kid_long.dta", replace
+	drop rand_* s3* *_txt
 
 /* Make Wide ___________________________________________________________________*/
 

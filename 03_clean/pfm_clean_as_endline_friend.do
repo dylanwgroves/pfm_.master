@@ -938,9 +938,9 @@ rename s8q5c		fm_friend_reject
 	
 	rename s17q8 f17q8
 	
-	drop section_* rand_* simid subscriberid devicephone* duration username ///
+	drop section_* simid subscriberid devicephone* duration username ///
 	caseid *_pull enum_oth s1* int_* txt_* choices_* ///
-	s3* s14* s4* s5* s6* s20* s21* ///
+	s14* s4* s5* s6* s20* s21* ///
 	ranked_* *_cl *_count *_rand *_draw ///	
 	sdev_*	s_*
 	
