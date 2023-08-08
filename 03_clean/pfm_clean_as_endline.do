@@ -985,6 +985,8 @@ We are coding that higher is always "more gender equality"
 
 	rename s12q14		couples_autonomy
 	
+	stop
+	
 	recode couples* (-999 = .d)(-888 = .r)	
 
 
