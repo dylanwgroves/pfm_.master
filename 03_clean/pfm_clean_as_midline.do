@@ -179,8 +179,13 @@
 	lab def vote_male 1 "Male" 0 "Female"
 	lab def vote_islam 1 "Islam" 0 "Christian"
 	
-	rename s3q4a vote_1
-	rename s3q4b vote_2
+	* vote
+	s3q4a vote_1
+	s3q4b vote_2
+	
+	* promise
+	m_rand_promise1_txt
+	m_rand_promise2_txt
 	
 	gen vote_fmhiv = .
 		replace vote_fmhiv = 1 if rand_promise1_txt == "fight against child marriage" & rand_promise2_txt == "make hiv-aids treatment more available"
