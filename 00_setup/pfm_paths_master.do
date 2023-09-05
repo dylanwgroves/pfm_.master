@@ -97,6 +97,10 @@ ________________________________________________________________________________
 			global data_bb "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening 2 (gbv)/01_data"
 			global bb_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening 2 (gbv)/03_tables"
 			
+			/* Environment */
+			global data_env "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening 2 (enviro)/01_data"
+			global env_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening 2 (enviro)/03_tables"
+
 		/* Political Priorities */
 		global data_priorities "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Political Priorities/01_data"
 		global priorities_tables "${user}/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Political Priorities/03_tables"
