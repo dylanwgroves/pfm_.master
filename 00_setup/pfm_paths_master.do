@@ -22,8 +22,10 @@ ________________________________________________________________________________
 
  
 /* Set Globals _________________________________________________________*/
-
-	foreach user in  "X:" "/Users/BeatriceMontano" "/Users/Bardia" {
+	
+	foreach user in  	"X:/" ///
+						"/Users/BeatriceMontano" ///
+						"/Users/Bardia" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
@@ -31,7 +33,9 @@ ________________________________________________________________________________
 	global user `dir'
 	display "${user}"
 
-	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" "/Volumes/Secomba/Bardia/Boxcryptor" {
+	foreach user in  	"X:/" ///
+						"/Volumes/Secomba/BeatriceMontano/Boxcryptor" ///
+						"/Volumes/Secomba/Bardia/Boxcryptor" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
@@ -39,8 +43,7 @@ ________________________________________________________________________________
 	global userboxcryptor `dir'
 	display "${userboxcryptor}"	
 
-	
-	
+
 /* Main folders ________________________________________________________________*/
 
 		/* Main */
@@ -51,7 +54,6 @@ ________________________________________________________________________________
 		global output "${user}/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/02_outputs"
 		global output_final "${user}/Dropbox/Apps/Overleaf"
 
-	
 
 /* Importing and Cleaning _______________________________________________________*/
 				
