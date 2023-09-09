@@ -31,7 +31,7 @@ ________________________________________________________________________________
 	global user `dir'
 	display "${user}"
 
-	foreach user in  "X:/" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" "/Volumes/Secomba/Bardia/Boxcryptor" {
+	foreach user in  "X:" "/Volumes/Secomba/BeatriceMontano/Boxcryptor" "/Volumes/Secomba/Bardia/Boxcryptor" {
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
