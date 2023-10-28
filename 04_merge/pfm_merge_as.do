@@ -189,3 +189,8 @@ ________________________________________________________________________________
 	save "${data}/03_final_data/pfm_as_merged.dta", replace
 	
 	
+	use "${data}/03_final_data/pfm_as_merged.dta", replace
+	
+	
+	
+	
