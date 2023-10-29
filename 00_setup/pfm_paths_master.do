@@ -80,8 +80,10 @@ ________________________________________________________________________________
 			global ipa_endline "${userboxcryptor}/Box Sync/19_Community Media Endlines"
 
 			/* Audio Screening 2*/
-			global ipa_as2 "${userboxcryptor}/Box Sync/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/03 Baseline/05_data/02_survey/3 clean"
-			global ipa_as2_midline "${userboxcryptor}/Box Sync/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/04 Midline/05_data/02_survey/03_clean"
+			global ipa_as2 "${userboxcryptor}/Box/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/03 Baseline/05_data/02_survey/3_clean/"
+			global ipa_as2_midline "${userboxcryptor}/Box/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/04 Midline/05_data/02_survey/03_clean/"
+			global ipa_as2_endline "${userboxcryptor}/Box/07_Questionnaires & Data/04 Endline/03 Data Flow/4_data/2_survey_encrypted"
+			
 
 		
 /* Analysis ____________________________________________________________________*/

@@ -22,84 +22,15 @@ ________________________________________________________________________________
 
 	gen cm_3_2023 = 1
 	
-/* Data ________________________________________________________________________
-
-	use "${data_pangani}/pfm5_pangani.dta", clear
-	*/	
-	
-	gen startdate 	= dofc(starttime)
-	gen enddate		= dofc(endtime)
-	gen subdate 	= dofc(submissiondate)
-	
-	format %td startdate enddate subdate
-
-/* Need to fix something inputted wrong from the field? ________________________*/
-	
-	* one ID has the wrong startdate
-	replace startdate = date("02oct2023", "DMY") if key == "uuid:21a5085e-a305-49fa-a8e7-9665328984f7"
-	
-	* are there duplicates in the IDs?
-	duplicates tag id , gen(dup)
-	tab dup
-	drop dup
-	
-/* Keep only full dataset ______________________________________________________*/
-				
-	* sample23 identifier
-		gen sample_23 = (startdate >= date("22sep2023", "DMY"))
-
-	/* Pilot 
-	keep 		if startdate == date("22sep2023", "DMY")
-	save 	 	"${data_pangani}/pfm5_pangani_pilot_clean.dta", replace
-	*/
-
-	/* Full dataset */
-	drop 		if startdate <= date("22sep2023", "DMY")
-	*save   	"${data_pangani}/pfm5_pangani_clean.dta", replace
-	
-
-********************************************************************************
-			
-/* ID __________________________________________________________________________*/  
-
-	count
-
-	gen resp_id = id 
-	distinct resp_id
-	
-/* Lenght of sections _________________________________________________________*/
-
-	* survey_length	
-		generate double survey_length = endtime - starttime
-		replace survey_length = round(survey_length / (1000*60), 1) // in minutes */
-
-		summ survey_length if survey_length < 100
-
-		/* details by day 
-		tab survey_length enum if startdate == date("02oct2023", "DMY")
-		*/
-	
-	* sections length
-	foreach var of varlist *_dur {
-		gen double `var'_v1	= real(`var')
-		gen double `var'_v2	= round(`var'_v1, .01)
-		drop 	`var'_v1
-		*tab 	`var'_v2 enum if startdate == date("02oct2023", "DMY") , m
-	}
-	
-	
-*	egen survey_length_check = rowtotal(*_dur_v2)
-*	tab survey_length_check survey_length ,m
-	
-	
-								
 /* Pulled treatment assignment _________________________________________________*/
 
-	gen  rd_sample 	= rd_sample_pull 		// numeric binary for RD sample status
-	destring rd_sample, replace
+	gen  rd_sample 	= radio_sample 		// numeric binary for RD sample status
 		la de rd_sample 0 "NOT RD sample" 1 "YES RD sample"
 		la val rd_sample rd_sample
-
+		
+	gen treat_rd 	= radio_treat_num 	// numeric binary for RD sample status
+		la de treat_rd 0 "Flashlight" 1 "Radio"
+		la val treat_rd treat_rd
 
 /* Converting don't know/refuse/other to extended missing values _______________*/
 
