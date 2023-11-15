@@ -23,9 +23,21 @@ ________________________________________________________________________________
 /* Export  _____________________________________________________________________*/
 
 	/* PII */
+	
+	drop 	deviceid subscriberid simid devicephonenum caseid liverlihood_pull enum_oth ///
+			district_code_oth ward_code_oth village_code_oth							///
+			survey_comment cases_* formdef_version *_label isvalidated					///
+			consented* 
+	
 	save "${data}/01_raw_data/03_surveys/pfm_pii_as2_baseline.dta", replace
 
 	/* No PII */
-	drop concl_phone concl_phone_re gpslongitude gpslatitude
+	drop 		enum_name 														///
+				region_name district_name ward_name village_name sub_village	///
+				key concl_phone concl_phone_re 									///
+				gps*
+	
+	label drop 	enum 
+				
 	save "${data}/01_raw_data/pfm_nopii_as2_baseline.dta", replace
 
