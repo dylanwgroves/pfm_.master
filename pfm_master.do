@@ -116,7 +116,7 @@ experiment was generated using GenMatch											*/
 		do "${code}/pfm_.master/02_randomization/pfm_randomization_rd_as.do" 				// Randomization of Radio Distribution in Audio screening
 		do "${code}/pfm_.master/02_randomization/pfm_randomization_rd_ne.do" 				// Randomization of Radio Distribution in Natural experiment
 		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_as.do"
-		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_ne.d	o"
+		*do "${code}/pfm_.master/02_randomization/pfm_ri_rd_ne.do"
 
 	/* Audio Screening */
 
