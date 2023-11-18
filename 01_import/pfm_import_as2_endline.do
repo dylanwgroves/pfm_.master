@@ -23,9 +23,25 @@ ________________________________________________________________________________
 /* Export  _____________________________________________________________________*/
 
 	/* PII */
+
+	drop 	_append_phone _merge_radio _merge_radio2 _merge_rdfollowup			///
+			caseid cases_* consented* isvalidated simid										///
+			deviceid devicephonenum enum_oth excluderadioownershipmodule 		///
+			formdef_version pilot_pull subscriberid survey_comment	///
+			v5* v6* v7* v8* 
+	
 	save "${data}/01_raw_data/03_surveys/pfm_pii_as2_endline.dta", replace
 
 	/* No PII */
-	drop resp_name name_pull info_confirm correct_name kids_first_name_r_1 kids_second_name_r_1 kids_third_name_r_1 child_full_name_r_1 kids_first_name_r_2 kids_second_name_r_2 kids_third_name_r_2 child_full_name_r_2 kids_first_name_r_3 kids_second_name_r_3 kids_third_name_r_3 child_full_name_r_3 kids_first_name_r_4 kids_second_name_r_4 kids_third_name_r_4 child_full_name_r_4 wife_name cases_resp_name gpslongitude gpslatitude
-	save "${data}/01_raw_data/pfm_nopii_as2_endline.dta", replace
+	
+	drop 	District_N Vil_Mtaa_N Ward_Name 									///
+			child_full* kids_first_name_r_* kids_old_r_* kids_second_name_r_* kids_third_name_r_*	///
+			concl_phone concl_phone_re 								///
+			correct_name correct_village village_pull correct_subvillage sub_village_pull	///
+			gps* key															///
+			name_pull resp_name wife_name ///
+			new_enum_name
 
+	label drop 	enum
+	
+	save "${data}/01_raw_data/pfm_nopii_as2_endline.dta", replace

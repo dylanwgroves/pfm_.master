@@ -1,20 +1,27 @@
 /*______________________________________________________________________________
 
 	Project: Pangani FM 2
-	File: Baseline Pilot Import and Cleaning
-	Date: 2023.10.28
-	Author: Dylan Groves, dylanwgroves@gmail.com
-	Overview: This imports piloting data
+	File: AS2 Endline Cleaning
+	Date: 2023.11
+	Author: 
+		Dylan Groves, dylanwgroves@gmail.com
+		Beatrice Montano, bm2955@columbia.com
+	Overview: This cleans endline data
 _______________________________________________________________________________*/
 
 
-/* Introduction ________________________________________________________________*/
-	
-	*version 15
-	clear all
-	set maxvar 30000
-	set more off
+/* Stata Prep ___________________________________________________________________*/
 
+	clear all 	
+	clear matrix
+	clear mata
+	set more off 
+	set maxvar 30000
+	version 16
+
+/* Set Seed ___________________________________________________________*/
+
+	set seed 1956
 	
 /* Load Data _________________________________________________________________*/
 
