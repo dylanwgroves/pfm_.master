@@ -203,6 +203,8 @@ ________________________________________________________________________________
 
 /* Merge Kids Long _____________________________________________________________*/
 
+	use "${data}/03_final_data/pfm_as2_merged.dta", replace
+
 		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
 			drop if merge_end_kid == 2
 			drop if id_village_uid == ""
