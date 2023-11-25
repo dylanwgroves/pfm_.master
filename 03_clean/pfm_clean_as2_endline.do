@@ -24,7 +24,7 @@ _______________________________________________________________________________*
 	
 /* Load Data _________________________________________________________________*/
 
-	use "${data}/01_raw_data/03_surveys/pfm_pii_as2_endline.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_nopii_as2_endline.dta", clear
 	
 	gen as2_endline = 1
 
@@ -41,7 +41,6 @@ _______________________________________________________________________________*
 	gen id_resp_c 				= substr(resp_id, -3, 3)
 			lab var id_resp_c "Respondent Code"
 	
-	drop District_N  Vil_Mtaa_N  Ward_Name
 		
 /* Pulled treatment assignment _________________________________________________*/
 
@@ -86,13 +85,13 @@ _______________________________________________________________________________*
 	
 	* name
 	* eye check: correct_name // all good, it's just spelling for all of them
-	replace resp_name = name_pull if resp_name == ""
-	replace resp_name = correct_name if correct_name != ""
-	drop correction_name correct_name name_pull
+	*replace resp_name = name_pull if resp_name == ""
+	*replace resp_name = correct_name if correct_name != ""
+	*drop correction_name correct_name name_pull
 	
 	* village
 	* eye check: correct_village correct_subvillage
-	 drop village_pull correction_village correct_village sub_village_pull correction_subvillage correct_subvillage
+	 *drop village_pull correction_village correct_village sub_village_pull correction_subvillage correct_subvillage
 	 
 	* age
 	destring resp_age , replace
@@ -116,7 +115,7 @@ _______________________________________________________________________________*
 	
 	label define enum 1 "Robert Mwandumbya" 2 "Neema Msechu" 3 "Management" 4 "Atwisile Jackson" 5 "Yasinta Moshi" 6 "Kassim Abdallah" 7 "Lusekelo Andrew" 8 "Frank Simon" 9 "Mary Temba" 10 "Silvana Karia" 11 "Charles Nzota" 12 "Michael Mwaigombe" 13 "Jenister Anthony" 14 "Husna Majura" 15 "Jackline Joseph" 16 "Rashid Seif" 17 "Aneth Juma" 18 "Aisha Amiri" 19 "Cosmas Sway" 20 "Jackson Bukuru" , modify
 	label values enum enum
-	drop new_enum_name enum_followup
+	drop  enum_followup
 	rename enum svy_enum
 
 	rename consent svy_consent 
@@ -1103,6 +1102,8 @@ _______________________________________________________________________________*
 	order id_ward_uid id_village_uid resp_id svy_enum  
 	
 	drop treat treat_rd
+	
+	label drop enum
 	
 	save "${data}/02_mid_data/pfm_as2_endline_clean.dta", replace
 

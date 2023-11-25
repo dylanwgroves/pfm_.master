@@ -17,7 +17,7 @@ _______________________________________________________________________________*
 	
 /* Load Data _________________________________________________________________*/
 
-	use "${data}/01_raw_data/03_surveys/pfm_pii_as2_midline.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_nopii_as2_midline.dta", clear
 	gen as2_midline = 1
 	
 /* Remove Labels _______________________________________________________________*/
@@ -552,7 +552,7 @@ gen enviro_elect = s3q4b_1
 /* Save _________________________________________________________________________*/
 
 	sort id_* *_id
-	order id_ward_uid id_village_uid resp_id region_code region_name district_code district_name ward_code ward_name village_code village_name id_resp_c sub_village enum enum_name 
+	order id_ward_uid id_village_uid resp_id region_code  district_code  ward_code  village_code  id_resp_c  enum  
 	
 	drop id_re 
 

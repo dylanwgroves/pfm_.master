@@ -368,7 +368,7 @@ forval i = 1/7 {
 	
 /* Political Knowledge _________________________________________________________*/
 
-	gen ptixknow_mp_correct = (district_name == "Korogwe" & ptixknow_mp == 4)
+	gen ptixknow_mp_correct = (district_code == "2" & ptixknow_mp == 4)
 	
 	gen ptixknow_pm_correct = (ptixknow_pm == 2)
 	
@@ -621,7 +621,7 @@ forval i = 1/7 {
 /* Save _________________________________________________________________________*/
 
 	sort id_* *_id
-	order id_ward_uid id_village_uid resp_id region_code region_name district_code district_name ward_code ward_name village_code village_name id_resp_c sub_village enum enum_name 
+	order id_ward_uid id_village_uid resp_id region_code  district_code  ward_code  village_code  id_resp_c  enum  
 	
 	drop id id_re 
 	

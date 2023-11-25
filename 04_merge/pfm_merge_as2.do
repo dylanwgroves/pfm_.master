@@ -36,14 +36,12 @@ ________________________________________________________________________________
 
 /* NOTES: 
 
-	- 	we might want to consider adding a prefix to each survey so we know where its
-		coming from		
-		
-	-	to avoid confusion, put "b_" in front of all baseline variables and
+	-	to avoid confusion, 
+		"b_" in front of all baseline variables and
 		"m_" in front of all midline variables
+		"e_" in front of all endline variables
 
 */
-
 
 	/* Audio Screening */
 	
@@ -102,6 +100,7 @@ ________________________________________________________________________________
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_ri'
 		
+		
 	/* Radio 
 	
 		/* Radio Distribution */
@@ -119,23 +118,16 @@ ________________________________________________________________________________
 		save `temp_rd_ri'
 	*/	
 	
-/* Merge _______________________________________________________________________
-
-	Note
-		- The endline data is merged off of a unique respondent id is created
-		after merging the other files first. So the steps are a little bit awkward:
-			1 - Merge all baseline data
-			2 - Generate Unique IDs
-			3 - Merge endline data (main and partner) based on unique ids
-			
-*/
+/* Merge _______________________________________________________________________*/
 	/* Merge Baseline */
 	
 		use `temp_allvills'
 		merge 1:n village_id using `temp_base', force gen(merge_base)
 			drop if merge_base == 1
 		merge 1:1 resp_id using `temp_mid', force gen(merge_base_mid)
+			gen m_attritor = (merge_base_mid==1)
 		merge 1:1 resp_id using `temp_end', force gen(merge_base_mid_end)
+			gen e_attritor = (merge_base_mid_end==1)
 		merge 1:1 resp_id using `temp_end_partner', force gen(merge_base_mid_end_p)
 	
 		/* AS Randomizations */
@@ -143,13 +135,10 @@ ________________________________________________________________________________
 		merge n:1 village_id using `temp_ri', force gen(merge_ri_as)
 		
 	/* Unique IDs */
-		/*
-		gen id_resp_c = b_resp_c
+		
+		gen id_resp_c = b_id_resp_c
 			lab var id_resp_c "Respondent Code"
 		
-		gen id_resp_n = b_resp_name
-			lab var id_resp_n "Respondent Name"
-		*/
 		drop id_ward_uid
 		egen id_ward_uid = concat(id_district_c id_ward_c), punct("_")
 			lab var id_ward_uid "Ward Unique ID"
@@ -164,7 +153,10 @@ ________________________________________________________________________________
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
 	
-
+		drop	b_id_* m_id_* e_id_* p_id_* ///
+				p_resp_id_pull p_resp_id_partner ///
+				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c 
+	
 /* Label ______________________________________________________________________*/
 
 	rename *_religious_* *_rel_*
@@ -194,20 +186,47 @@ ________________________________________________________________________________
 
 /* Save ________________________________________________________________________*/
 
-
-	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+	*save "${data}/03_final_data/pfm_as2_merged.dta", replace
+	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 	
 	
-	
-	
-
 /* Merge Kids Long _____________________________________________________________*/
 
-	use "${data}/03_final_data/pfm_as2_merged.dta", replace
-
-		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
-			drop if merge_end_kid == 2
-			drop if id_village_uid == ""
+	* without RI * 
 	
-	save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace
+		use "${data}/03_final_data/pfm_as2_merged.dta", replace
+		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
+		
+		/* Label */
+		rename as2_* *	
+		rename *_end_* *_e_*
+		rename *_responsibilities_* *_respo_*
+		rename *_parent_interviewed_* *_p_int_*
+		rename k_gbv_safe_streets_self_short k_gbv_safe_str_self_short
+		rename * as2_*	
+		rename as2_id_* id_*
+		
+		/* Save */
+		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace
+
+	
+	* with RI * 
+	
+		use "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
+		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
+		
+		/* Label */
+		rename as2_* *	
+		rename *_end_* *_e_*
+		rename *_responsibilities_* *_respo_*
+		rename *_parent_interviewed_* *_p_int_*
+		rename k_gbv_safe_streets_self_short k_gbv_safe_str_self_short
+		rename * as2_*	
+		rename as2_id_* id_*
+		
+		/* Save */
+		save "${data}/03_final_data/pfm_as2_merged_kids_withri.dta", replace
+	
+	
+	
 	

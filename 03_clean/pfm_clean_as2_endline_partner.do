@@ -18,7 +18,7 @@ _______________________________________________________________________________*
 	
 /* Load Data _________________________________________________________________*/
 
-	use "${data}/01_raw_data/03_surveys/pfm_pii_as2_endline_partner.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_nopii_as2_endline_partner.dta", clear
 	gen as2_endline_partner = 1
 	
 /* Converting don't know/refuse/other to extended missing values _______________*/
@@ -960,7 +960,7 @@ _______________________________________________________________________________*
 	fre compliance_topic
 
 	
-	/* Re-insert village_uids ______________________________________________________*/
+	/* Re-insert village_uids ______________________________________________________
 
 
 	replace id_village_uid = "2_121_5" if village_pull == "Chepete"
@@ -1001,7 +1001,8 @@ _______________________________________________________________________________*
 	replace id_village_uid = "8_61_1" if village_pull == "Kichalikani"
 	replace id_village_uid = "8_61_2" if village_pull == "Mongavyeru"	
 
-
+*/
+	
 /* Save ________________________________________________________________________*/	
 	
 	drop treat treat_original treat_rd treat_rd_original 
