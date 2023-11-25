@@ -24,9 +24,9 @@ ________________________________________________________________________________
  
 /* Set Globals _________________________________________________________________*/
 
+	
 	foreach user in  	"X:/" ///
-						"/Users/BeatriceMontano" ///
-						"/Users/Bardia" {
+						"/Users/BeatriceMontano"{
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
@@ -35,9 +35,8 @@ ________________________________________________________________________________
 	display "${user}"
 
 
-	foreach user in  	"X:/" ///
-						"/Volumes/Secomba/BeatriceMontano/Boxcryptor" ///
-						"/Volumes/Secomba/Bardia/Boxcryptor" {
+	foreach user in  	"X:/Box" ///
+						"/Volumes/Secomba/BeatriceMontano/Boxcryptor/Box Sync"  {
 							
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
@@ -45,7 +44,7 @@ ________________________________________________________________________________
 	local dir `c(pwd)'
 	global userboxcryptor `dir'
 	display "${userboxcryptor}"	
-	
+
 	
 	cap assert "$`{globals_set}'" == "yes"
 	if _rc!=0 {   

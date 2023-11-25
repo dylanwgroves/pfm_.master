@@ -23,8 +23,7 @@ ________________________________________________________________________________
 
 	
 	foreach user in  	"X:/" ///
-						"/Users/BeatriceMontano" ///
-						"/Users/Bardia" {
+						"/Users/BeatriceMontano"{
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
 				}
@@ -33,9 +32,8 @@ ________________________________________________________________________________
 	display "${user}"
 
 
-	foreach user in  	"X:/" ///
-						"/Volumes/Secomba/BeatriceMontano/Boxcryptor" ///
-						"/Volumes/Secomba/Bardia/Boxcryptor" {
+	foreach user in  	"X:/Box" ///
+						"/Volumes/Secomba/BeatriceMontano/Boxcryptor/Box Sync"  {
 							
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
@@ -61,25 +59,25 @@ ________________________________________________________________________________
 		/* IPA source files */
 		
 			/* Community Surveys */
-			global ipa_cm_1_2020 		"${userboxcryptor}/Box/19_Community Media Endlines/07_Questionnaires & Data/05 Uzikwasa/03 Data Flow/03 clean"
-			global ipa_cm_2_2021 		"${userboxcryptor}/Box/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/01_Community Survey/05_data/02_survey/03 clean"
-			global ipa_cm_3_2023 		"${userboxcryptor}/Box/07_Questionnaires & Data/05_Community survey/03 Data Flow/4_data_encrypted/2_survey"
+			global ipa_cm_1_2020 		"${userboxcryptor}/19_Community Media Endlines/07_Questionnaires & Data/05 Uzikwasa/03 Data Flow/03 clean"
+			global ipa_cm_2_2021 		"${userboxcryptor}/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/01_Community Survey/05_data/02_survey/03 clean"
+			global ipa_cm_3_2023 		"${userboxcryptor}/07_Questionnaires & Data/05_Community survey/03 Data Flow/4_data_encrypted/2_survey"
 		
 			/* Natural Experiment */
-			global ipa_ne 				"${userboxcryptor}/Box/08_PanganiFM/PanganiFM/2 - Data and Analysis"
-			global ipa_ne_endline 		"${userboxcryptor}/Box/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
+			global ipa_ne 				"${userboxcryptor}/08_PanganiFM/PanganiFM/2 - Data and Analysis"
+			global ipa_ne_endline 		"${userboxcryptor}/19_Community Media Endlines/07_Questionnaires & Data/06_NE/05_data_encrypted/02_survey/03_clean"
 		
 			/* Audio Screening */
-			global ipa_as 				"${userboxcryptor}/Box/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
-			global ipa_as_midline 		"${userboxcryptor}/Box/19_Community Media Endlines/04_Research Design/04 Randomization & Sampling"
-			global ipa_as_endline 		"${userboxcryptor}/Box/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
-			global ipa_as_endline_spill "${userboxcryptor}/Box/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
-			global ipa_leader 			"${userboxcryptor}/Box/19_Community Media Endlines/07_Questionnaires & Data/09_leaders/03 Data Flow/02_imported/"
+			global ipa_as 				"${userboxcryptor}/17_PanganiFM_2/07&08 Questionnaires & Data/03 Baseline/04_Data Quantitative/02 Main Survey Data"
+			global ipa_as_midline 		"${userboxcryptor}/19_Community Media Endlines/04_Research Design/04 Randomization & Sampling"
+			global ipa_as_endline 		"${userboxcryptor}/19_Community Media Endlines/07_Questionnaires & Data/07_AS/05_data_encrypted/02_survey/03_clean"
+			global ipa_as_endline_spill "${userboxcryptor}/19_Community Media Endlines/07_Questionnaires & Data/08_Spillover/05_data_encrypted/02_survey"
+			global ipa_leader 			"${userboxcryptor}/19_Community Media Endlines/07_Questionnaires & Data/09_leaders/03 Data Flow/02_imported/"
 
 			/* Audio Screening 2 */
-			global ipa_as2 				"${userboxcryptor}/Box/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/03 Baseline/05_data/02_survey/3_clean/"
-			global ipa_as2_midline 		"${userboxcryptor}/Box/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/04 Midline/05_data/02_survey/03_clean/"
-			global ipa_as2_endline 		"${userboxcryptor}/Box/07_Questionnaires & Data/04 Endline/03 Data Flow/4_data/2_survey_encrypted"
+			global ipa_as2 				"${userboxcryptor}/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/03 Baseline/05_data/02_survey/3_clean/"
+			global ipa_as2_midline 		"${userboxcryptor}/30_Community Media II (Wellspring)/07&08 Questionnaires & Data/04 Midline/05_data/02_survey/03_clean/"
+			global ipa_as2_endline 		"${userboxcryptor}/07_Questionnaires & Data/04 Endline/03 Data Flow/4_data/2_survey_encrypted"
 			
 
 		
