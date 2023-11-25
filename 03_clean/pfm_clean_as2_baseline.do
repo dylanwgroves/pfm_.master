@@ -17,7 +17,7 @@ _______________________________________________________________________________*
 	
 /* Load Data _________________________________________________________________*/
 
-	use "${data}/01_raw_data/03_surveys/pfm_pii_as2_baseline.dta", clear
+	use "${data}/01_raw_data/03_surveys/pfm_nopii_as2_baseline.dta", clear
 	gen as2_baseline = 1
 	
 /* Remove Labels _______________________________________________________________*/

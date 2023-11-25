@@ -56,7 +56,6 @@ ________________________________________________________________________________
 	
 /* Part 1: Import ______________________________________________________________*/
 
-* Tasks: Import files from Box, remove PII
 * Note: This can only be run by authors with Boxcryptor Access
 
 	/* Radio Distribution */
@@ -168,9 +167,9 @@ Tasks: Clean, and generate variables
 		do "${code}/pfm_.master/03_clean/pfm_clean_as2_endline.do" 							// Endline
 		do "${code}/pfm_.master/03_clean/pfm_clean_as2_endline_partner.do"					// Endline (Partner)
 		do "${code}/pfm_.master/03_clean/pfm_clean_as2_endline_kid.do"						// Endline (Kid)
-		do "${code}/pfm_.master/03_clean/pfm_surveyCTO_as2_endline.do"						// Endline - cases with randomizations within surveyCTO
-		do "${code}/pfm_.master/03_clean/pfm_surveyCTO_as2_endline.do"						// Endline (Partner) - cases with randomizations within surveyCTO
-		do "${code}/pfm_.master/03_clean/pfm_surveyCTO_as2_endline.do"						// Endline (Kid) - cases with randomizations within surveyCTO
+*		do "${code}/pfm_.master/03_clean/pfm_surveyCTO_as2_endline.do"						// Endline - cases with randomizations within surveyCTO
+*		do "${code}/pfm_.master/03_clean/pfm_surveyCTO_as2_endline.do"						// Endline (Partner) - cases with randomizations within surveyCTO
+*		do "${code}/pfm_.master/03_clean/pfm_surveyCTO_as2_endline.do"						// Endline (Kid) - cases with randomizations within surveyCTO
 	
 	
 /* Part 3: Merge _______________________________________________________________
