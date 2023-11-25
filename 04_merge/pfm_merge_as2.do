@@ -150,6 +150,7 @@ ________________________________________________________________________________
 			
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
+		
 			
 		drop	*_id_ward_uid *_id_village_uid *_id_resp_c ///
 				objectid
