@@ -26,7 +26,7 @@ ________________________________________________________________________________
 	/* PII */
 	drop 	deviceid subscriberid simid devicephonenum username duration caseid ///
 			enum_oth survey_comment formdef_version key isvalidated 				///
-			excluderadioownershipmodule cases_* v5* _merge*
+			excluderadioownershipmodule cases_* v5* _merge* attritor
 	
 	save "${data}/01_raw_data/03_surveys/pfm_pii_as2_endline_partner.dta", replace
 

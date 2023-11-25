@@ -6,7 +6,6 @@
 	Author: 
 		Dylan Groves, dylanwgroves@gmail.com
 		Beatrice Montano, bm2955@columbia.com
-	Overview: This cleans endline data
 _______________________________________________________________________________*/
 
 
@@ -26,8 +25,24 @@ _______________________________________________________________________________*
 /* Load Data _________________________________________________________________*/
 
 	use "${data}/01_raw_data/03_surveys/pfm_pii_as2_endline.dta", clear
-	gen as2_endline = 1
 	
+	gen as2_endline = 1
+
+/* ID information  _________________________________________________________*/
+
+	replace resp_id = "2_101_5_01" if resp_id == "2_101_5_001"
+	replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
+
+	drop resp_id_pull id id_re 
+	
+	replace id_village_uid 			= substr(resp_id, 1, (strlen(resp_id)-4))
+	gen 	id_ward_uid 			= substr(id_village_uid, 1, (strlen(id_village_uid)-2))
+			
+	gen id_resp_c 				= substr(resp_id, -3, 3)
+			lab var id_resp_c "Respondent Code"
+	
+	drop District_N  Vil_Mtaa_N  Ward_Name
+		
 /* Pulled treatment assignment _________________________________________________*/
 
 	destring treat_pull, replace
@@ -38,6 +53,7 @@ _______________________________________________________________________________*
 	gen treat_rd = radio_treat 
 	la de treat_rd 0 "flashlight" 1 "radio"
 	la val treat_rd treat_rd
+	drop rd_sample treat_rd_pull
 
 
 /* Converting don't know/refuse/other to extended missing values _______________*/
@@ -54,17 +70,6 @@ _______________________________________________________________________________*
 
 /* Pulled Data / Confirmations _________________________________________________*/
 
-	
-	destring resp_female, replace
-	lab def resp_female 0 "Male" 1 "Female"
-	lab val resp_female resp_female 
-	
-		* check that resp_female was correctly replaced if gender was not confirmed from pull
-		rename gender_correction correction_gender
-		gen check_gender = (gender_confirm == 0)
-		tab resp_female correction_gender if check_gender == 1 
-		drop check_gender
-	
 	tab info_confirm														
 
 	rename info_correction_1	correction_name
@@ -73,29 +78,47 @@ _______________________________________________________________________________*
 	rename info_correction_4	correction_village
 	rename info_correction_5	correction_subvillage
 	
-	* clean by hand the strings, as need eye check: correct_name correct_village correct_subvillage
+	* gender 
+	destring resp_female, replace
+	lab def resp_female 0 "Male" 1 "Female"
+	lab val resp_female resp_female 
+	drop gender_correction gender_confirm gender_pull gender_pull_txt resp_sex
 	
-	* Age
-		destring resp_age , replace
-		gen age_check = resp_age if correction_age == 0 
-		replace age_check = correct_age if correction_age == 1 & resp_age < correct_age & correct_age != . 
-		gen check_age = (age_check != resp_age)
-		tab resp_age age_check if check_age == 1 
-		
-		drop age_check check_age
-		
-	* Marital status
+	* name
+	* eye check: correct_name // all good, it's just spelling for all of them
+	replace resp_name = name_pull if resp_name == ""
+	replace resp_name = correct_name if correct_name != ""
+	drop correction_name correct_name name_pull
+	
+	* village
+	* eye check: correct_village correct_subvillage
+	 drop village_pull correction_village correct_village sub_village_pull correction_subvillage correct_subvillage
+	 
+	* age
+	destring resp_age , replace
+	destring age_pull , replace
+	replace resp_age = age_pull if resp_age == .
+	replace resp_age = correct_age if correction_age == 1 & resp_age < correct_age & correct_age != . 
+	drop age_pull correct_age correction_age
+	
+	* marital status
 	destring resp_marital_status, replace
 	replace resp_marital_status = correct_marital_status if correction_marital == 1
-
 	lab val resp_marital_status correct_marital_status
-	decode resp_marital_status, gen(resp_marital_status_n)
+	drop correction_marital correct_marital_status resp_mar_sta_pull_txt_sw resp_marital_status_pull resp_marital_status_pull_txt 
+	
+	* religion: resp_religion_txt_pull
+	drop resp_religion_txt_swa_pull
 	
 /* Survey Information __________________________________________________________*/
 
 	rename visits_nbr svy_visitsnum
 	
-	rename enum svy_enum 
+	label define enum 1 "Robert Mwandumbya" 2 "Neema Msechu" 3 "Management" 4 "Atwisile Jackson" 5 "Yasinta Moshi" 6 "Kassim Abdallah" 7 "Lusekelo Andrew" 8 "Frank Simon" 9 "Mary Temba" 10 "Silvana Karia" 11 "Charles Nzota" 12 "Michael Mwaigombe" 13 "Jenister Anthony" 14 "Husna Majura" 15 "Jackline Joseph" 16 "Rashid Seif" 17 "Aneth Juma" 18 "Aisha Amiri" 19 "Cosmas Sway" 20 "Jackson Bukuru" , modify
+	label values enum enum
+	drop new_enum_name enum_followup
+	rename enum svy_enum
+
 	rename consent svy_consent 
 	
 	
@@ -992,7 +1015,7 @@ _______________________________________________________________________________*
 /* Radio distribution compliance _______________________________________________*/
 
 	rename s30q1 rd_receive
-		replace rd_receive = 0 if rd_sample == 1 & rd_receive != 1
+		replace rd_receive = 0 if rd_sample_pull == "1" & rd_receive != 1
 	rename s30q2 rd_stillhave
 		replace rd_stillhave = 0 if rd_receive == 0
 	rename s30q3 rd_receive_whylost
@@ -1031,7 +1054,7 @@ _______________________________________________________________________________*
 	fre bb_ethics_trouble
   
 
-/* Re-insert village_uids ______________________________________________________*/
+/* Re-insert village_uids ______________________________________________________
 
 
 	replace id_village_uid = "2_121_5" if village_pull == "Chepete"
@@ -1072,12 +1095,15 @@ _______________________________________________________________________________*
 	replace id_village_uid = "8_61_1" if village_pull == "Kichalikani"
 	replace id_village_uid = "8_61_2" if village_pull == "Mongavyeru"	
 	
-	
+*/	
 
 /* Save ________________________________________________________________________*/	
 
-
+	sort id_* *_id
+	order id_ward_uid id_village_uid resp_id svy_enum  
+	
 	save "${data}/02_mid_data/pfm_as2_endline_clean.dta", replace
+
 stop	
 	
 	

@@ -35,6 +35,10 @@ _______________________________________________________________________________*
 
 /* Pulled Data / Confirmations _________________________________________________*/
 
+	* IDs 
+	replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
+	
+	* gender 
 	destring resp_female, replace
 	*lab def resp_female 0 "Male" 1 "Female"
 	lab val resp_female resp_female 

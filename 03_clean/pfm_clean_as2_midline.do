@@ -1,10 +1,9 @@
 /*______________________________________________________________________________
 
 	Project: Pangani FM 2
-	File: Baseline Pilot Import and Cleaning
+	File: Midline Cleaning
 	Date: 2023.10.28
 	Author: Dylan Groves, dylanwgroves@gmail.com
-	Overview: This imports piloting data
 _______________________________________________________________________________*/
 
 
@@ -26,11 +25,19 @@ _______________________________________________________________________________*
 	cap drop *_label
 
 	
-/* Village Information _________________________________________________________
+/* ID information  _________________________________________________________*/
 
-		gen id_resp_c = id
+*	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
+*	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
+
+	gen id_village_uid 			= substr(resp_id, 1, (strlen(resp_id)-4))
+	gen id_ward_uid 			= substr(id_village_uid, 1, (strlen(id_village_uid)-2))
+			
+		gen id_resp_c = id_re
 			lab var id_resp_c "Respondent Code"
-		
+			
+			
+/* Village information  ________________________________________________________	
 ** WHERE IS RESPONDENT NAME**
 /*
 		gen id_resp_n = b_resp_name
@@ -543,6 +550,11 @@ gen enviro_elect = s3q4b_1
 
 	
 /* Save _________________________________________________________________________*/
+
+	sort id_* *_id
+	order id_ward_uid id_village_uid resp_id region_code region_name district_code district_name ward_code ward_name village_code village_name id_resp_c sub_village enum enum_name 
+	
+	drop id_re 
 
 	save "${data}/02_mid_data/pfm_as2_midline_clean.dta", replace
 											

@@ -27,7 +27,7 @@ ________________________________________________________________________________
 	drop 	deviceid subscriberid simid devicephonenum caseid liverlihood_pull enum_oth ///
 			district_code_oth ward_code_oth village_code_oth							///
 			survey_comment cases_* formdef_version *_label isvalidated					///
-			consented* v291 v293 v302
+			consented* v291 v293 v302 section_*_start section_*_end section_*_dur 
 	
 	save "${data}/01_raw_data/03_surveys/pfm_pii_as2_midline.dta", replace
 
