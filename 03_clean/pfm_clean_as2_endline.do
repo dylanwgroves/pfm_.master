@@ -1102,9 +1102,11 @@ _______________________________________________________________________________*
 	sort id_* *_id
 	order id_ward_uid id_village_uid resp_id svy_enum  
 	
+	drop treat treat_rd
+	
 	save "${data}/02_mid_data/pfm_as2_endline_clean.dta", replace
 
-stop	
+	
 	
 	
 /*

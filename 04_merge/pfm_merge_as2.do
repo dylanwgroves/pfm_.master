@@ -94,10 +94,11 @@ ________________________________________________________________________________
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_rand'
 			
-		/* Village RI */
+		/* Village RI 
 		use "${data}/02_mid_data/pfm_ri_as2.dta", clear
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_ri'
+		*/
 
 	/* Radio 
 	
@@ -117,19 +118,7 @@ ________________________________________________________________________________
 	*/	
 	
 
-/* Merge _______________________________________________________________________
-
-	Note
-		- The endline data is merged off of a unique respondent id is created
-		after merging the other files first. So the steps are a little bit awkward:
-			1 - Merge all baseline data
-			2 - Generate Unique IDs
-			3 - Merge endline data (main and partner) based on unique ids
-			
-*/
-
-	/* Merge Baseline */
-
+/* Merge _______________________________________________________________________*/
 	
 		use `temp_allvills'
 		merge 1:n village_id using `temp_base', force gen(merge_base)
@@ -142,14 +131,15 @@ ________________________________________________________________________________
 	
 		/* AS Randomizations */
 		merge n:1 village_id using `temp_rand', force gen(merge_ri_rd)
-		merge n:1 village_id using `temp_ri', force gen(merge_ri_as)
+		*merge n:1 village_id using `temp_ri', force gen(merge_ri_as)
 		
 	/* Unique IDs */
+		/*
 		gen id_resp_n = b_resp_name
 			lab var id_resp_n "Respondent Name"
 		*/
 		
-		drop id_ward_uid
+		*drop id_ward_uid
 		egen id_ward_uid = concat(id_district_c id_ward_c), punct("_")
 			lab var id_ward_uid "Ward Unique ID"
 			
@@ -166,7 +156,6 @@ ________________________________________________________________________________
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
 		
-			
 		drop	*_id_ward_uid *_id_village_uid *_id_resp_c ///
 				objectid
 			
@@ -200,6 +189,7 @@ ________________________________________________________________________________
 /* Save ________________________________________________________________________*/
 
 	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+	*save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 	
 	/* Save NO PII _____________________________________________________________*/
 
@@ -239,23 +229,23 @@ ________________________________________________________________________________
 /* Merge Kids Long _____________________________________________________________*/
 
 	use "${data}/03_final_data/pfm_as2_merged.dta", replace
+	*use "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 
-		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
-			drop if merge_end_kid == 2
-			drop if id_village_uid == ""
 	merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
 
-	
-	save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace
-
 	/* Label */
-		rename as2_* *	
-		rename *_end_* *_e_*
-		rename *_responsibilities_* *_respo_*
-		rename *_parent_interviewed_* *_p_int_*
-		rename k_gbv_safe_streets_self_short k_gbv_safe_str_self_short
-		rename * as2_*	
-		rename as2_id_* id_*
+	rename as2_* *	
+	rename *_end_* *_e_*
+	rename *_responsibilities_* *_respo_*
+	rename *_parent_interviewed_* *_p_int_*
+	rename k_gbv_safe_streets_self_short k_gbv_safe_str_self_short
+	rename * as2_*	
+	rename as2_id_* id_*
+
+	/* Save */
+	save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace
+	*save "${data}/03_final_data/pfm_as2_merged_kids_withri.dta", replace
+
 
 	/* Save NO PII _____________________________________________________________*/
 
