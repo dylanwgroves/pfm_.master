@@ -20,7 +20,7 @@ ________________________________________________________________________________
 	
 /* Load Data ___________________________________________________________________*/
 
-	import excel "${data}\01_raw_data\AS_2_Sample Villages_Final.xlsx", sheet("Sheet1") firstrow clear
+	import excel "${data}/01_raw_data/AS_2_Sample Villages_Final.xlsx", sheet("Sheet1") firstrow clear
 
 
 	/* Create Unique IDs */

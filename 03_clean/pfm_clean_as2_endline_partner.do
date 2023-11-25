@@ -1003,6 +1003,8 @@ _______________________________________________________________________________*
 
 
 /* Save ________________________________________________________________________*/	
+	
+	drop treat treat_original treat_rd treat_rd_original 
 
 	save "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta" , replace
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear

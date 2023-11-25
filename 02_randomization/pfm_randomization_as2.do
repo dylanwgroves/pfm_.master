@@ -7,7 +7,7 @@ Author: Dylan W Groves, dylanwgroves@gmail.com
 Date: 2022/04/1
 ________________________________________________________________________________*/
 
-import excel "${data}\01_raw_data\AS_2_Sample Villages_Final.xlsx", sheet("Sheet1") firstrow clear
+import excel "${data}/01_raw_data/AS_2_Sample Villages_Final.xlsx", sheet("Sheet1") firstrow clear
 
 egen id_village_uid = concat(District_C Ward_Code Vil_Mtaa_C), punct("_")
 			lab var id_village_uid "Village Unique ID"

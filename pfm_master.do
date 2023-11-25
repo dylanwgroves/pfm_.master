@@ -128,9 +128,9 @@ experiment was generated using GenMatch											*/
 
 	/* Audio Screening 2 */
 	
-																							// Randomization - Audio screening 2
-
-	/* Natural Experiment */
+		do "${code}/pfm_.master/02_randomization/pfm_randomization_as2.do" 					// Randomization - Audio screening 2
+		
+		/* Community Media */
 	
 		* No Randomization for Community Media
 
