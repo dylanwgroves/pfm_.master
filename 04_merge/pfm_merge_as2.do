@@ -35,17 +35,13 @@ ________________________________________________________________________________
 /* Import Data ________________________________________________________________*/
 
 /* NOTES: 
-
-	- 	we might want to consider adding a prefix to each survey so we know where its
-		coming from		
-		
-	-	to avoid confusion, put "b_" in front of all baseline variables and
+	-	to avoid confusion, 
+		"b_" in front of all baseline variables
 		"m_" in front of all midline variables
-
+		"e_" in front of all midline variables	
 */
 
-
-	/* Audio Screening */
+	/* Audio Screening 2 */
 	
 		/* All villages */
 		use "${data}/01_raw_data/pfm_allvills_clean.dta"
@@ -90,8 +86,9 @@ ________________________________________________________________________________
 		rename k_resp_id id_resp_uid
 		save `temp_end_kid'
 	
+
 	/* Randomization */
-	
+
 		/* Village Randomization */
 		use "${data}/02_mid_data/pfm_randomized_as2.dta", clear
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
@@ -101,7 +98,7 @@ ________________________________________________________________________________
 		use "${data}/02_mid_data/pfm_ri_as2.dta", clear
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_ri'
-		
+
 	/* Radio 
 	
 		/* Radio Distribution */
@@ -119,6 +116,7 @@ ________________________________________________________________________________
 		save `temp_rd_ri'
 	*/	
 	
+
 /* Merge _______________________________________________________________________
 
 	Note
@@ -129,13 +127,17 @@ ________________________________________________________________________________
 			3 - Merge endline data (main and partner) based on unique ids
 			
 */
+
 	/* Merge Baseline */
+
 	
 		use `temp_allvills'
 		merge 1:n village_id using `temp_base', force gen(merge_base)
 			drop if merge_base == 1
 		merge 1:1 resp_id using `temp_mid', force gen(merge_base_mid)
+			gen m_attritor = (merge_base_mid==1)
 		merge 1:1 resp_id using `temp_end', force gen(merge_base_mid_end)
+			gen e_attritor = (merge_base_mid_end==1)
 		merge 1:1 resp_id using `temp_end_partner', force gen(merge_base_mid_end_p)
 	
 		/* AS Randomizations */
@@ -143,13 +145,10 @@ ________________________________________________________________________________
 		merge n:1 village_id using `temp_ri', force gen(merge_ri_as)
 		
 	/* Unique IDs */
-		/*
-		gen id_resp_c = b_resp_c
-			lab var id_resp_c "Respondent Code"
-		
 		gen id_resp_n = b_resp_name
 			lab var id_resp_n "Respondent Name"
 		*/
+		
 		drop id_ward_uid
 		egen id_ward_uid = concat(id_district_c id_ward_c), punct("_")
 			lab var id_ward_uid "Ward Unique ID"
@@ -158,13 +157,19 @@ ________________________________________________________________________________
 		egen id_village_uid = concat(id_district_c id_ward_c id_village_c), punct("_")
 			lab var id_village_uid "Village Unique ID"
 			
+		gen id_resp_c = b_id_resp_c
+			lab var id_resp_c "Respondent Code"
+		
 		gen id_resp_uid = resp_id			
 			lab var id_resp_uid "Respondent Unique ID"
 			
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
-	
-
+		
+			
+		drop	*_id_ward_uid *_id_village_uid *_id_resp_c ///
+				objectid
+			
 /* Label ______________________________________________________________________*/
 
 	rename *_religious_* *_rel_*
@@ -194,11 +199,41 @@ ________________________________________________________________________________
 
 /* Save ________________________________________________________________________*/
 
-
 	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 	
-	
-	
+	/* Save NO PII _____________________________________________________________*/
+
+		drop 	id_region_n id_district_n id_ward_n id_village_n ///
+				as2_*_enum_name 		///
+				as2_*_region_name 		///
+				as2_*_district_name 	///
+				as2_*_ward_name 		///
+				as2_*_village_name  	///
+				as2_*_village_pull 		///
+				as2_*_correct_village	///
+				as2_*_sub_village		///
+				as2_*_sub_village_pull 	///
+				as2_*_correct_subvillage	///
+				as2_*_key 				///
+				as2_*_concl_phone as2_*_concl_phone_re 	///
+				as2_*_gps*				///
+				as2_m_phone_pull 		///
+				as2_*_resp_name			///
+				as2_*_name_pull 		///
+				as2_*_correct_name		///
+				as2_*_enum_name 		///
+				as2_p_id_resp_name_pull ///
+				as2_p_k_resp_name* 		///
+				as2_p_spouse_name_pull  ///
+				as2_p_id_district_name_pull ///
+				as2_p_id_ward_name_pull ///
+				as2_p_id_village_name_pull ///
+				as2_p_id_sub_village_name_pull ///
+				as2_p_new_enum_name		
+
+		label drop 	enum
+
+		save "${data}/03_final_data/pfm_nopii_as2_merged.dta", replace
 	
 
 /* Merge Kids Long _____________________________________________________________*/
@@ -208,6 +243,54 @@ ________________________________________________________________________________
 		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
 			drop if merge_end_kid == 2
 			drop if id_village_uid == ""
+	merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
+
 	
 	save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace
-	
+
+	/* Label */
+		rename as2_* *	
+		rename *_end_* *_e_*
+		rename *_responsibilities_* *_respo_*
+		rename *_parent_interviewed_* *_p_int_*
+		rename k_gbv_safe_streets_self_short k_gbv_safe_str_self_short
+		rename * as2_*	
+		rename as2_id_* id_*
+
+	/* Save NO PII _____________________________________________________________*/
+
+		drop 	id_region_n id_district_n id_ward_n id_village_n ///
+				as2_*_enum_name 		///
+				as2_*_region_name 		///
+				as2_*_district_name 	///
+				as2_*_ward_name 		///
+				as2_*_village_name  	///
+				as2_*_village_pull 		///
+				as2_*_correct_village	///
+				as2_*_sub_village		///
+				as2_*_sub_village_pull 	///
+				as2_*_correct_subvillage	///
+				as2_*_key 				///
+				as2_*_concl_phone as2_*_concl_phone_re 	///
+				as2_*_gps*				///
+				as2_m_phone_pull 		///
+				as2_*_resp_name			///
+				as2_*_name_pull 		///
+				as2_*_correct_name		///
+				as2_*_enum_name 		///
+				as2_p_id_resp_name_pull ///
+				as2_p_k_resp_name* 		///
+				as2_p_spouse_name_pull  ///
+				as2_p_id_district_name_pull ///
+				as2_p_id_ward_name_pull ///
+				as2_p_id_village_name_pull ///
+				as2_p_id_sub_village_name_pull ///
+				as2_p_new_enum_name		/// 
+				as2_k_parent_name 		/// 
+				as2_k_correct_parent_name ///
+				as2_k_correct_kid_name ///
+				as2_k_s20q2latitude as2_k_s20q2longitude as2_k_s20q2altitude as2_k_s20q2accuracy 
+			
+		label drop 	enum
+
+		save "${data}/03_final_data/pfm_nopii_as2_merged_kids.dta", replace

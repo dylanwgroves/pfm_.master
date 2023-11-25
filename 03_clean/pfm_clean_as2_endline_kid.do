@@ -30,7 +30,6 @@ _______________________________________________________________________________*
 	* Remember, you have to run this dofile in between the import and this cleaning -- which fixes field mistakes!
 	*	do "${userboxcryptor}07_Questionnaires & Data/04 Endline/03 Data Flow/0_master.do"	
 	
-	use "X:/Box/07_Questionnaires & Data/04 Endline/03 Data Flow/4_data/2_survey_encrypted/pfm5_child.dta", clear
 
 	gen startdate 	= dofc(starttime)
 	gen enddate		= dofc(endtime)
@@ -92,6 +91,10 @@ _______________________________________________________________________________*
 	
 /* Pulled Data / Confirmations _________________________________________________*/
 
+	* IDs 
+	replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
+
+	
 	destring resp_female, replace
 		*lab def resp_female 0 "Male" 1 "Female"
 	lab val resp_female resp_female 
@@ -511,6 +514,8 @@ _______________________________________________________________________________*
 	rename compl_as2_topic compliance_discuss_topic
 	rename compl_as2_topic_who compliance_discuss_who
 
+	
+	
 /* village names _______________________________________________________________
 
 	replace id_village_uid = "2_121_5" if village_pull == "Chepete"

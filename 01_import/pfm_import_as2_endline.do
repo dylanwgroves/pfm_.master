@@ -28,7 +28,7 @@ ________________________________________________________________________________
 			caseid cases_* consented* isvalidated simid										///
 			deviceid devicephonenum enum_oth excluderadioownershipmodule 		///
 			formdef_version pilot_pull subscriberid survey_comment	///
-			v5* v6* v7* v8* 
+			v5* v6* v7* v8* section_*_start section_*_end section_*_dur text_audit
 	
 	save "${data}/01_raw_data/03_surveys/pfm_pii_as2_endline.dta", replace
 
