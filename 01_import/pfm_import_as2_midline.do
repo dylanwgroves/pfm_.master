@@ -19,7 +19,7 @@ ________________________________________________________________________________
 	
 
 	* import screening 	
-	merge 1:1 resp_id using "${ipa_as2_midline}/pfm4_audio_screening_midline_survey_clean.dta", gen(_merge_attendance)
+	use "${ipa_as2_midline}/pfm4_audio_screening_midline_survey_clean.dta", clear
 
 
 
