@@ -57,6 +57,11 @@ _______________________________________________________________________________*
 			lab var id_objectid "(TZ Census) Object ID"
 */
 			
+/* Converting don't know/refuse/other to extended missing values _______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
 /* Respondent Information ______________________________________________________*/
 
 	rename resp_wear_ppe resp_ppe
