@@ -76,6 +76,12 @@ ________________________________________________________________________________
 		/* Partner */
 		use "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta", clear
 		rename consented* c*
+*		rename agr_productivity_* agr_prod_*	
+*		rename resp_visitcity_activities_* resp_visitcity_act_* 
+*		rename enviro_cause_second_othersuper env_cause_sec_othsup
+*		rename radio_stations_* radio_stat_*
+*		rename rd_receive_stillhave_whynowork rd_rec_stillhave_whynowork
+*		rename * e_*
 		rename * p_*	
 		rename p_resp_id resp_id
 		save `temp_end_partner'
@@ -165,7 +171,7 @@ ________________________________________________________________________________
 	rename *_enviro_* *_env_*
 	drop *_label_*
 	drop *_randomizer_*
-	drop *_ptixpart_* *_ppart_*
+	rename *_ptixpart_* *_ppart_*
 	rename *_section_* *_sect_*
 	rename *_receive_* *_rec_*
 	rename *_marital_status_* *_marstat_*

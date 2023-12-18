@@ -437,8 +437,8 @@ _______________________________________________________________________________*
 	gen gbv_response_norm_gov = (gbv_response_norm == 2)
 	
 	* Court 
-	recode court_boda_sex (1 = 1 "Testify")(2 = 0 "Don't tesitfy"), gen(gbv_testify)
-	recode court_boda_sex_norm (1 = 1 "Testify")(2 = 0 "Don't tesitfy"), gen(gbv_testify_norm)
+	recode court_boda_sex (1 = 1 "Testify")(2 = 0 "Don't testify"), gen(gbv_testify)
+	recode court_boda_sex_norm (1 = 1 "Testify")(2 = 0 "Don't testify"), gen(gbv_testify_norm)
 	
 	
 	foreach var of varlist gbv_* {
