@@ -76,12 +76,6 @@ ________________________________________________________________________________
 		/* Partner */
 		use "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta", clear
 		rename consented* c*
-*		rename agr_productivity_* agr_prod_*	
-*		rename resp_visitcity_activities_* resp_visitcity_act_* 
-*		rename enviro_cause_second_othersuper env_cause_sec_othsup
-*		rename radio_stations_* radio_stat_*
-*		rename rd_receive_stillhave_whynowork rd_rec_stillhave_whynowork
-*		rename * e_*
 		rename * p_*	
 		rename p_resp_id resp_id
 		save `temp_end_partner'
@@ -125,6 +119,7 @@ ________________________________________________________________________________
 	*/	
 	
 /* Merge _______________________________________________________________________*/
+	
 	/* Merge Baseline */
 	
 		use `temp_allvills'
@@ -198,7 +193,7 @@ ________________________________________________________________________________
 	
 /* Merge Kids Long _____________________________________________________________*/
 
-	* without RI * 
+	/* without RI
 	
 		use "${data}/03_final_data/pfm_as2_merged.dta", replace
 		merge 1:n id_resp_uid using `temp_end_kid', gen(merge_end_kid)
@@ -214,7 +209,8 @@ ________________________________________________________________________________
 		
 		/* Save */
 		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace
-
+	
+	*/
 	
 	* with RI * 
 	

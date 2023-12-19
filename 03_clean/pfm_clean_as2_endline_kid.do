@@ -438,11 +438,12 @@ _______________________________________________________________________________*
 	recode gbv_safe_boda_norm (1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_boda_risky_norm)
 	
 	tab 	end_gbv_norm_rand_txt
+	tab gbv_boda_risky_norm rand_parent_txt
 
 	* Party
 	tab gbv_safe_party_self if resp_female == 1, m
 	
-	* Streets																	// DWG: Not sure need only when dark
+	* Streets																	
 	tab gbv_resp_streets_self if resp_female == 1, m
 	rename gbv_resp_streets_self gbv_safe_streets_self_short 
 	
@@ -456,6 +457,13 @@ _______________________________________________________________________________*
 	
 
 	rename gbv_response_norm gbv_response_parent
+		label de gbv_response_parent 	0 	"Wait for situation to resolve itself" ///
+									1	"Report the issue to the girl's family" ///
+									2	"Report the issue to the VEO or VC" ///
+									3	"Report the issue to the teachers" ///
+									, modify
+									
+		label val gbv_response_parent gbv_response_parent		
 	
 	gen gbv_response_parent_gov = (gbv_response_parent == 2)
 
@@ -516,46 +524,6 @@ _______________________________________________________________________________*
 
 	
 	
-/* village names _______________________________________________________________
-
-	replace id_village_uid = "2_121_5" if village_pull == "Chepete"
-	replace id_village_uid = "8_91_5" if village_pull == "Churwa"
-	replace id_village_uid = "2_81_5" if village_pull == "Kwakibomi"
-	replace id_village_uid = "2_121_1" if village_pull == "Madala"
-	replace id_village_uid = "8_141_2" if village_pull == "Mapatano"
-	replace id_village_uid = "8_91_2" if village_pull == "Mhinduro"
-	replace id_village_uid = "3_11_2" if village_pull == "Misozwe"
-	replace id_village_uid = "2_81_3" if village_pull == "Msasa"
-	replace id_village_uid = "8_141_3" if village_pull == "Mtakuja"
-	replace id_village_uid = "3_11_4" if village_pull == "Mwarimba"
-	replace id_village_uid = "2_101_7" if village_pull == "Welei"
-	replace id_village_uid = "2_181_1" if village_pull == "Kwemanolo"
-	replace id_village_uid = "2_181_2" if village_pull == "Mali"
-	replace id_village_uid = "2_101_5" if village_pull == "Masange"
-	replace id_village_uid = "2_91_7" if village_pull == "Shalaka"
-	replace id_village_uid = "2_91_1" if village_pull == "Kwemshai"
-	replace id_village_uid = "2_201_2" if village_pull == "Changalikwa"
-	replace id_village_uid = "2_201_1" if village_pull == "Makole"
-		
-	replace id_village_uid = "2_191_7" if village_pull == "Gombalamu"
-	replace id_village_uid = "2_191_1" if village_pull == "Mafuleta"
-	replace id_village_uid = "1_71_3" if village_pull == "Nkamai"
-	replace id_village_uid = "1_71_4" if village_pull == "Mponde"
-	replace id_village_uid = "1_421_4" if village_pull == "Kwendoghoi"
-	replace id_village_uid = "1_421_1" if village_pull == "Kwamzuza"	
-	
-	replace id_village_uid = "8_181_1" if village_pull == "Boma kichakamiba"
-	replace id_village_uid = "8_181_2" if village_pull == "Subutuni"
-	replace id_village_uid = "8_211_1" if village_pull == "Kibewani"
-	replace id_village_uid = "8_211_2" if village_pull == "Kilulu - Duga"
-	replace id_village_uid = "8_191_2" if village_pull == "Parungu Kasera"
-	replace id_village_uid = "8_191_3" if village_pull == "Mzingi Mwagogo"
-
-	replace id_village_uid = "8_81_2" if village_pull == "Vunge Manyinyi"
-	replace id_village_uid = "8_81_4" if village_pull == "Dima"
-	replace id_village_uid = "8_61_1" if village_pull == "Kichalikani"
-	replace id_village_uid = "8_61_2" if village_pull == "Mongavyeru"	
-*/	
 	
 /* Save ________________________________________________________________________*/	
 
