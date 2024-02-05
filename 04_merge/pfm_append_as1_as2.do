@@ -8,17 +8,18 @@
 _______________________________________________________________________________*/
 
 
+*set maxvar 32767 , perm
+
 /* Introduction _______________________________________________________________*/
 
 	clear all
 	
 /* Locals and Tempfiles ________________________________________________________*/
 
-tempfile temp_ne
-tempfile temp_ne_new
 tempfile temp_as
 tempfile temp_as2
-tempfile temp_cm
+tempfile temp_as_noprefix
+tempfile temp_as2_noprefix
 
 	
 /* Notes _______________________________________________________________________
@@ -32,22 +33,17 @@ tempfile temp_cm
 
 /* Import Data _________________________________________________________________*/
 
-	use "${data}/03_final_data/pfm_ne_merged.dta", clear
-		rename ne_rd_treat_* rd_treat_*
-		save `temp_ne', replace
-
 	use "${data}/03_final_data/pfm_as_merged.dta", clear
-		rename as_rd_treat_* rd_treat_*
+		drop as_rd_treat_* 
+		drop as_treat_*
+		rename as_rd_treat   rd_treat
+		drop *_cases_*
+		drop *_section_*
 		save `temp_as'
 
-
 	use "${data}/03_final_data/pfm_as2_merged.dta", clear
-		rename as2_rd_treat_* rd_treat_*
+		drop *_sect_*
 		save `temp_as2'
-		
-	use "${data}/03_final_data/pfm_cm_merged.dta", clear
-		rename cm_rd_treat_* rd_treat_*
-		save `temp_cm'
 		
 
 /* Export with Prefix __________________________________________________________
@@ -57,49 +53,33 @@ tempfile temp_cm
 	
 */
 	use `temp_as'
-	qui append using `temp_ne', force
 	qui append using `temp_as2', force
-	qui append using `temp_cm', force
-	save "${data}/03_final_data/pfm_appended_prefix.dta", replace
-
-	
-/* Export Each AS Dataset Independently ________________________________________
-
-	This is useful so we can pull in different datasets
-	
-*/
-
-	use `temp_ne', clear
-		rename ne_* *
-		save `temp_ne_new', replace
-
-	use `temp_as', clear
-		rename as_* *
-		rename treat treat_as
-
-	append using `temp_ne_new', force
-	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
+	save "${user}/Dropbox/Socialization/01_data/pfm_as_as2_appended_prefix.dta", replace
 
 
 	
 /* Export without Prefixes _____________________________________________________
 
-	This is useful when we want to combine surveys for some reason
+	This is useful when we want to combine surveys 
 	
 */
-
-	use `temp_ne', clear
-		rename ne_* *
-		save `temp_ne_new', replace
 
 	use `temp_as', clear
 		rename as_* *
 		rename treat treat_as
-		gen survey = "as"
+		gen survey = "as1"
+		save `temp_as_noprefix'
+		
+	use `temp_as2'
+		rename as2_* *
+		rename treat treat_as2
+		gen survey = "as2" 	
+		save `temp_as2_noprefix'
+	
+	use`temp_as_noprefix'
+	qui append using `temp_as2_noprefix', force
 
-	append using `temp_ne_new', force
-		replace survey = "ne" if survey != "as"
-	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace
+	save "${user}/Dropbox/Socialization/01_data/pfm_as_as2_appended_noprefix.dta", replace
 
 	
 

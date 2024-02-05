@@ -85,7 +85,7 @@ ________________________________________________________________________________
 		rename f_id_resp_uid id_resp_uid
 		save `temp_end_friend'
 		
-		/* Kids */
+		/* Kids -- use the wide dta! */
 		use "${data}/01_raw_data/pfm_as_endline_clean_kid.dta", clear
 		rename * k_*		
 		rename k_id_resp_uid id_resp_uid
@@ -139,6 +139,7 @@ ________________________________________________________________________________
 		merge 1:n village_id using `temp_base', force gen(merge_base)
 			drop if merge_base == 1
 		merge 1:1 resp_id using `temp_mid', force gen(merge_base_mid)
+					gen m_attritor = (merge_base_mid==1)
 		merge 1:1 resp_id using `temp_rd_dist', force gen(merge_bas_mid_rd)
 		merge 1:1 resp_id using `temp_rd_rand', force gen(merge_bas_mid_rd_rdrand)
 		merge 1:1 resp_id using `temp_rd_ri', force gen(merge_rdri)
@@ -169,6 +170,7 @@ ________________________________________________________________________________
 			
 	/* Merge Endlines */
 		merge 1:1 id_resp_uid using `temp_end', gen(merge_end)
+			gen e_attritor = (merge_end==1)
 		merge 1:1 id_resp_uid using `temp_end_partner', gen(merge_end_part)
 		merge 1:1 id_resp_uid using `temp_end_friend', gen(merge_end_friend)
 		merge 1:1 id_resp_uid using `temp_end_kid', gen(merge_end_kid)
@@ -188,8 +190,6 @@ ________________________________________________________________________________
 
 	save "${data}/03_final_data/pfm_as_merged.dta", replace
 	
-	
-	use "${data}/03_final_data/pfm_as_merged.dta", replace
 	
 	
 	

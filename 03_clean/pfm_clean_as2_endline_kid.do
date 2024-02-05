@@ -531,6 +531,25 @@ _______________________________________________________________________________*
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear
 
 	
+/* Make Wide ___________________________________________________________________*/
+
+	gen helper = substr(k_resp_id,-1,.)
+	encode helper, gen(id_kid_rank)
+	drop helper
+
+	rename * k_*
+	rename k_k_* k_*
+	
+	rename k_resp_parent_interviewed_* k_resp_parent_int_*
+	rename k_id_kid_rank    id_kid_rank
+	rename k_resp_id_parent resp_id_parent
+	
+	reshape wide k_* , i(resp_id_parent) j(id_kid_rank)
+
+					 
+/* Export Wide __________________________________________________________________*/
+
+	save "${data}/02_mid_data/pfm_as_endline_clean_kid_wide.dta", replace
 	
 	
 /*
