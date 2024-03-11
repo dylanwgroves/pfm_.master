@@ -23,10 +23,6 @@ tempfile temp_cm
 	
 /* Notes _______________________________________________________________________
 
-	THIS IS WHERE NEED TO GO BACK TO MAKE SURE THAT WE ARE NOT APPENDING
-	VARIABLES WITH DIFFERENT VALUES TO ONE ANOTHER , WHICH COULD FUCK UP 
-	THE LABELLING AND/OR VALUES
-
 */
 
 

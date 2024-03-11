@@ -70,8 +70,8 @@ ________________________________________________________________________________
 		/* Endline */
 		use  "${data}/01_raw_data/pfm_as_endline_clean.dta", clear
 		rename * e_*
-		rename e_id_resp_uid id_resp_uid
-		sort id_resp_uid 
+		rename e_id_resp_uid resp_id
+		clonevar id_resp_uid = resp_id
 		save `temp_end'
 		
 		/* Partner */
@@ -170,7 +170,7 @@ ________________________________________________________________________________
 			
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
-			
+					
 	/* Merge Endlines */
 		merge 1:1 id_resp_uid using `temp_end', gen(merge_end)
 			gen e_attritor = (merge_end==1)
@@ -184,9 +184,7 @@ ________________________________________________________________________________
 
 /* Label ______________________________________________________________________*/
 
-	rename e_choices_randomizer_rpt_count e_choices_rand_rpt_count
-	rename e_treat_values_urbangood_gender e_treat_val_urbgood_gender
-	rename e_conjoint_randomizer_rpt_count e_conjoint_rand_rpt_count
+	drop e_choices_randomizer_rpt_count e_treat_values_urbangood_gender e_conjoint_randomizer_rpt_count
 	rename * as_*	
 	rename as_id_* id_*
 	rename as_sample sample
@@ -201,7 +199,14 @@ ________________________________________________________________________________
 	
 	save "${data}/03_final_data/pfm_as_merged.dta", replace
 	
-	
-	
+/* Save RI _____________________________________________________________________*/
+
+	use "${data}/03_final_data/pfm_as_merged_withri.dta", replace
+		rename as_rd_treat_* rd_treat_* 
+		keep rd_treat_* id_resp_uid 
+		keep if !missing(rd_treat_1)
+		save "${user}\Dropbox\Wellspring Tanzania Papers\Wellspring Tanzania - Radio Distribution\01 Data/pfm_ri_rd_as.dta", replace 
+
+
 	
 	
