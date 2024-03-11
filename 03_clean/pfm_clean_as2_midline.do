@@ -525,7 +525,6 @@ gen enviro_elect = s3q4b_1
 	gen gbv_parent = parent_helicopter
 	
 	
-/* Enviro Indices ______________________________________________________________*/
 
 	gen enviro_ccknow_long_short = enviro_ccknow_long/2
 	gen enviro_cause_intl_short = enviro_cause_intl/2
@@ -547,7 +546,6 @@ gen enviro_elect = s3q4b_1
 	gen socpref1_rank_bribes_short = socpref1_rank_bribes/4
 	gen thermo_leader_short = thermo_local_leader/100
 	egen corruption_index = rowmean(ppart_corruption socpref1_rank_bribes_short thermo_leader_short)
-
 	
 /* Save _________________________________________________________________________*/
 

@@ -348,11 +348,9 @@ _______________________________________________________________________________*
 											enviro_cause_second_intl ///
 											enviro_cause_second_gov)
 																
-	recode env_cause (4 5 6 7 8 = 2)(1 2 3 9 10 -222 -999 = 0), gen(enviro_cause_human)		// DWG: for outcome measure, do we want to set this to zero if they got the meaning of climate change wrong
 	lab var enviro_cause_human "Environmental problems primarily caused by humans, secondarily, or not at all"
 	replace enviro_cause_human = 1 if enviro_cause_second_humans == 1 & enviro_cause_human == 0
 	
-	recode env_cause (7 = 1)(1 2 3 4 5 6 8 9 10 -222 -999 = 0), gen(enviro_cause_intl)
 	lab var enviro_cause_intl "Dummy: enviro prob caused by international folks"
 	replace enviro_cause_intl = 1 if enviro_cause_second_intl == 1 
 	
@@ -360,10 +358,8 @@ _______________________________________________________________________________*
 		cap fre enviro_*
 	}
 
-
 /* Gender ______________________________________________________________________*/
 
-	fre ge_school
 	recode ge_school (2 = 1)(1 = 0)
 	lab def ge_school_new 1 "Girls Equal Edu" 0 "Boys > Girls Edu"
 	lab val ge_school ge_school_new
@@ -400,8 +396,6 @@ _______________________________________________________________________________*
 	
 	recode gbv_safe_travel_norm (1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_travel_risky_norm)
 
-	tab 	end_gbv_norm_rand_txt
-	tab 	gbv_travel_risky_norm end_gbv_norm_rand_txt
 
 																				
 	* risky boda att + norm
@@ -417,15 +411,10 @@ _______________________________________________________________________________*
 
 	recode gbv_safe_boda_norm (1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_boda_risky_norm)
 	
-	tab 	end_gbv_norm_rand_txt
-	tab 	gbv_boda_risky_norm end_gbv_norm_rand_txt
 
 	* Party
-	tab gbv_safe_party_self if resp_female == 1, m
-	tab gbv_safe_party_norm, m
 	
 	* Streets																	// DWG: Not sure need only when dark
-	tab gbv_resp_streets_self if resp_female == 1, m
 	rename gbv_resp_streets_self gbv_safe_streets_self_short 
 	
 *	if pilot == 1 {
