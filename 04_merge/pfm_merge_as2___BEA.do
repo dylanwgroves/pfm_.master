@@ -157,8 +157,13 @@ ________________________________________________________________________________
 			lab var id_objectid "(TZ Census) Object ID"
 	
 		drop	b_id_* m_id_* e_id_* p_id_* ///
+<<<<<<< HEAD
 				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c 
 				*p_resp_id_pull p_resp_id_partner ///
+=======
+				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c  
+				
+>>>>>>> 6ad87638509dbaacb91507aa2253723a664bb06c
 	
 /* Label ______________________________________________________________________*/
 
@@ -196,9 +201,17 @@ ________________________________________________________________________________
 
 /* Save ________________________________________________________________________*/
 
+<<<<<<< HEAD
 	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 *	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 	
+=======
+*	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
+	drop as2_treat_* 
+	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+
+>>>>>>> 6ad87638509dbaacb91507aa2253723a664bb06c
 	
 /* Merge Kids Long _____________________________________________________________*/
 		
@@ -247,5 +260,11 @@ ________________________________________________________________________________
 		rename as2_id_* id_*
 		
 		/* Save  */
+<<<<<<< HEAD
 		save "${data}/03_final_data/pfm_as2_merged_kids_long_withri.dta", replace
 	*/   
+=======
+		save "${data}/03_final_data/pfm_as2_merged_kids_withri.dta", replace
+		drop as2_treat_* 
+		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace   
+>>>>>>> 6ad87638509dbaacb91507aa2253723a664bb06c

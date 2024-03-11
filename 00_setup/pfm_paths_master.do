@@ -23,6 +23,7 @@ ________________________________________________________________________________
 
 	
 	foreach user in  	"X:/" ///
+						"C:\Users\grovesd\" ///
 						"/Users/BeatriceMontano"{
 					capture cd "`user'"
 					if _rc == 0 macro def path `user'
