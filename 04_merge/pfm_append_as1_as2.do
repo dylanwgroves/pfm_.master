@@ -1,10 +1,10 @@
 /*______________________________________________________________________________
 
 	Project: Pangani FM
-	File: Appends Audio Screening and Natural Experiment DTA files
-	Date: 8/22/2019
-	Author: Dylan Groves, dgroves@poverty-action.org
-	Overview: This merges and appends are relevant datasets
+	File: Appends Audio Screening 1 and 2 DTA files
+	Date: 2024/02/14
+	Author: Beatrice Montano, beatrice.montano@hotmail.com 
+	Overview: This appends are relevant datasets
 _______________________________________________________________________________*/
 
 
@@ -54,8 +54,8 @@ tempfile temp_as2_noprefix
 */
 	use `temp_as'
 	qui append using `temp_as2', force
-	save "${user}/Dropbox/03_final_data/1_data/pfm_as_as2_appended_prefix.dta", replace
-
+	save "${user}/Dropbox/Socialization/01_data/pfm_as_as2_appended_prefix.dta", replace
+	save "${user}/Dropbox/Pluralistic Ignorance/05_code/Tanzania/01_data/pfm_as_as2_appended_prefix.dta", replace
 
 	
 /* Export without Prefixes _____________________________________________________
@@ -79,7 +79,8 @@ tempfile temp_as2_noprefix
 	use`temp_as_noprefix'
 	qui append using `temp_as2_noprefix', force
 
-	save "${user}/Dropbox/03_final_data/01_data/pfm_as_as2_appended_noprefix.dta", replace
+	save "${user}/Dropbox/Socialization/01_data/pfm_as_as2_appended_noprefix.dta", replace
+	save "${user}/Dropbox/Pluralistic Ignorance/05_code/Tanzania/01_data/pfm_as_as2_appended_noprefix.dta", replace
 
 	
 

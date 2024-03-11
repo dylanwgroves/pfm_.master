@@ -382,6 +382,10 @@ _______________________________________________________________________________*
 		
 /* GBV _________________________________________________________________________*/
 	
+	
+	* worry ride
+	recode gbv_worry_ride (2=1 "Risky") (1=0 "Safe"), gen(gbv_worry_ride_short)
+	
 	* risky travel att + norm
 	recode gbv_safe_travel (2 = 1 "Risky")(1 = 0 "Safe"), gen(gbv_travel_risky_short)
 	

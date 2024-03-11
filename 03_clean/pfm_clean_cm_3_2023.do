@@ -603,8 +603,8 @@ ________________________________________________________________________________
 /* GBV _________________________________________________________________________*/
 																				
 	* risky boda att + norm
-	recode gbv_safe_boda (2 = 1 "Generally risky")(1 = 0 "Generally safe"), gen(gbv_boda_risky_short)
-	tab gbv_boda_risky_short 	, m
+	recode gbv_safe_boda (2 = 1 "Generally risky")(1 = 0 "Generally safe"), gen(gbv_risky_boda_short)
+	tab gbv_risky_boda_short 	, m
 
 	*Street
 	tab gbv_resp_streets_self if resp_female == 1, m

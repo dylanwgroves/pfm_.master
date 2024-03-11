@@ -149,7 +149,7 @@ _______________________________________________________________________________*
 /* Kids ________________________________________________________________________*/
 
 	tab kids_anykids, m
-	tab kids_anydaughter14yo, m
+	*tab kids_anydaughter14yo, m
 	tab kids_num, m
 
 /* Elections ___________________________________________________________________*/
@@ -690,10 +690,11 @@ _______________________________________________________________________________*
 	gen thermo_boda_num = thermo_boda*5
 	gen thermo_ccm_num = thermo_ccm*5
 	gen thermo_chinese_num = thermo_chinese*5
-	gen thermo_mamasamia_num = thermo_mamasamia*5
+	*gen thermo_mamasamia_num = thermo_mamasamia*5
 	gen thermo_samiahassan_num = thermo_samiahassan*5
 	
-	egen thermo_samia_num = rowmax(thermo_samiahassan_num thermo_mamasamia_num)
+	*egen thermo_samia_num = rowmax(thermo_samiahassan_num thermo_mamasamia_num)
+	gen thermo_samia_num = thermo_samiahassan_num
 	
 	tab thermo_local_leader_num
 	tab thermo_business_num
@@ -1005,8 +1006,9 @@ _______________________________________________________________________________*
 	
 /* Save ________________________________________________________________________*/	
 	
-	drop treat treat_original treat_rd treat_rd_original 
-
+	*drop treat treat_original treat_rd treat_rd_original 
+	drop treat_pull  treat_rd_pull 
+	
 	save "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta" , replace
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear
 

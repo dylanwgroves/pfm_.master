@@ -95,12 +95,12 @@ ________________________________________________________________________________
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_rand'
 			
-		/* Village RI */
+		/* Village RI 
 		use "${data}/02_mid_data/pfm_ri_as2.dta", clear
 		drop id_ward_uid
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_ri'
-		
+	*/
 		
 	/* Radio */
 	
@@ -120,19 +120,19 @@ ________________________________________________________________________________
 	/* Merge Baseline */
 	
 		use `temp_allvills'
-		merge 1:n village_id using `temp_base', force gen(merge_base)
+		merge 1:n village_id using `temp_base',  gen(merge_base)
 			drop if merge_base == 1
-		merge 1:1 resp_id using `temp_mid', force gen(merge_base_mid)
+		merge 1:1 resp_id using `temp_mid',  gen(merge_base_mid)
 			gen m_attritor = (merge_base_mid==1)
-		merge 1:1 resp_id using `temp_end', force gen(merge_base_mid_end)
+		merge 1:1 resp_id using `temp_end',  gen(merge_base_mid_end)
 			gen e_attritor = (merge_base_mid_end==1)
-		merge 1:1 resp_id using `temp_end_partner', force gen(merge_base_mid_end_p)
-		merge 1:1 resp_id using `temp_end_kid', force gen(merge_base_mid_end_k)
+		merge 1:1 resp_id using `temp_end_partner',  gen(merge_base_mid_end_p)
+		merge 1:1 resp_id using `temp_end_kid',  gen(merge_base_mid_end_k)
 	
 	
 		/* AS Randomizations */
-		merge n:1 village_id using `temp_rand', force gen(merge_rand_as)
-		merge n:1 village_id using `temp_ri', force gen(merge_rand_as_ri)
+		merge n:1 village_id using `temp_rand',  gen(merge_rand_as)
+		*merge n:1 village_id using `temp_ri',  gen(merge_rand_as_ri)
 		
 		/* RD RI*/
 		merge 1:1 resp_id using `temp_rd_ri', force gen(merge_rd_as2_ri)
@@ -156,8 +156,13 @@ ________________________________________________________________________________
 			lab var id_objectid "(TZ Census) Object ID"
 	
 		drop	b_id_* m_id_* e_id_* p_id_* ///
+<<<<<<< HEAD
+				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c 
+				*p_resp_id_pull p_resp_id_partner ///
+=======
 				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c  
 				
+>>>>>>> 6ad87638509dbaacb91507aa2253723a664bb06c
 	
 /* Label ______________________________________________________________________*/
 
@@ -186,6 +191,7 @@ ________________________________________________________________________________
 	rename k_as2_* k_*
 	rename k_pi_cut_comvil_rej_txt_pull* k_pi_cut_comvil_rej_txt*
 	rename k_pi_cut_comvil_tot_txt_pull* k_pi_cut_comvil_tot_txt*
+	*rename p_excluderadioownershipmodule p_noradioownmodule
 	
 	rename * as2_*	
 	rename as2_id_* id_*
@@ -194,12 +200,18 @@ ________________________________________________________________________________
 
 /* Save ________________________________________________________________________*/
 
+<<<<<<< HEAD
+	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+*	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
+	
+=======
 *	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 	drop as2_treat_* 
 	drop as2_rd_treat_*
 	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 
+>>>>>>> 6ad87638509dbaacb91507aa2253723a664bb06c
 	
 /* Merge Kids Long _____________________________________________________________*/
 		
@@ -211,7 +223,7 @@ ________________________________________________________________________________
 	rename k_resp_id id_resp_uid
 	save `temp_end_kid_long'
 
-	/* without RI 
+	/* without RI */ 
 	
 		use "${data}/03_final_data/pfm_as2_merged.dta", replace
 		drop as2_k_*  // drop wide kids
@@ -229,9 +241,9 @@ ________________________________________________________________________________
 		
 		/* Save */
 		save "${data}/03_final_data/pfm_as2_merged_kids_long.dta", replace
-	*/    
+	   
 
-	/* with RI */
+	/* with RI 
 	
 		use "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 		drop as2_k_*  // drop wide kids
@@ -248,7 +260,12 @@ ________________________________________________________________________________
 		rename as2_id_* id_*
 		
 		/* Save  */
+<<<<<<< HEAD
+		save "${data}/03_final_data/pfm_as2_merged_kids_long_withri.dta", replace
+	*/   
+=======
 		save "${data}/03_final_data/pfm_as2_merged_kids_withri.dta", replace
 		drop as2_treat_* 
 		drop as2_rd_treat_*
 		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace   
+>>>>>>> 6ad87638509dbaacb91507aa2253723a664bb06c

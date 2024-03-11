@@ -420,7 +420,7 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 		
 		gen em_norm_reject = community_marry_q7_8b if randomdraw78or79 < 0.5
 			replace em_norm_reject = community_marry_q7_9b if randomdraw78or79 > 0.5
-		recode em_norm_reject (2 = 1) (1 = 0)
+		recode em_norm_reject (2 = 0) (1 = 1)
 		lab val em_norm_reject reject
 		lab var em_norm_reject "[Vignette] Community Reject EFM?"
 	

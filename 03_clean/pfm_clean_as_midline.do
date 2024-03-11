@@ -180,12 +180,12 @@
 	lab def vote_islam 1 "Islam" 0 "Christian"
 	
 	* vote
-	s3q4a vote_1
-	s3q4b vote_2
+	gen vote_1 = s3q4a
+	gen vote_2 = s3q4b
 	
 	* promise
-	m_rand_promise1_txt
-	m_rand_promise2_txt
+	*m_rand_promise1_txt
+	*m_rand_promise2_txt
 	
 	gen vote_fmhiv = .
 		replace vote_fmhiv = 1 if rand_promise1_txt == "fight against child marriage" & rand_promise2_txt == "make hiv-aids treatment more available"
