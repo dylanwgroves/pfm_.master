@@ -54,7 +54,7 @@ tempfile temp_as2_noprefix
 */
 	use `temp_as'
 	qui append using `temp_as2', force
-	save "${user}/Dropbox/03_final_data/1_data/pfm_as_as2_appended_prefix.dta", replace
+	save "${user}/Dropbox/Socialization/01_data/pfm_as_as2_appended_prefix.dta", replace
 
 
 	
@@ -79,7 +79,7 @@ tempfile temp_as2_noprefix
 	use`temp_as_noprefix'
 	qui append using `temp_as2_noprefix', force
 
-	save "${user}/Dropbox/03_final_data/01_data/pfm_as_as2_appended_noprefix.dta", replace
+	save "${user}/Dropbox/Socialization/01_data/pfm_as_as2_appended_noprefix.dta", replace
 
 	
 

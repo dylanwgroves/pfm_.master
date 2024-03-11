@@ -102,22 +102,18 @@ ________________________________________________________________________________
 		save `temp_ri'
 		
 		
-	/* Radio // needs to be done from scratch with the new excels that need to be imported and all for AS2
+	/* Radio */
 	
-		/* Radio Distribution */
-		use "${data}/02_mid_data/pfm_clean_rd_distribution_as.dta", clear
-		gen resp_id = rd_resp_id
+		/* Radio RI */
+		use "${data}/02_mid_data/pfm_ri_rd_as2_cm.dta", clear
+		rename id_resp_uid resp_id
 		sort resp_id
-		save `temp_rd_dist'
+		save `temp_rd_ri'
 		
-		/* Radio Randomization */
+		/* Radio Randomization 
 		use "${data}/02_mid_data/pfm_rd_randomization_as.dta", clear
 		save `temp_rd_rand'
-		
-		/* Radio RI */
-		use "${data}/02_mid_data/pfm_rd_ri_as.dta", clear
-		save `temp_rd_ri'
-	*/	
+		*/
 	
 /* Merge _______________________________________________________________________*/
 	
@@ -138,6 +134,9 @@ ________________________________________________________________________________
 		merge n:1 village_id using `temp_rand', force gen(merge_rand_as)
 		merge n:1 village_id using `temp_ri', force gen(merge_rand_as_ri)
 		
+		/* RD RI*/
+		merge 1:1 resp_id using `temp_rd_ri', force gen(merge_rd_as2_ri)
+
 	/* Unique IDs */
 		
 		gen id_resp_c = b_id_resp_c
@@ -198,6 +197,7 @@ ________________________________________________________________________________
 *	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 	drop as2_treat_* 
+	drop as2_rd_treat_*
 	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 
 	
@@ -250,4 +250,5 @@ ________________________________________________________________________________
 		/* Save  */
 		save "${data}/03_final_data/pfm_as2_merged_kids_withri.dta", replace
 		drop as2_treat_* 
+		drop as2_rd_treat_*
 		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace   

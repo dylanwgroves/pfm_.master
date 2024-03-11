@@ -193,7 +193,7 @@ ________________________________________________________________________________
 	drop as_treat_* 
 	drop as_rd_treat_*
 	
-	save "${data}/03_final_data/pfm_as_merged.dta", replace
+	save "${data}/03_final_data/pfm_as_merged_withri.dta", replace
 	
 	
 	

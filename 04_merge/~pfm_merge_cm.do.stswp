@@ -103,7 +103,7 @@ NOTES:
 		
 		/* Radio RI */
 		use "${data}/02_mid_data/pfm_ri_rd_as2_cm.dta", clear
-		rename id_resp_uid resp_id
+		rename id_resp_uid r
 		save `temp_rd_ri'
 		
 /* Merge _______________________________________________________________________
