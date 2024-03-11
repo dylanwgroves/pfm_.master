@@ -69,6 +69,9 @@ ________________________________________________________________________________
 		
 		/* Endline */
 		use  "${data}/01_raw_data/pfm_as_endline_clean.dta", clear
+		rename * e_*
+		rename e_id_resp_uid id_resp_uid
+		sort id_resp_uid 
 		save `temp_end'
 		
 		/* Partner */
@@ -181,6 +184,9 @@ ________________________________________________________________________________
 
 /* Label ______________________________________________________________________*/
 
+	rename e_choices_randomizer_rpt_count e_choices_rand_rpt_count
+	rename e_treat_values_urbangood_gender e_treat_val_urbgood_gender
+	rename e_conjoint_randomizer_rpt_count e_conjoint_rand_rpt_count
 	rename * as_*	
 	rename as_id_* id_*
 	rename as_sample sample

@@ -98,9 +98,9 @@ ________________________________________________________________________________
 
 	/* Community Media in Pangani */
 																						
-		do "${code}/pfm_.master/01_import/pfm_import_cm1_2020.do" 						// First Wave 	2020
-		do "${code}/pfm_.master/01_import/pfm_import_cm2_2021.do" 						// Second Wave 	2021
-		do "${code}/pfm_.master/01_import/pfm_import_cm2_2023.do" 						// Third Wave 	2023
+		do "${code}/pfm_.master/01_import/pfm_import_cm_1_2020.do" 						// First Wave 	2020
+		do "${code}/pfm_.master/01_import/pfm_import_cm_2_2021.do" 						// Second Wave 	2021
+		*do "${code}/pfm_.master/01_import/pfm_import_cm_3_2023.do" 						// Third Wave 	2023
 
 		
 		
@@ -177,6 +177,7 @@ Tasks: Clean, and generate variables
  
 		/* Main Files */
 
+			do "${code}/pfm_.master/04_merge/pfm_merge_cm.do" 								// Community Surveys
 			do "${code}/pfm_.master/04_merge/pfm_merge_ne.do" 								// Natural Experiment
 			do "${code}/pfm_.master/04_merge/pfm_merge_as.do" 								// Audio Screening
 			do "${code}/pfm_.master/04_merge/pfm_merge_as2.do" 								// Audio Screening 2
@@ -184,11 +185,11 @@ Tasks: Clean, and generate variables
 
 		/* Append Together AS1 + NE */
 		
-			do "${code}/pfm_.master/04_merge/pfm_append.do" 								// Append Natural Experiment and Audio Screening 1
+			do "${code}/pfm_.master/04_merge/pfm_append_as1_ne.do" 								// Append Natural Experiment and Audio Screening 1
 
-		/* Append Together AS1 + AS 2*/
+		/* Append Together AS1 + AS2 */
 		
-			do "${code}/pfm_.master/04_merge/pfm_append_as12.do" 							// Append Audio Screening 1 and Audio Screening 2
+			do "${code}/pfm_.master/04_merge/pfm_append_as1_as2.do" 							// Append Audio Screening 1 and Audio Screening 2
 	
 		
 			

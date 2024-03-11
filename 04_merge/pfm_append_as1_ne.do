@@ -38,16 +38,13 @@ tempfile temp_cm
 
 	use "${data}/03_final_data/pfm_as_merged.dta", clear
 		rename as_rd_treat_* rd_treat_*
+		rename as_treat   as_treat_as
+		rename as_treat_* as_treat_as_*
 		save `temp_as'
 
-
 	use "${data}/03_final_data/pfm_as2_merged.dta", clear
-		rename as2_rd_treat_* rd_treat_*
+		*rename as2_rd_treat_* rd_treat_*
 		save `temp_as2'
-		
-	use "${data}/03_final_data/pfm_cm_merged.dta", clear
-		rename cm_rd_treat_* rd_treat_*
-		save `temp_cm'
 		
 
 /* Export with Prefix __________________________________________________________
@@ -59,7 +56,6 @@ tempfile temp_cm
 	use `temp_as'
 	qui append using `temp_ne', force
 	qui append using `temp_as2', force
-	qui append using `temp_cm', force
 	save "${data}/03_final_data/pfm_appended_prefix.dta", replace
 
 	
@@ -75,7 +71,11 @@ tempfile temp_cm
 
 	use `temp_as', clear
 		rename as_* *
-		rename treat treat_as
+
+	use `temp_as2', clear
+		rename as2_* *
+		rename as2_treat as2_treat_as2
+		rename as2_treat_* as2_treat_as2_*
 
 	append using `temp_ne_new', force
 	save "${data}/03_final_data/pfm_appended_noprefix.dta", replace

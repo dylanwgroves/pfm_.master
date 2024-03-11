@@ -369,6 +369,8 @@ _______________________________________________________________________________*
 	
 	tab gender_fm rand_pi, m
 	
+	recode gender_fm (2 = 0 "Accept FM") (1 = 1 "Reject FM"), gen(fm_reject)
+	
 	recode gender_fm_branched (2 = 0 "Strong accept FM")(1 = 1 "Accept FM")(3 = 2 "Reject FM")(4 = 3 "Strong reject FM"), gen(ge_fm_long)
 		replace ge_fm_long = 3 if gender_fm_down == 2
 		replace ge_fm_long = 2 if gender_fm_down == 1
@@ -376,12 +378,10 @@ _______________________________________________________________________________*
 	gen ge_fm_norm_parent = gender_fm_parent
 	gen ge_fm_norm_comm = gender_fm_norm
 	
-	rename gender_earning ge_earning
-	
-	rename gender_earning_parent ge_earning_norm_parent
-	
-	tab ge_school, m
-	
+	recode gender_earning 		 (2 = 0 "PRO Women$$>Man") (1 = 1 "AGAINST Women$$>Man"), gen(ge_earning)
+	recode gender_earning_parent (2 = 0 "PRO Women$$>Man") (1 = 1 "AGAINST Women$$>Man"), gen(ge_earning_norm_parent)
+	recode ge_school (2 = 0 "Equal school") (1 = 1 "Boys more school"), gen(ge_school_dum)
+			
 	rename parenting_helicopter sb_helicopter
 	recode sb_helicopter (1 = 1 "Helicopter good")(2 = 0 "Helicopter bad"), gen(parenting_helicopter)
 	
