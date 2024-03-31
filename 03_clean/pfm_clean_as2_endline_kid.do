@@ -224,13 +224,26 @@ _______________________________________________________________________________*
 	rename s3q12 ge_idealkidnum
 	tab ge_idealkidnum, m
 	
-	rename scouples_q2_f ge_girlmakemoney
-	replace ge_girlmakemoney = scouples_q2_m if ge_girlmakemoney == .
-	tab ge_girlmakemoney, m
+*	rename scouples_q2_f ge_girlmakemoney
+*	replace ge_girlmakemoney = scouples_q2_m if ge_girlmakemoney == .
+*	tab ge_girlmakemoney, m
 	
 	rename rship_permission_w rship_permission 
 		replace rship_permission = rship_permission_m if rship_permission == .
 	fre rship_permission
+
+	/* Core outcome */
+	rename scouples_q2_f		ge_wep
+		replace ge_wep = scouples_q2_m if resp_female == 0
+		recode ge_wep (2=3)(3=2)
+		lab val ge_wep ge_wep
+		
+	gen ge_wep_dum = 1 if ge_wep == 3
+			replace ge_wep_dum = 0 if ge_wep == 1
+			replace ge_wep_dum = . if ge_wep == 2
+			lab val ge_wep_dum agree 
+			lab var ge_wep_dum "Woman [man] support self [wife] participating economically"
+	
 	
 /* Elections ___________________________________________________________________*/
 

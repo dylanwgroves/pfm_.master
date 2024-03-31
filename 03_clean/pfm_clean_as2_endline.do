@@ -108,6 +108,7 @@ _______________________________________________________________________________*
 	
 	* religion: resp_religion_txt_pull
 	drop resp_religion_txt_swa_pull
+	gen resp_muslim = (resp_religion_txt_pull == "Muslim")
 	
 /* Survey Information __________________________________________________________*/
 

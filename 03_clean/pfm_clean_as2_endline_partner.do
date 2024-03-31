@@ -86,6 +86,8 @@ _______________________________________________________________________________*
 	tab resp_describe_day, m
 	tab resp_tribe, m
 	
+	gen resp_muslim = (resp_religion == 3)
+	
 	tab values_tzvstribe, m
 	recode values_tzvstribe	(1 2 = 1 "TZ > Tribe") (3 4 5 = 0 "TZ <= Tribe"), gen(values_tzovertribe_dum)
 	
