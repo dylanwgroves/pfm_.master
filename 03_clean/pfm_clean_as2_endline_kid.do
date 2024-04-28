@@ -539,6 +539,10 @@ _______________________________________________________________________________*
 	
 	
 /* Save ________________________________________________________________________*/	
+	
+	replace k_resp_id = "8_181_1_027_k1" if k_resp_id == "8_181_1_027_k2"
+	replace k_resp_id = "8_181_1_027_k2" if k_resp_id == "8_181_1_027_k3"
+	replace k_resp_id = "8_181_1_061_k1" if k_resp_id == "8_181_1_061_k2"
 
 	save "${data}/02_mid_data/pfm_as2_endline_clean_kids.dta" , replace
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear
@@ -561,6 +565,7 @@ _______________________________________________________________________________*
 
 					 
 /* Export Wide __________________________________________________________________*/
+
 
 	save "${data}/02_mid_data/pfm_as_endline_clean_kid_wide.dta", replace
 	
