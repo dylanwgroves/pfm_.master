@@ -21,6 +21,50 @@ _______________________________________________________________________________*
 	use "${data}/01_raw_data/03_surveys/pfm_nopii_as2_endline_partner.dta", clear
 	gen as2_endline_partner = 1
 	
+	* IDs 
+
+	drop resp_id_pull id_re 
+
+	drop if pilot_pull == "1"	
+	/* only need this if you leave the pilot in the survey 
+		split id , p("_") g(temp)
+		split id , p("-") g(temptemp)
+		replace temp1 = "" if temptemp2 != ""
+		replace temp2 = "" if temptemp2 != ""
+		replace temptemp1 = "" if temptemp2 == ""
+		split temptemp5 , p("_") g(temptemptemp)
+		drop temptemp5
+		drop temptemp1
+		replace temp1 = temptemp2 if temptemp2 != ""
+		replace temp2 = temptemp3 if temptemp2 != ""
+		replace temp3 = temptemp4 if temptemp2 != ""
+		replace temp4 = temptemptemp1 if temptemp2 != ""
+		replace temp5 = temptemptemp2 if temptemp2 != ""
+		replace temp5 = proper(temp5)
+	gen p_id_resp_uid = temp1+"_"+temp2+"_"+temp3+"_"+temp4+"_"+temp5
+		drop temp*
+	*/
+	*	replace p_id_resp_uid = proper(p_id_resp_uid)
+	
+	gen p_id_resp_uid = proper(id)
+	drop id 
+	gen id_resp_uid = subinstr(p_id_resp_uid,"_P","",.)			// Create matching unique respondent id
+	
+	* one desk survey in the office was mistakenly uploaded and should be dropped
+		gsort id_resp_uid -submissiondate
+		by id_resp_uid : gen a = _n
+		drop if a == 2 
+		drop a 
+	
+	* one id name was imputted wrong
+		replace id_resp_uid = "2_101_5_04" if id_resp_uid == "2_101_5_004"
+	
+	* final sort
+	sort id_resp_uid
+	
+	rename id_resp_uid resp_id
+	rename p_id_resp_uid resp_id_par
+	
 /* Converting don't know/refuse/other to extended missing values _______________*/
 
 	qui ds, has(type numeric)
@@ -35,9 +79,6 @@ _______________________________________________________________________________*
 
 /* Pulled Data / Confirmations _________________________________________________*/
 
-	* IDs 
-	replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
-	
 	* gender 
 	destring resp_female, replace
 	*lab def resp_female 0 "Male" 1 "Female"
@@ -48,6 +89,9 @@ _______________________________________________________________________________*
 		gen check_gender = (gender_confirm == 0)
 		tab resp_female correction_gender if check_gender == 1 
 		drop check_gender
+
+	* we only interviewed women partners
+	replace resp_female = 1 if resp_female == .
 	
 	tab info_confirm														
 
@@ -1010,6 +1054,8 @@ _______________________________________________________________________________*
 	
 	*drop treat treat_original treat_rd treat_rd_original 
 	drop treat_pull  treat_rd_pull 
+	
+	
 	
 	save "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta" , replace
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear

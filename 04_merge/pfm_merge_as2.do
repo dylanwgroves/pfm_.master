@@ -79,46 +79,45 @@ ________________________________________________________________________________
 		use "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta", clear
 		rename consented* c*
 		rename * p_*	
-		rename p_resp_id resp_id
+		rename 	p_resp_id 		resp_id
+		rename 	p_resp_id_par 	resp_id_par
 		save `temp_end_partner'
 		
 		/* Kids -- use the wide dta! */
 		use "${data}/02_mid_data/pfm_as_endline_clean_kid_wide.dta", clear
 		rename resp_id_parent resp_id 
+		drop k_id_re* k_resp_id_pull* k_id*
 *		rename * k_*		// already k_ in the wide 
 		save `temp_end_kid'
 	
-	/* Randomization */
+	/* Audio Screening 2 Randomization */
 	
-		/* Village Randomization */
+		/* AS2 Randomization */
 		use "${data}/02_mid_data/pfm_randomized_as2.dta", clear
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_rand'
 			
-		/* Village RI 
+		/* AS2 RI */
 		use "${data}/02_mid_data/pfm_ri_as2.dta", clear
 		drop id_ward_uid
 		gen village_id = subinstr(id_village_uid, "_", "-", .)
 		save `temp_ri'
-	*/
+		
 		
 	/* Radio */
 	
+		/* Radio Randomization */
+
 		/* Radio RI */
 		use "${data}/02_mid_data/pfm_ri_rd_as2_cm.dta", clear
 		rename id_resp_uid resp_id
 		sort resp_id
 		save `temp_rd_ri'
 		
-		/* Radio Randomization 
-		use "${data}/02_mid_data/pfm_rd_randomization_as.dta", clear
-		save `temp_rd_rand'
-		*/
-	
+			
 /* Merge _______________________________________________________________________*/
 	
-	/* Merge Baseline */
-	
+	/* Merge surveys */
 		use `temp_allvills'
 		merge 1:n village_id using `temp_base',  gen(merge_base)
 			drop if merge_base == 1
@@ -130,15 +129,22 @@ ________________________________________________________________________________
 		merge 1:1 resp_id using `temp_end_kid',  gen(merge_base_mid_end_k)
 	
 	
-		/* AS Randomizations */
+	/* AS Randomization */
 		merge n:1 village_id using `temp_rand',  gen(merge_rand_as)
-		*merge n:1 village_id using `temp_ri',  gen(merge_rand_as_ri)
 		
-		/* RD RI*/
+	/* AS Randomizations -- with RI */
+		merge n:1 village_id using `temp_ri',  gen(merge_rand_as_ri)
+		
+		
+	/* Radio Randomization -- without RI*/
+		
+	/* Radio Randomization -- with RI */
 		merge 1:1 resp_id using `temp_rd_ri', force gen(merge_rd_as2_ri)
-
+		drop if merge_rd_as2_ri == 2
+		drop OBJECTID
+	
+	
 	/* Unique IDs */
-		
 		gen id_resp_c = b_id_resp_c
 			lab var id_resp_c "Respondent Code"
 		
@@ -155,10 +161,8 @@ ________________________________________________________________________________
 		gen id_objectid = objectid
 			lab var id_objectid "(TZ Census) Object ID"
 	
-		drop	b_id_* m_id_* e_id_* p_id_* ///
-				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c 
-				*p_resp_id_pull p_resp_id_partner ///
-				objectid *_region_code  *_district_code *_ward_code  *_village_code  *_id_resp_c  
+		drop	b_id_* m_id_* e_id_* resp_id_par ///
+				objectid *_region_code  *_district_code *_ward_code  *_village_code  village_id *_id_resp_c  
 					
 /* Label ______________________________________________________________________*/
 
@@ -194,26 +198,30 @@ ________________________________________________________________________________
 	*rename as2_sample sample
 		gen sample = "as2"
 
-/* Save ________________________________________________________________________*/
+/* Save -- PICK WHICH ONE YOU WANT TO SAVE AND CHANGE THE MERGE ACCORDINGLY ____*/
 
+	*CURRENTLY: saves with AS2 RI and RD RI, can be changed above! 
 
-*	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+	/* save with RI */
 	save "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
-	drop as2_rd_treat_*
-	save "${data}/03_final_data/pfm_as2_merged.dta", replace
-
 	
-/* Merge Kids Long _____________________________________________________________*/
+	
+	/* save without RI 
+	save "${data}/03_final_data/pfm_as2_merged.dta", replace
+	*/
+	
+/* Merge Kids Long if needed ___________________________________________________*/
 		
-	/* Kids -- use the long dta! */
+	/* Kids -- use the long dta! 
 	use "${data}/02_mid_data/pfm_as2_endline_clean_kids.dta", clear
 	gen k_resp_kidnum = substr(k_resp_id,-1,.)
 	rename resp_id_parent resp_id 
 	rename * k_*	
 	rename k_resp_id id_resp_uid
 	save `temp_end_kid_long'
-
-	/* without RI */ 
+	*/
+	
+	/* without RI 
 	
 		use "${data}/03_final_data/pfm_as2_merged.dta", replace
 		drop as2_k_*  // drop wide kids
@@ -231,7 +239,7 @@ ________________________________________________________________________________
 		
 		/* Save */
 		save "${data}/03_final_data/pfm_as2_merged_kids_long.dta", replace
-	   
+	*/    
 
 	/* with RI 
 	
@@ -255,3 +263,5 @@ ________________________________________________________________________________
 		drop as2_treat_* 
 		drop as2_rd_treat_*
 		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace   
+	*/
+	
