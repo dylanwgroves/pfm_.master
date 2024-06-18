@@ -210,7 +210,7 @@ ________________________________________________________________________________
 	save "${data}/03_final_data/pfm_as2_merged.dta", replace
 	*/
 	
-/* Merge Kids Long if needed ___________________________________________________*/
+/* Merge Kids Long _____________________________________________________________*/
 		
 	/* Kids -- use the long dta! 
 	use "${data}/02_mid_data/pfm_as2_endline_clean_kids.dta", clear

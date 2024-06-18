@@ -382,7 +382,7 @@ _______________________________________________________________________________*
 	
 	tab gender_fm rand_pi, m
 	
-	recode gender_fm (2 = 0 "Accept FM") (1 = 1 "Reject FM"), gen(fm_reject)
+	recode gender_fm (1 = 0 "Accept FM") (2 = 1 "Reject FM"), gen(fm_reject) // recoded on June 18, 2024!
 	
 	recode gender_fm_branched (2 = 0 "Strong accept FM")(1 = 1 "Accept FM")(3 = 2 "Reject FM")(4 = 3 "Strong reject FM"), gen(ge_fm_long)
 		replace ge_fm_long = 3 if gender_fm_down == 2

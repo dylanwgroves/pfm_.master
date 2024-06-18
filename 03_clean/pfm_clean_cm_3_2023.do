@@ -46,16 +46,12 @@ ________________________________________________________________________________
 
 /* Pulled Data / Confirmations _________________________________________________*/
 
-	destring resp_female, replace
-	lab def resp_female 0 "Male" 1 "Female" , modify
-	lab val resp_female resp_female 
-	
-		* check that resp_female was correctly replaced if gender was not confirmed from pull
-		*rename gender_correction correction_gender
-		*gen check_gender = (gender_confirm == 0)
-			*tab resp_female correction_gender if check_gender == 1 
-		*drop check_gender
-	
+	gen resp_female_str = gender_pull
+		replace resp_female_str = "1" if enum_gender == 1
+		replace resp_female_str = "0" if enum_gender == 0
+	drop gender_pull enum_gender 
+		destring resp_female_str , gen(resp_female)
+
 	*tab info_confirm														
 
 	rename info_correction_1	correction_name

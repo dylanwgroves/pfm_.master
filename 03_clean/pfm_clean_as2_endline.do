@@ -162,7 +162,7 @@ _______________________________________________________________________________*
 	tab resp_visitcity_transport, m												
 	tab resp_visitcity_transport_oth
 
-		rename resp_visitcity_transport gbv_howvisitcity 
+		rename resp_visitcity_transport 	gbv_howvisitcity 
 		rename resp_visitcity_transport_oth gbv_howvisitcity_oth
 
 	tab resp_boda_safe, m
