@@ -32,6 +32,7 @@ ________________________________________________________________________________
 	*do "${user}/Documents/pfm_.master/00_setup/pfm_paths_master.do"	
 	use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_kid.dta", clear
 
+	
 
 /* Labels _______________________________________________________________________*/
 
@@ -775,5 +776,10 @@ ________________________________________________________________________________
 
 					 
 /* Export Wide __________________________________________________________________*/
+
+	/* Converting don't know/refuse/other to extended missing valuesv_______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 	save "${data}/01_raw_data/pfm_as_endline_clean_kid.dta", replace

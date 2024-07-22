@@ -1142,4 +1142,10 @@ rename s5q9				efficacy_speakout
 		
 /* Save ________________________________________________________________________*/
 
+	/* Converting don't know/refuse/other to extended missing values _______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
+
 	save  "${data}/01_raw_data/pfm_as_endline_clean_partner.dta", replace

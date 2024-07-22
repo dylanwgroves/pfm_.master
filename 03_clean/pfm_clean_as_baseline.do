@@ -544,6 +544,13 @@ _______________________________________________________________________________*
 
 * Save _________________________________________________________________________*/
 
+
+	/* Converting don't know/refuse/other to extended missing valuesv_______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
+
 	save "${data}/02_mid_data/pfm_as_baseline_clean.dta", replace
 											
 				

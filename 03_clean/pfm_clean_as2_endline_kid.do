@@ -382,21 +382,24 @@ _______________________________________________________________________________*
 	
 	tab gender_fm rand_pi, m
 	
-	recode gender_fm (1 = 0 "Accept FM") (2 = 1 "Reject FM"), gen(fm_reject) // recoded on June 18, 2024!
+	recode gender_fm (1 = 0 "Accept FM") (2 = 1 "Reject FM"), gen(fm_reject) 											// recoded on June 18, 2024!
 	
-	recode gender_fm_branched (2 = 0 "Strong accept FM")(1 = 1 "Accept FM")(3 = 2 "Reject FM")(4 = 3 "Strong reject FM"), gen(ge_fm_long)
+	recode gender_fm_branched (2 = 0 "Strong accept FM") (1 = 1 "Accept FM") (3 = 2 "Reject FM") (4 = 3 "Strong reject FM"), gen(ge_fm_long)
 		replace ge_fm_long = 3 if gender_fm_down == 2
 		replace ge_fm_long = 2 if gender_fm_down == 1
 		
 	gen ge_fm_norm_parent = gender_fm_parent
 	gen ge_fm_norm_comm = gender_fm_norm
 	
-	recode gender_earning 		 (2 = 0 "PRO Women$$>Man") (1 = 1 "AGAINST Women$$>Man"), gen(ge_earning)
-	recode gender_earning_parent (2 = 0 "PRO Women$$>Man") (1 = 1 "AGAINST Women$$>Man"), gen(ge_earning_norm_parent)
-	recode ge_school (2 = 0 "Equal school") (1 = 1 "Boys more school"), gen(ge_school_dum)
+/* Gender norms ________________________________________________________________*/
+
+	recode gender_earning 		 (2 = 1 "PRO Women$$>Man") (1 = 0 "AGAINST Women$$>Man"), gen(ge_earning) 				// recoded on June 18, 2024!
+	recode gender_earning_parent (2 = 1 "PRO Women$$>Man") (1 = 0 "AGAINST Women$$>Man"), gen(ge_earning_norm_parent)	// recoded on June 18, 2024!
+	
+	recode ge_school 			 (2 = 1 "Equal school") (1 = 0 "Boys more school"), gen(ge_school_dum)					// recoded on June 18, 2024!
 			
 	rename parenting_helicopter sb_helicopter
-	recode sb_helicopter (1 = 1 "Helicopter good")(2 = 0 "Helicopter bad"), gen(parenting_helicopter)
+	recode sb_helicopter (1 = 0 "Helicopter good")(2 = 1 "Helicopter bad"), gen(parenting_helicopter)					// recoded on June 18, 2024!
 	
 		
 

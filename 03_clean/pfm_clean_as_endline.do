@@ -609,7 +609,7 @@ We are coding that higher is always "more gender equality"
 	
 	rename s21_txt_treat treat_wpp
 
-	rename s21q1	wpp_attitude
+	rename s21q1	wpp_attitude. // In general, do you think that political leaders in Tanzania should be mostly men, mostly women, or that there should be equal numbers of men and women?
 		gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
 		replace wpp_attitude_dum = 0 if wpp_attitude == 0
 		lab var wpp_attitude_dum "Who should lead? Equal women or more women"
@@ -1359,6 +1359,11 @@ We are coding that higher is always "more gender equality"
 /* Export ______________________________________________________________________*/
 
 	gen endline_as = 1
+
+/* Converting don't know/refuse/other to extended missing values _______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 	
 	* Within folder
 	save "${data}/01_raw_data/pfm_as_endline_clean.dta", replace
