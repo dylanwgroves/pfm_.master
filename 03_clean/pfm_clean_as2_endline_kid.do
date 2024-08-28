@@ -69,12 +69,23 @@ _______________________________________________________________________________*
 	la de treat 0 "env" 1 "gbv"
 	la val treat treat
 
-
 /*
 	la de treat_rd 0 "flashlight" 1 "radio"
 	la val treat_rd treat_rd
 */
 
+/* PI experiment  _____________________________________________________________*/
+
+	fre rand_pi
+	replace rand_pi = "comm" if rand_pi == "parent"
+	
+	destring emreject_comm_pull, gen(rand_pi_value_num)
+	destring emcount_comm_pull,  gen(rand_pi_value_den)
+	replace rand_pi_value_num = 9 	if startdate <= date("7aug2023", "DMY")
+	replace rand_pi_value_den = 10 	if startdate <= date("7aug2023", "DMY")
+	gen  rand_pi_value =	rand_pi_value_num/rand_pi_value_den
+
+	
 /* Converting don't know/refuse/other to extended missing values _______________*/
 
 	qui ds, has(type numeric)
@@ -375,13 +386,13 @@ _______________________________________________________________________________*
 	}
 	
 
-/* Forced marriage _____________________________________________________________*/
 
-	fre rand_pi
+	
+	
+/* Forced marriage _____________________________________________________________*/
+	
 	tab gender_fm, m
-	
-	tab gender_fm rand_pi, m
-	
+		
 	recode gender_fm (1 = 0 "Accept FM") (2 = 1 "Reject FM"), gen(fm_reject) 											// recoded on June 18, 2024!
 	
 	recode gender_fm_branched (2 = 0 "Strong accept FM") (1 = 1 "Accept FM") (3 = 2 "Reject FM") (4 = 3 "Strong reject FM"), gen(ge_fm_long)
