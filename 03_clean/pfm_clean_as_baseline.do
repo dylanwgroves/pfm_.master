@@ -383,7 +383,7 @@ _______________________________________________________________________________*
 	rename s6q1 ge_raisekids
 
 	rename s6q3 ge_earning
-		recode ge_earning (1=0)(0=1)
+		recode ge_earning (0=1)(1=0)
 
 	rename s6q4 ge_leadership
 
