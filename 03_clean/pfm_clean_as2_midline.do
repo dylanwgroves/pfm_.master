@@ -27,8 +27,8 @@ _______________________________________________________________________________*
 	
 /* ID information  _________________________________________________________*/
 
-*	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
-*	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
+	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
+	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
 
 	gen id_village_uid 			= substr(resp_id, 1, (strlen(resp_id)-4))
 	gen id_ward_uid 			= substr(id_village_uid, 1, (strlen(id_village_uid)-2))
