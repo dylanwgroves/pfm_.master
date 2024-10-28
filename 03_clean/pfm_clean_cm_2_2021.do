@@ -30,7 +30,20 @@ encode village_name_pull, gen (id_village)
 /* Respondent Information ______________________________________________________*/
 
 /* Cleaning */
+
+	replace resp_gender = enum_gender 	if resp_gender == . 
+	replace resp_gender = 0 			if resp_gender == . & enum_name == "Hamza Mtinangi"
+	replace resp_gender = 0 			if resp_gender == . & enum_name == "Jackson Bukuru"
+	replace resp_gender = 0 			if resp_gender == . & enum_name == "Kassim Abdallah"
+	replace resp_gender = 0 			if resp_gender == . & enum_name == "Kasimu Mohamed Abdallah"
+	replace resp_gender = 0 			if resp_gender == . & enum_name == "Lusekelo Andrew"
+	replace resp_gender = 0 			if resp_gender == . & enum_name == "Rashid Seif"
+	replace resp_gender = 1 			if resp_gender == . & enum_name == "Husna Majura"
+	replace resp_gender = 1 			if resp_gender == . & enum_name == "Sheila Mlaki"
+	replace resp_gender = 1 			if resp_gender == . & enum_name == "Silvana Karia"
+
 	cap rename s3q21_religion resp_religion
+	cap rename s3q21_religion_oth resp_religion_oth
 	cap rename s3q21_religion_oth resp_religion_oth
 
 	cap rename s3q21_tribe resp_tribe

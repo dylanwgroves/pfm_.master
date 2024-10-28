@@ -46,11 +46,11 @@ ________________________________________________________________________________
 
 /* Pulled Data / Confirmations _________________________________________________*/
 
-	gen resp_female_str = gender_pull
-		replace resp_female_str = "1" if enum_gender == 1
-		replace resp_female_str = "0" if enum_gender == 0
-	drop gender_pull enum_gender 
-		destring resp_female_str , gen(resp_female)
+	gen  resp_female_str = gender_pull
+	replace resp_female_str = "1" if enum_gender == 1 & gender_pull == ""
+	replace resp_female_str = "0" if enum_gender == 0 & gender_pull == "" 
+	drop resp_female gender_pull gender_pull_txt enum_gender enum_gender_txt
+	destring resp_female_str , gen(resp_female)
 
 	*tab info_confirm														
 
@@ -632,7 +632,7 @@ ________________________________________________________________________________
 		
 		*/
 		
-	/*  GBV Indeces */
+	/*  GBV Indeces 
 	
 		rename gbv_boda_risky_* gbv_risky_boda_* 
 		egen gbv_risk_index = rowmean(gbv_risky_boda_short ///
@@ -646,7 +646,8 @@ ________________________________________________________________________________
 		egen gbv_prior_index = rowmean(gbv_elect ptixpref1_rank_gbv_short)
 	tab gbv_prior_index
 			
-			
+	*/
+	
 /* GBV for Boda Drivers ________________________________________________________*/
 	
 

@@ -73,7 +73,11 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	rename sex_q2_1 resp_female
 		recode resp_female (2=1)(1=0)
 		lab val resp_female yesno
+		
+		replace resp_female = 1 if resp_female == . & svy_enum == 12 
+		replace resp_female = 1 if resp_female == . & svy_enum == 21
 	
+
 	rename day_q2_2 resp_howudoin
 	
 	gen resp_goodday = resp_howudoin
