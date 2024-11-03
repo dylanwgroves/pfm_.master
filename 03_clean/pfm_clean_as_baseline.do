@@ -38,7 +38,8 @@ _______________________________________________________________________________*
 /* Converting don't know/refuse/other to extended missing valuesv_______________*/
 
 	qui ds, has(type numeric)
-	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+	*recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+	recode `r(varlist)' (-888 = .) (-999 = .) (-222 = .) (-666 = .)
 
 
 /* Clean up _____________________________________________________________________*/
@@ -80,6 +81,7 @@ _______________________________________________________________________________*
 
 	rename s2q1 resp_female
 		recode resp_female (2=1)(1=0)
+		lab var resp_female "Female?"
 		lab val resp_female yesno
 
 	rename s2q2 resp_howudoin
@@ -108,7 +110,12 @@ _______________________________________________________________________________*
 	replace resp_married  = 0 if resp_married  == .
 	lab var resp_married "Married?"
 	lab val resp_married yesnodkr
-
+	
+	gen resp_asmarried = 1 if resp_maritalstatus == 1 | resp_maritalstatus == 2
+	replace resp_asmarried = 0 if resp_asmarried == . 
+	lab var resp_asmarried "As married?"
+	lab val resp_asmarried yesno
+	
 	rename s2q6 resp_numhh	
 															
 	rename s2q7 resp_numkid
@@ -126,6 +133,14 @@ _______________________________________________________________________________*
 	gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
 	replace resp_villknow_all = 0 if resp_villknow_all  == .
 
+	gen resp_knowppl = 1 if resp_villknow == 4
+		replace resp_knowppl = 2 if resp_villknow == 3
+		replace resp_knowppl = 3 if resp_villknow == 2
+		replace resp_knowppl = 4 if resp_villknow == 1
+		lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
+		lab val resp_knowppl resp_knowppl
+		lab var resp_knowppl "How many ppl can you name in vill?"
+	
 	rename city_rand_txt resp_t_citytype
 	rename s2q14a resp_livecity_dum
 	rename s2q14b resp_livecity_num
@@ -151,14 +166,21 @@ _______________________________________________________________________________*
 	replace resp_nevervisittown = 0 if resp_nevervisittown ==.
 	lab var resp_nevervisittown "Never visits town?"
 	lab val resp_nevervisittown  yesnodkr
-						
+	
+	gen  resp_visit_town_new  = resp_visit_town - 1
+	lab var resp_visit_town_new "How often visits town?"
+	lab de resp_visit_town_new 0 "Never" 1 "Less than once a year" 2 "Less than once a month" 3 "A few times a month"  4 "A few times a week"  5 "Every day"  
+	lab val resp_visit_town_new resp_visit_town_new
+		
 	rename s2q17 resp_education
-	gen resp_standard7  = 1 if resp_education > 7
-	replace resp_standard7 = 0 if resp_standard7 == .
+	replace resp_education = 18 if s2q17_oth == "Astashahada"
+	replace resp_education = 0 	if s2q17_oth == "Elimu ya dini (Madrisa)" 
+	gen resp_standard7  = 1 if resp_education > 7 
+	replace resp_standard7  = 0 if resp_education <= 7 
 	lab var resp_standard7 "At least standard 7 education?"
 	lab val resp_standard7 yesnodkr
 
-	rename s2q17_oth resp_education_oth
+	drop s2q17_oth
 
 	gen resp_readwrite = s2q18a if resp_education < 8								
 	replace resp_readwrite = s2q18b if resp_education > 7 
@@ -204,9 +226,15 @@ _______________________________________________________________________________*
 	lab val resp_muslim religion
 
 	rename s3q2 resp_religiosity
-	replace resp_religiosity = .r if resp_religiosity == 999							
-	replace resp_religiosity = .r if resp_religiosity == -999	
-	replace resp_religiosity = .d if resp_religiosity == -888	
+	replace resp_religiosity = . if resp_religiosity == 999							
+	replace resp_religiosity = . if resp_religiosity == -999	
+	replace resp_religiosity = . if resp_religiosity == -888
+	
+	gen resp_religiosity_bins = 0 if resp_religiosity == 0
+	replace resp_religiosity_bins = 1 if resp_religiosity == 1
+	replace resp_religiosity_bins = 2 if resp_religiosity > 1
+	lab de resp_religiosity_bins 0 "Not practicing" 1 "Practicing" 2 "Devoted" , modify
+	lab val resp_religiosity_bins resp_religiosity_bins
 
 * Section 4: Media _____________________________________________________________*/
 
@@ -343,6 +371,14 @@ _______________________________________________________________________________*
 		lab var media_news_never  "Never listen to news or current events?"
 		lab val media_news_never  yesnodkr
 
+	gen media_news_ever = 1 if media_news > 1
+		replace media_news_ever = 0 if media_news_ever == 0 
+		replace media_news_ever = 0 if media_news_ever == .
+		replace media_news_ever = 0 if media_news_ever == 1 & radio_any == 0 & resp_literate == 0  
+		lab var media_news_ever  "Ever read or listen to news/current events?"
+		lab val media_news_ever  yesno
+		
+		
 	gen media_news_daily = 1 if media_news == 5
 		replace media_news_daily  = 0 if media_news_daily  == .
 		lab var media_news_daily "Listen to news or current events every day?"
@@ -495,11 +531,22 @@ _______________________________________________________________________________*
 		lab def s11q3 11 "Mud and Sticks", add
 		recode asset_walls (-222 = .o)
 
+
 	gen asset_mudwalls = asset_walls	
 	recode asset_mudwalls (1=1)(2=1)(3=0)(4=0)(5=0) (7=0)(11=1)
 	replace asset_mudwalls  = 0 if asset_mudwalls == .o
-		
-	rename s11q3_oth asset_walls_oth
+	
+	replace asset_mudwalls = 0 if 	s11q3_oth == "Matofali ya block (saruji. )" 	| s11q3_oth == "Matofali ya bloko" | ///
+									s11q3_oth == "Matofali ya mchanga na simenti" 	| s11q3_oth == "Matofali ya simenti" | ///
+									s11q3_oth == "Matofali ya theruji na mchanga" 	| s11q3_oth == "Matofali ya theruji na mchanga." | ///
+									s11q3_oth == "Simenti na mchanga"
+												
+	replace asset_mudwalls = 1 if 	s11q3_oth == "Miti" 			| s11q3_oth ==  "Miti  na matope" | ///
+									s11q3_oth == "Miti na matope" 	| s11q3_oth ==  "Miti na mawe" | ///
+									s11q3_oth == "Miti na udongo" 	| s11q3_oth == "Matofali ya theruji na mchanga." 
+	
+	
+	drop s11q3_oth
 
 
 /* Section 12: Assets  __________________________________________________________*/
