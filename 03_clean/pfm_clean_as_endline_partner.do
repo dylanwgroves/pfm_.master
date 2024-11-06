@@ -42,6 +42,10 @@ ________________________________________________________________________________
 	lab def yesnolisten 0 "Don't Listen" 1 "Listen"
 	lab def reject_cat 0 "Always Acceptable" 1 "Sometimes Acceptable" 2 "Never Acceptable"
 	lab def interest 0 "Not interested" 1 "Somewhat interested" 2 "Interested" 3 "Very interested"
+	lab def em_elect 0 "Vote Against EM Candidate" 1 "Vote For EM Candidate"
+	lab def hiv_elect 0 "Vote Against HIV Candidate" 1 "Vote for HIV Candidate"
+	lab def treatment 0 "Control" 1 "Treatment" 
+	lab def elect_topic 1 "EFM" 2 "HIV" 3 "Roads" 4 "Crime"
 	lab def em_norm_reject 0 "Acceptable" 1 "Sometimes Acceptable" 2 "Never acceptable"
 	lab def ipv 0 "Accept IPV" 1 "Reject IPV"
 	lab def tzovertribe 0 "Tribe >= TZ" 1 "TZ > Tribe"
@@ -51,6 +55,12 @@ ________________________________________________________________________________
 	lab def hh_dum_rev 0 "Man" 1 "Woman or balanced"
 	
 	
+/* Converting don't know/refuse/other to extended missing values _______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
+
 /* Survey Info _________________________________________________________________*/
 
 	gen svy_partner = 1
@@ -101,33 +111,39 @@ ________________________________________________________________________________
 
 	rename s2q1_ppe resp_ppe
 
-	/* Age */
-	destring age_pull, 		gen(resp_age)
-	gen resp_age_yr	=		2017-resp_age
-
+	/* Gender = opposite of their partner (pull) */
 	gen resp_female = .
 		replace resp_female = 0 if gender_pull == "Female"
 		replace resp_female = 1 if gender_pull == "Male"
 		lab val resp_female female
-		
+
+	/* Age */
+	rename s1q4		resp_age
+	gen resp_age_yr	= 2020-resp_age						// yob of this respondent (partner)
+	
+	/* Age of the main respondent!!!!!! 
+	destring age_pull, 		gen(resp_age_originalrespondent)
+	*/
+	
 	rename s1q3 	resp_howyoudoing
 	
 	rename s3q3_status 	resp_rltn_status
-	rename s3q4 		resp_rltn_age
-		recode resp_rltn_age (-999 = .d)(-222 = .d)
-		
-	gen resp_rltn_age_yr = 2020 - resp_rltn_age 
-
-	gen resp_married = 1 // Everyone married
+	gen resp_asmarried = 1 // Everyone as married
 	
-	gen resp_married_yr = year(s3q5)
+	rename s3q4 		resp_rltn_age					// age of partner
+		recode resp_rltn_age (-999 = .d)(-222 = .d)
+		replace resp_rltn_age = . if resp_rltn_age == 4
+				
+	gen resp_rltn_age_yr = 2020 - resp_rltn_age 		// yob 	of partner
+
+	
+	gen resp_married_yr = year(s3q5)					// year of marriage
 		recode resp_married_yr (-999 = .d)
 	
-	gen resp_married_age = resp_married_yr - resp_age_yr
-	gen resp_rltn_married_age = resp_married_yr - resp_rltn_age_yr
-
-	rename s3q15_city_town		resp_urbanvisit
-		recode resp_urbanvisit (-999 = .d)
+	gen resp_married_age = resp_married_yr - resp_age_yr				// age of partner (this survey respondent) at marriage
+	gen resp_rltn_married_age = resp_married_yr - resp_rltn_age_yr		// age of main respondent (the partner of this respondent) at marriage
+		
+		
 
 	gen resp_christian = s3q16_religion
 		recode resp_christian (2=1)(3=0)(1=0)
@@ -138,14 +154,64 @@ ________________________________________________________________________________
 		lab val resp_muslim yesno
 		
 	rename s3q22_religious		resp_religiosity
+		replace resp_religiosity = . if resp_religiosity == 999							
+		replace resp_religiosity = . if resp_religiosity == -999	
+		replace resp_religiosity = . if resp_religiosity == -888
+		
+		gen resp_religiosity_bins = 0 if resp_religiosity == 0
+		replace resp_religiosity_bins = 1 if resp_religiosity == 1
+		replace resp_religiosity_bins = 2 if resp_religiosity > 1
+		lab de resp_religiosity_bins 0 "Not practicing" 1 "Practicing" 2 "Devoted" , modify
+		lab val resp_religiosity_bins resp_religiosity_bins
 
 	rename s3q17				resp_religiousschool
 		replace resp_religiousschool = s3q18 if resp_christian == 1
 
-	rename s3q19_tribe			resp_tribe										// Need to input "other"
+	rename s3q19_tribe			resp_tribe										// Need to input "other" -- BM done
+		replace resp_tribe = 20 if s3q19_tribe_oth == "Waha" | s3q19_tribe_oth == "Muha"
+		replace resp_tribe = 37 if s3q19_tribe_oth == "Mrangi"
+		replace resp_tribe = 40 if s3q19_tribe_oth == "Wanyasa"
+		la def s3q19_tribe 40 "Wanyasa" , modify
+		replace resp_tribe = 41 if s3q19_tribe_oth == "Wapangwa" | s3q19_tribe_oth == "Mpangwa" 
+		la def s3q19_tribe 41 "Wapangwa" , modify
+		replace resp_tribe = 42 if s3q19_tribe_oth == "Wasegeju" |s3q19_tribe_oth == "Msegeju" 
+		la def s3q19_tribe 42 "Wasegeju" , modify
+		replace resp_tribe = 43 if s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba"  | s3q19_tribe_oth == "Wapembaa"
+		la def s3q19_tribe 43 "Wapemba" , modify
+		replace resp_tribe = 44 if s3q19_tribe_oth == "Washirazi" | s3q19_tribe_oth == "MSHIRAZI"
+		la def s3q19_tribe 44 "Washirazi" , modify
+		replace resp_tribe = 45 if s3q19_tribe_oth == "Wanyamwanga"
+		la def s3q19_tribe 45 "Wanyamwanga" , modify
+		replace resp_tribe = 46 if s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "Wamuha" | s3q19_tribe_oth == "Mmakua"
+		la def s3q19_tribe 46 "Wamakua" , modify
 
+		replace s3q19_tribe_oth = "" if s3q19_tribe_oth == "Wanyasa" | s3q19_tribe_oth == "Wapangwa" | s3q19_tribe_oth == "Mpangwa" | ////
+										s3q19_tribe_oth == "Waha" | s3q19_tribe_oth == "Muha" | s3q19_tribe_oth == "Wasegeju" |s3q19_tribe_oth == "Msegeju" | ////
+										s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba"  | s3q19_tribe_oth == "Wapembaa" | s3q19_tribe_oth == "Washirazi" | ////
+										s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "Wamuha" | s3q19_tribe_oth == "Mmakua" | ////
+										s3q19_tribe_oth == "MSHIRAZI" | s3q19_tribe_oth == "Mrangi"
+			
+		
 	gen svy_date = 				startdate
 
+		
+	gen resp_knowppl = 1 if s2q13 == 4
+		replace resp_knowppl = 2 if s2q13 == 3
+		replace resp_knowppl = 3 if s2q13 == 2
+		replace resp_knowppl = 4 if s2q13 == 1
+		lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
+		lab val resp_knowppl resp_knowppl
+		lab var resp_knowppl "How many ppl can you name in vill?"
+
+	rename s2q15b resp_samevillage
+
+	rename s3q15_city_town		resp_urbanvisit
+		recode resp_urbanvisit (-999 = .d)
+	
+	gen resp_visit_town_new  = resp_urbanvisit - 1
+	lab var resp_visit_town_new "How often visits town?"
+	lab de resp_visit_town_new 0 "Never" 1 "Less than once a year" 2 "Less than once a month" 3 "A few times a month"  4 "A few times a week"  5 "Every day"  
+	lab val resp_visit_town_new resp_visit_town_new
 
 	
 /* General Values ______________________________________________________________*/

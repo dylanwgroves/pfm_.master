@@ -111,7 +111,7 @@ ________________________________________________________________________________
 
 	/* Age */
 	destring age_pull, 		gen(resp_age)
-	gen resp_age_yr	=		2017-resp_age
+	gen resp_age_yr	=		2017-resp_age					// yob of main respondent
 
 	gen resp_female = .
 		replace resp_female = 1 if gender_pull == "Female"
@@ -121,16 +121,22 @@ ________________________________________________________________________________
 	rename s1q3 	resp_howyoudoing
 	
 	rename s3q3_status 	resp_rltn_status
-	rename s3q4 		resp_rltn_age
-		recode resp_rltn_age (-999 = .d)(-222 = .d)
-		
-	gen resp_rltn_age_yr = 2020 - resp_rltn_age 
+	gen resp_asmarried = 1 if resp_rltn_status == 1 | resp_rltn_status == 2
+		replace resp_asmarried = 0 if resp_asmarried == . 
+		lab var resp_asmarried "As married?"
+		lab val resp_asmarried yesno
 
-	gen resp_married_yr = year(s3q5)
+	rename s3q4 		resp_rltn_age						// age of partner
+		recode resp_rltn_age (-999 = .d)(-222 = .d)
+	
+		
+	gen resp_rltn_age_yr = 2020 - resp_rltn_age 			// yob 	of partner
+
+	gen resp_married_yr = year(s3q5)						// year of marriage
 		recode resp_married_yr (-999 = .d)
 
-	gen resp_married_age = resp_married_yr - resp_age_yr
-	gen resp_rltn_married_age = resp_married_yr - resp_rltn_age_yr
+	gen resp_married_age = resp_married_yr - resp_age_yr				// age of main respondent at marriage
+	gen resp_rltn_married_age = resp_married_yr - resp_rltn_age_yr		// age of partner at marriage
 
 	rename s3q15_city_town		resp_urbanvisit
 		recode resp_urbanvisit (-999 = .d)
@@ -148,7 +154,41 @@ ________________________________________________________________________________
 	rename s3q17				resp_religiousschool
 		replace resp_religiousschool = s3q18 if resp_christian == 1
 
-	rename s3q19_tribe			resp_tribe											// Need to input "other"
+	rename s3q19_tribe			resp_tribe											// Need to input "other" -- BM: done.
+		replace resp_tribe = 25 if s3q19_tribe_oth == "Wakinga"
+		replace resp_tribe = 9  if s3q19_tribe_oth == "Mnyamwezi"
+		replace resp_tribe = 19 if s3q19_tribe_oth == "Mbena"
+		replace resp_tribe = 20 if s3q19_tribe_oth == "Waha" | s3q19_tribe_oth == "Muha"
+		replace resp_tribe = 5 	if s3q19_tribe_oth == "Wakwele"
+		replace resp_tribe = 14 if s3q19_tribe_oth == "Wakagulu" | s3q19_tribe_oth == "Mkaguru"
+		replace resp_tribe = 4	if s3q19_tribe_oth == "Wangoni"
+		replace resp_tribe = 6	if s3q19_tribe_oth == "Mpare" 
+		replace resp_tribe = 40 if s3q19_tribe_oth == "Wanyasa"
+		la def s3q19_tribe 40 "Wanyasa" , modify
+		replace resp_tribe = 41 if s3q19_tribe_oth == "Wapangwa" | s3q19_tribe_oth == "Mpangwa" | s3q19_tribe_oth == "Mpangu"
+		la def s3q19_tribe 41 "Wapangwa" , modify
+		replace resp_tribe = 42 if s3q19_tribe_oth == "Wasegeju" | s3q19_tribe_oth == "Msegeji" | s3q19_tribe_oth == "Msegejo" | s3q19_tribe_oth == "Msegeju" 
+		la def s3q19_tribe 42 "Wasegeju" , modify
+		replace resp_tribe = 43 if s3q19_tribe_oth == "mpemba" | s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba"
+		la def s3q19_tribe 43 "Wapemba" , modify
+		replace resp_tribe = 44 if s3q19_tribe_oth == "Washirazi" | s3q19_tribe_oth == "Shirazi" | s3q19_tribe_oth == "Mshirazi" | s3q19_tribe_oth == "Mshilazi"
+		la def s3q19_tribe 44 "Washirazi" , modify
+		replace resp_tribe = 45 if s3q19_tribe_oth == "Mnyamwanga" | s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "wanyamwanga"
+		la def s3q19_tribe 45 "Wanyamwanga" , modify
+		replace resp_tribe = 46 if s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "wamakua" | s3q19_tribe_oth == "Wamakuwa" | s3q19_tribe_oth == "Mmakua"
+		la def s3q19_tribe 46 "Wamakua" , modify
+		
+		replace s3q19_tribe_oth = "" if 	s3q19_tribe_oth == "Wakinga" | s3q19_tribe_oth == "Mbena" | s3q19_tribe_oth == "Wakwele" | ////
+											s3q19_tribe_oth == "Mnyamwezi" | s3q19_tribe_oth == "Waha" | s3q19_tribe_oth == "Muha" | ////
+											s3q19_tribe_oth == "Wakagulu" | s3q19_tribe_oth == "Mkaguru" | ////
+											s3q19_tribe_oth == "Wanyasa" | s3q19_tribe_oth == "Wapangwa" | ////
+											s3q19_tribe_oth == "Wasegeju" | s3q19_tribe_oth == "Msegeji" | s3q19_tribe_oth == "Msegejo" | s3q19_tribe_oth == "Msegeju" | ////
+											s3q19_tribe_oth == "mpemba" | s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba" | ////
+											s3q19_tribe_oth == "Washirazi" | s3q19_tribe_oth == "Shirazi" | s3q19_tribe_oth == "Mshirazi" | s3q19_tribe_oth == "Mshilazi" | ////
+											s3q19_tribe_oth == "Mnyamwanga" | s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "wanyamwanga" | ////
+											s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "wamakua" | s3q19_tribe_oth == "Wamakuwa" | s3q19_tribe_oth == "Mmakua" | ////
+											s3q19_tribe_oth == "Wakwele" | s3q19_tribe_oth == "Wakagulu" | s3q19_tribe_oth == "Mkaguru" | s3q19_tribe_oth == "Wangoni" | ////
+											s3q19_tribe_oth == "Mpare" | s3q19_tribe_oth == "Mpangwa" | s3q19_tribe_oth == "Mpangu"
 	
 	gen svy_date = 				startdate
 
@@ -178,7 +218,8 @@ ________________________________________________________________________________
 	rename s3q20_tz_tribe values_tzovertribe
 	
 	/* Recode */
-	recode values_* (-999 = .d) (-888 = .r)
+	*recode values_* (-999 = .d) (-888 = .r)
+	recode values_* (-999 = .) (-888 = .)
 
 /* Efficacy ____________________________________________________________________*/
 
@@ -272,9 +313,21 @@ ________________________________________________________________________________
 		gen prej_thermo_out_rel = prej_thermo_muslims if resp_muslim == 0
 			replace prej_thermo_out_rel = prej_thermo_christians if resp_muslim == 1
 		
-		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38
-			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
+			gen prej_thermo_in_rel = prej_thermo_muslims if resp_muslim == 1
+				replace prej_thermo_in_rel = prej_thermo_christians if resp_muslim == 0
 
+		
+		gen resp_tribe_digo = 1 if resp_tribe == 38				// digo
+			replace resp_tribe_digo = 0 if resp_tribe == 32		// samba
+		
+		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe_digo == 0
+			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe_digo == 1
+
+			gen prej_thermo_in_eth = prej_thermo_digo if resp_tribe_digo == 1
+				replace prej_thermo_in_eth = prej_thermo_sambaa if resp_tribe_digo == 0
+
+			
+			
 /* Political Prefences __________________________________________________________*/
 
 	forval i = 1/9 {
@@ -451,7 +504,7 @@ ________________________________________________________________________________
 		replace vote_2 = s3q4b_2 if rand_order_2nd_txt == "second"
 		recode vote_2 (2=0)(1=1)
 		
-	/* Gen Vote Pref
+	/* Gen Vote Pref 
 		/* Muslim */
 		gen vote_pref_muslim_1 = 1 if vote_elect1 == 1 & (cand1_muslim > cand2_muslim)
 			replace vote_pref_muslim_1 = 1 if vote_elect1 == 0 & (cand1_muslim < cand2_muslim)
@@ -470,7 +523,7 @@ ________________________________________________________________________________
 			replace vote_pref_muslim_2 = . if (cand3_muslim == cand4_muslim)
 			
 		egen vote_pref_muslim_index = rowmean(vote_pref_muslim_1 vote_pref_muslim_2)
-		
+	
 		/* Female */
 		gen vote_pref_female_1 = 1 if vote_elect1 == 1 & (cand1_female > cand2_female)
 			replace vote_pref_female_1 = 1 if vote_elect1 == 0 & (cand1_female < cand2_female)
@@ -489,8 +542,7 @@ ________________________________________________________________________________
 			replace vote_pref_female_2 = . if (cand3_female == cand4_female)
 			
 		egen vote_pref_female_index = rowmean(vote_pref_female_1 vote_pref_female_2)
-	 */	
-
+		*/	
 
 /* Gender Equality _____________________________________________________________
 
@@ -535,7 +587,7 @@ We are coding that higher is always "more gender equality"
 			forval j = 1/3 {	
 				replace ge_hhlabor`i' = s8q5_r_`j' if s8q5_index_r_`j' == "`i'"	// Need to change this back to "2"
 			}
-		lab var ge_hhlabor`i' "How is ideally responsible for X?"
+		lab var ge_hhlabor`i' "Who is ideally responsible for X?"
 		lab val ge_hhlabor`i' ge_hhlabor
 	}
 		rename ge_hhlabor1 		ge_hhlabor_chores								// Not sure this is coded right
@@ -555,7 +607,12 @@ We are coding that higher is always "more gender equality"
 							(2 = 0 "men"), ///
 							gen(`var'_dum) label(`var'_dum)
 			lab var `var'_dum "1=prog/bal : Ideally, who is responsible for..."
+
 		}
+	
+	egen ge_hhlabor_index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_kids_dum ge_hhlabor_money_dum)
+	lab var ge_hhlabor_index "Index of 3 HH IDEAL labor questions"
+	
 		
 /* Forced Marriage _____________________________________________________________*/
 
@@ -596,7 +653,7 @@ We are coding that higher is always "more gender equality"
 	rename s15q2b	ptixpart_villmeet
 	rename s15q2c	ptixpart_collact
 		
-	cap rename s15q7	ptixpart_contact_satisfied
+	* rename s15q7	ptixpart_contact_satisfied // dropped after pilot
 	
 
 
@@ -609,7 +666,7 @@ We are coding that higher is always "more gender equality"
 	
 	rename s21_txt_treat treat_wpp
 
-	rename s21q1	wpp_attitude. // In general, do you think that political leaders in Tanzania should be mostly men, mostly women, or that there should be equal numbers of men and women?
+	rename s21q1	wpp_attitude // In general, do you think that political leaders in Tanzania should be mostly men, mostly women, or that there should be equal numbers of men and women?
 		gen wpp_attitude_dum = 1 if wpp_attitude == 1 | wpp_attitude == 2
 		replace wpp_attitude_dum = 0 if wpp_attitude == 0
 		lab var wpp_attitude_dum "Who should lead? Equal women or more women"
@@ -622,8 +679,8 @@ We are coding that higher is always "more gender equality"
 		replace wpp_norm_dum = 0 if wpp_norm == 0
 		lab var wpp_norm_dum "Who should lead? Equal women or more women"
 		
-	rename s21q3		wpp_behavior
-	cap rename s21q4	wpp_partner
+	rename s21q3	wpp_behavior
+	rename s21q4	wpp_partner
 
 	foreach var of varlist wpp_* {
 		recode `var' (-888 = .r) (-999 = .d) (-222 = .d)
@@ -660,7 +717,7 @@ We are coding that higher is always "more gender equality"
 	rename s17q5c		em_hearddiscussed
 
 	rename s17q5d		em_hearddiscussed_often
-		replace em_hearddiscussed_often = 0 if em_hearddiscussed == 0
+		replace em_hearddiscussed_often = 1 if em_hearddiscussed == 0
 		
 	gen treat_pi = 1 if em_txt_treat == "treat"
 		replace treat_pi = 0 if em_txt_treat == "control"
@@ -770,8 +827,9 @@ We are coding that higher is always "more gender equality"
 		lab def ptixknow_fopo_kenyatta 0 "Wrong" 1 "Close" 2 "Correct"
 
 	rename s13q5		ptixknow_em_aware
-		cap replace ptixknow_em_aware = s17q1_intro if s17_txt_treat == "treat_both" | s17_txt_treat == "treat_court"
-		destring ptixknow_em_aware, replace
+	// this is from the pilot, we decided Endline was only going to have PI and not COURTS experiment
+	*	replace ptixknow_em_aware = s17q1_intro if s17_txt_treat == "treat_both" | s17_txt_treat == "treat_court" 	
+	*	destring ptixknow_em_aware, replace
 
 	rename s13q6		ptixknow_sourcetrust
 	
@@ -927,7 +985,6 @@ We are coding that higher is always "more gender equality"
 		lab var hhlabor_laundry_dum "[1 = prog/bal] Who in HH is responsible for laundry?"
 		
 	egen hhlabor_chores_dum = rowmean(hhlabor_water_dum hhlabor_laundry_dum)
-		lab val hhlabor_chores_dum hh_dum
 		lab var hhlabor_chores_dum "[1 = prog/bal] Who in HH is responsible for chores?"
 	
 	recode hhlabor_kids (2=1)(3=1)(1=0), gen(hhlabor_kids_dum)
@@ -941,7 +998,7 @@ We are coding that higher is always "more gender equality"
 	recode hhlabor* (-999 = .d)(-888 = .r)		
 
 	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
-	lab var hhlabor_index "Index of four HH labor questions"
+	lab var hhlabor_index "Index of 3 HH labor questions"
 
 
 /* HH Decisions _____________________________________________________________________*/
@@ -982,6 +1039,10 @@ We are coding that higher is always "more gender equality"
 	rename s12q13_9		couples_talk_none
 
 	rename s12q14		couples_autonomy
+		recode couples_autonomy (4=0) (3=1) (2=2) (1=3)
+		la de couples_autonomy 0 "Always" 1 "Most times" 2 "Sometimes" 3 "Never" , modify
+		la val couples_autonomy couples_autonomy
+ 		lab var couples_autonomy "Partner prohibits you going to maket / friends"
 		
 	recode couples* (-999 = .d)(-888 = .r)	
 
@@ -990,20 +1051,22 @@ We are coding that higher is always "more gender equality"
 
 	rename s11q0		parent_hhkids_any
 
-	rename s11q1		parent_currentevents
 
 	rename s11q3		parent_question
 		recode parent_question (2=1) (1=0)
 		lab def parent_question 0 "Agree" 1 "Disagree"
 		lab val parent_question parent_question
-		lab var parent_question "Agree (0) or Disagree (1): Parents should not allow children to question their decisions"
+		lab var parent_question "Agree (0) or Disagree (1): Parents should NOT allow children to question their decisions"
 		
 	rename s11q4a		parent_control_activities
 	rename s11q4b		parent_control_punish
 	rename s11q4c		parent_responsive_praise
 	rename s11q4d		parent_responsive_school
 
-	rename s11q5_1		parent_talk_news
+	rename s11q1		parent_currentevents
+		gen parent_currentevents_dum = (parent_currentevents > 1)
+
+	rename s11q5_1		parent_talk_newspols
 	rename s11q5_2		parent_talk_school
 	rename s11q5_3		parent_talk_community
 	rename s11q5_4		parent_talk_entertainment
@@ -1340,7 +1403,11 @@ We are coding that higher is always "more gender equality"
 	
 	rename s7q9			kidssample_consent
 	
-
+	* Does the person have at least one daughter (older than 13?)
+		egen temp = rowmean(kidssample_gender_*)
+		gen daughters = (temp > 1)
+		drop temp
+	
 /* Conclusion __________________________________________________________________*/
 
 	rename s20q1				svy_followupok
