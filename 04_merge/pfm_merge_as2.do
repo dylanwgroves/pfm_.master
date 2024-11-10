@@ -129,10 +129,10 @@ ________________________________________________________________________________
 		merge 1:1 resp_id using `temp_end_kid',  gen(merge_base_mid_end_k)
 	
 	
-	/* AS Randomization */
+	/* AS2 Randomization */
 		merge n:1 village_id using `temp_rand',  gen(merge_rand_as)
 		
-	/* AS Randomizations -- with RI */
+	/* AS2 Randomizations -- with RI */
 		merge n:1 village_id using `temp_ri',  gen(merge_rand_as_ri)
 		
 		

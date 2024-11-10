@@ -13,7 +13,6 @@ ________________________________________________________________________________
 (*) Rememeber to check in kids_02_cleaning_martin.do that training and pilot data are cut.
 (*) Respondent Info (basic) 
 	- clean "other tribe" at the end of collection
-	- Think about how to code religiosity differently across religions
 (*) Prejudice
 	- check outer thermomether for tribe_txt
 (*) Forced Marriage and Early Marriage
@@ -172,6 +171,13 @@ ________________________________________________________________________________
 	rename s3q22_religious		resp_religiosity								// maybe add different code for different religions?
 	replace resp_religiosity = . if resp_religiosity == -888 | ///
 									resp_religiosity == -999
+
+	gen resp_religiosity_bins = 0 if resp_religiosity == 0
+		replace resp_religiosity_bins = 1 if resp_religiosity == 1
+		replace resp_religiosity_bins = 2 if resp_religiosity > 1
+		lab de resp_religiosity_bins 0 "Not practicing" 1 "Practicing" 2 "Devoted" , modify
+		lab val resp_religiosity_bins resp_religiosity_bins
+
 	
 	rename s3q17				resp_religiousschool							
 		replace resp_religiousschool = s3q18 if resp_christian == 1
@@ -179,10 +185,37 @@ ________________________________________________________________________________
 		label var resp_religiousschool "Have you ever been enrolled in RELIGIOUS school?"
 			
 	rename s3q24				resp_rellead_off
+	gen resp_rellead_off_dum = (resp_rellead_off > 1)
+	label var resp_rellead_off_dum "Talk 1-1 to Religious Leader?"
+	label val resp_rellead_off_dum yesno
 	
-	rename s3q19_tribe			resp_tribe	
-	rename s3q19_tribe_oth		resp_tribe_oth									// clean this at the end of collection
-	
+	rename s3q19_tribe			resp_tribe										// Need to input "other" -- BM: done.
+		replace resp_tribe = 6  if s3q19_tribe_oth == "mpale"
+		replace resp_tribe = 8  if s3q19_tribe_oth == "mmkonde"
+		replace resp_tribe = 15 if s3q19_tribe_oth == "Wafipa"
+		replace resp_tribe = 20 if s3q19_tribe_oth == "Wahea"
+		replace resp_tribe = 19 if s3q19_tribe_oth == "mbena"
+		replace resp_tribe = 41 if s3q19_tribe_oth == "Wapangwa" | s3q19_tribe_oth == "Mpangwa" 
+		la def s3q19_tribe 41 "Wapangwa" , modify
+		replace resp_tribe = 42 if s3q19_tribe_oth == "Wasegeju" |s3q19_tribe_oth == "Msegeju" 
+		la def s3q19_tribe 42 "Wasegeju" , modify
+		replace resp_tribe = 43 if s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba"  | s3q19_tribe_oth == "mpembaa"
+		la def s3q19_tribe 43 "Wapemba" , modify
+		replace resp_tribe = 45 if s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "manyambwa" 
+		la def s3q19_tribe 45 "Wanyamwanga" , modify
+		replace resp_tribe = 46 if s3q19_tribe_oth == "WAMAKUA" 
+		la def s3q19_tribe 46 "Wamakua" , modify
+		replace resp_tribe = 47 if s3q19_tribe_oth == "WATUMBATU" | s3q19_tribe_oth == "Watumbatu" 
+		la def s3q19_tribe 47 "Watumbatu" , modify
+		replace resp_tribe = . if s3q19_tribe_oth == "Doesn't know"
+
+	replace s3q19_tribe_oth = "" if s3q19_tribe_oth == "Wapangwa" | s3q19_tribe_oth == "Mpangwa" | ////
+									s3q19_tribe_oth == "Wasegeju" |s3q19_tribe_oth == "Msegeju" | ////
+									s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba"  | s3q19_tribe_oth == "mpembaa" | ////
+									s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "manyambwa" | ////
+									s3q19_tribe_oth == "WAMAKUA" | ////
+									s3q19_tribe_oth == "WATUMBATU" | s3q19_tribe_oth == "Watumbatu" | ////
+									s3q19_tribe_oth == "Doesn't know"
 
 /* Prejudice ___________________________________________________________________*/
 		
@@ -276,14 +309,31 @@ ________________________________________________________________________________
 	drop `var'
 	}
 
-	/* Generate Out-Group feeling Thermometer */
-	gen prej_thermo_out_rel = prej_thermo_muslims if resp_muslim == 0
-		replace prej_thermo_out_rel = prej_thermo_christians if resp_muslim == 1
-	
-	gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38				
-		replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38	// not sure, shouldn't this be !=58 ?
 			
-																				// make out_gender thermo
+	/* Generate Out-Group feeling Thermometer */
+		gen prej_thermo_out_rel = prej_thermo_muslims if resp_muslim == 0
+			replace prej_thermo_out_rel = prej_thermo_christians if resp_muslim == 1
+		
+			gen prej_thermo_in_rel = prej_thermo_muslims if resp_muslim == 1
+				replace prej_thermo_in_rel = prej_thermo_christians if resp_muslim == 0
+
+		
+		gen resp_tribe_digo = 1 if resp_tribe == 38				// digo
+			replace resp_tribe_digo = 0 if resp_tribe == 32		// samba
+		
+		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe_digo == 0
+			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe_digo == 1
+
+			gen prej_thermo_in_eth = prej_thermo_digo if resp_tribe_digo == 1
+				replace prej_thermo_in_eth = prej_thermo_sambaa if resp_tribe_digo == 0
+				
+		gen prej_thermo_out_gend = prej_thermo_women if resp_female == 0
+			replace prej_thermo_out_gend = prej_thermo_men if resp_female == 1
+
+		gen prej_thermo_in_gend = prej_thermo_women if resp_female == 1
+			replace prej_thermo_in_gend = prej_thermo_men if resp_female == 0
+				
+																// make out_gender thermo
 			
 /* Forced Marriage _____________________________________________________________*/
 
@@ -312,9 +362,15 @@ ________________________________________________________________________________
  
 	** Generate Interest
 	rename s15q1	ptixpart_interest
+		recode ptixpart_interest (1=3)(2=2)(3=1)(4=0)
+		lab val ptixpart_interest interest
 
 	** Participation Activities														
 	rename s15q2	efficacy_understand
+	recode efficacy_understand (1 = 0) (2=1)
+	lab def efficacy_understand 0 "Politics too complicated" 1 "Understand politics"
+	lab val efficacy_understand efficacy_understand
+
 	recode s15q4 	(1=1 "Want to lead") ///
 					(2=0 "Other things to do"), ///
 					gen(ptixpart_leadership) label(ptixpart_leadership)
@@ -477,10 +533,20 @@ ________________________________________________________________________________
 
 	/* Sources about new issues */
 	rename s13q6	ptixknow_sourcetrust
+
+		gen ptixknow_trustloc = 1 if ptixknow_sourcetrust == 1
+		replace ptixknow_trustloc = 0 if ptixknow_sourcetrust == 2 | ptixknow_sourcetrust == 3
+	
+	gen ptixknow_trustnat = 1 if ptixknow_sourcetrust == 2
+		replace ptixknow_trustnat = 0 if ptixknow_sourcetrust == 1 | ptixknow_sourcetrust == 3
+		
+	gen ptixknow_trustrel = 1 if ptixknow_sourcetrust == 3
+		replace ptixknow_trustrel = 0 if ptixknow_sourcetrust == 1 | ptixknow_sourcetrust == 2
 		
 	foreach var of varlist ptixknow_* {
 		cap recode `var' (-999 = 0)(-222 = 0)
 	}
+
 
 /* HIV  ________________________________________________________________________*/
 
@@ -536,7 +602,12 @@ ________________________________________________________________________________
 	
 	gen hhlabor_chores = hhlabor_water if txt_choresactual == "water"
 		replace hhlabor_chores = hhlabor_laundry if txt_choresactual == "laundry"
-		replace hhlabor_chores = hhlabor_laundry if txt_choresactual == "laundry"
+
+	gen hhlabor_chores_dum = hhlabor_water_dum if txt_choresactual == "water"
+		replace hhlabor_chores = hhlabor_laundry_dum if txt_choresactual == "laundry"
+	
+	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
+	lab var hhlabor_index "Index of 3 HH labor questions"
 	
 	/* Core outcome */
 	rename scouples_q2_f		ge_wep
@@ -590,12 +661,17 @@ ________________________________________________________________________________
 										(2 5 = 0 "men"), ///
 										gen(ge_hhlabor_money_dum) label(ge_hhlabor_money_dum)				
 										lab var ge_hhlabor_money_dum "[1=prog/bal] Who is ideally responsible for making money"
-	
+
+	egen ge_hhlabor_index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_money_dum)
+	lab var ge_hhlabor_index "Index of 2 HH IDEAL labor questions"
+
+	egen ge_index = rowmean(ge_wep_dum ge_earning ge_school)
+										
 	/* Good wife */
-	rename s6q6__1		goodwife_hard
+*	rename s6q6__1		goodwife_hard //select if hard for child to answer -- only 3
 	rename s6q6_0 		goodwife_respecful
 	rename s6q6_1 		goodwife_makemoney										
-	rename s6q6_2		goodwife_haschildren	
+	rename s6q6_2		goodwife_haschildren	// no one
 	rename s6q6_3		goodwife_sex  
 	rename s6q6_4		goodwife_nocheat
 	rename s6q6_5		goodwife_religious 
@@ -604,14 +680,21 @@ ________________________________________________________________________________
 	rename s6q6_8		goodwife_cook  
 	rename s6q6_9		goodwife_nofight
 	rename s6q6_10		goodwife_timetable 
-	rename s6q6_11		goodwife_lovehusb
+	rename s6q6_11		goodwife_lovecouple
 	rename s6q6_12		goodwife_lovechild
-	rename s6q6__888 	goodwife_dk
-	rename s6q6__222	goodwife_oth
-	*s6q6_oth																	// clean this at the end of collection
+*	rename s6q6__888 	goodwife_dk
+*	rename s6q6__222	goodwife_oth
+	
+	*s6q6_oth																	// clean this at the end of collection -- BM done
+	gen goodwife_lovecouplefam 	= 1 if s6q6_oth ==  "Heshima kwa baba na mama" | s6q6_oth == "Kuipenda familia yake"
+	replace goodwife_nocheat 	= 1 if s6q6_oth == "Kuishi na majirani vzur na kua msafi"
+	replace goodwife_lovecouple = 1 if s6q6_oth == "Kumjali mumewe" 
+	replace goodwife_lovechild 	= 1 if s6q6_oth == "Mama asiwe na ubaguzi au kumpendelea mtoto mmoja" | s6q6_oth == "Na asiwe mbaguzi, (upendeleo kwa baadhi ya watoto)"
+	replace goodwife_nofight 	= 1 if s6q6_oth == "Atulie kwenye ndoa yake" | s6q6_oth == "Kuwaheshimu watu wengine,"
+	replace goodwife_chores 	= 1 if s6q6_oth == "Kuchota maji"
 	
 	/* Good husband */
-	rename s6q7__1		goodhusb_hard
+*	rename s6q7__1		goodhusb_hard  //select if hard for child to answer -- only 4
 	rename s6q7_0 		goodhusb_respecful
 	rename s6q7_1 		goodhusb_makemoney	
 	rename s6q7_2		goodhusb_haschildren	
@@ -620,16 +703,19 @@ ________________________________________________________________________________
 	rename s6q7_5		goodhusb_religious 
 	rename s6q7_6		goodhusb_parent
 	rename s6q7_7		goodhusb_chores 
-	rename s6q7_8		goodhusb_cook  
+	rename s6q7_8		goodhusb_cook  // no one
 	rename s6q7_9		goodhusb_nofight
-	rename s6q7_10		goodhusb_timetable 
-	rename s6q7_11		goodhusb_lovehusb
+	rename s6q7_10		goodhusb_timetable // no one
+	rename s6q7_11		goodhusb_lovecouple
 	rename s6q7_12		goodhusb_lovechild
-	rename s6q7__888 	goodhusb_dk
-	rename s6q7__222	goodhusb_oth
-	*s6q7_oth																	// clean this at the end of collection
+*	rename s6q7__888 	goodhusb_dk
+*	rename s6q7__222	goodhusb_oth
 	
-	egen ge_index = rowmean(ge_wep_dum ge_earning ge_school)
+	*s6q7_oth																	// clean this at the end of collection -- BM done
+	gen goodhusb_protect 		= 1 if s6q7_oth == "Kuongoza familia na kulinda familia." | s6q7_oth ==  "1. Kumpa mkewe anacho taka kama kumnunulia nguo. 2. Kuilinda familia yake."
+	replace goodhusb_makemoney 	= 1 if s6q7_oth == "Kuleta chakula" | s6q7_oth == "Kuwajengea sehemu nzuri ya kuishi"
+	replace goodhusb_parent 	= 1 if s6q7_oth ==  "Kuwapeleka watoto shule" | s6q7_oth == "Kuwasomesha watoto wake"
+	
 
 	
 /* Family and Parenting ________________________________________________________*/
@@ -655,7 +741,9 @@ ________________________________________________________________________________
 									radio_listen == 3 | ///
 									radio_listen == 4 | ///
 									radio_listen == 5
-		recode radio_ever (-999 = .d) (-888 = .r)
+		replace radio_ever = 0 if radio_ever == . 
+		replace radio_ever = 0 if -999
+		recode radio_ever (-888 = .r)
 
 	* Favorite Radio Program Types
 	rename s4q5_programs_sm				radio_type	
@@ -709,10 +797,14 @@ ________________________________________________________________________________
 	rename s40q1_16			rm_maleartist
 	rename s40q1_17			rm_femaleartist 
 	rename s40q1_18			rm_malesport
-	rename s40q1_19			rm_femalesport 
-	rename s40q1__222		rm_other 
-	rename s40q1__888		rm_refuse
-	rename s40q1__999		rm_dk
+	rename s40q1_19			rm_femalesport // no one
+	
+	replace rm_villlead = 1 if s40q1_oth == "Aliyekua mtendaji wetu wa kijiji"	
+	replace rm_femaledoctor = 1 if s40q1_oth == "Jirani yangu ambae ni Nesi"
+	replace rm_femaledoctor = 1 if s40q1_oth == "Muuza duka la dawa(kike"
+	replace rm_maleptix = 1 if s40q1_oth == "mtu mkubwa serikarini"
+	replace rm_rellead = 1 if s40q1_oth == "shekhe mkubwa na maarufu"
+	
 	
 /* Radio Distribution Compliance _______________________________________________*/
 

@@ -177,6 +177,8 @@ ________________________________________________________________________________
 		la def s3q19_tribe 45 "Wanyamwanga" , modify
 		replace resp_tribe = 46 if s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "wamakua" | s3q19_tribe_oth == "Wamakuwa" | s3q19_tribe_oth == "Mmakua"
 		la def s3q19_tribe 46 "Wamakua" , modify
+		replace resp_tribe = 47 if s3q19_tribe_oth == "MTUMBATU" | s3q19_tribe_oth == "Watumbatu" | s3q19_tribe_oth == "Mtumbatu"
+		la def s3q19_tribe 47 "Watumbatu" , modify
 		
 		replace s3q19_tribe_oth = "" if 	s3q19_tribe_oth == "Wakinga" | s3q19_tribe_oth == "Mbena" | s3q19_tribe_oth == "Wakwele" | ////
 											s3q19_tribe_oth == "Mnyamwezi" | s3q19_tribe_oth == "Waha" | s3q19_tribe_oth == "Muha" | ////
@@ -188,7 +190,8 @@ ________________________________________________________________________________
 											s3q19_tribe_oth == "Mnyamwanga" | s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "wanyamwanga" | ////
 											s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "wamakua" | s3q19_tribe_oth == "Wamakuwa" | s3q19_tribe_oth == "Mmakua" | ////
 											s3q19_tribe_oth == "Wakwele" | s3q19_tribe_oth == "Wakagulu" | s3q19_tribe_oth == "Mkaguru" | s3q19_tribe_oth == "Wangoni" | ////
-											s3q19_tribe_oth == "Mpare" | s3q19_tribe_oth == "Mpangwa" | s3q19_tribe_oth == "Mpangu"
+											s3q19_tribe_oth == "Mpare" | s3q19_tribe_oth == "Mpangwa" | s3q19_tribe_oth == "Mpangu" | ////
+											s3q19_tribe_oth == "MTUMBATU" | s3q19_tribe_oth == "Watumbatu" | s3q19_tribe_oth == "Mtumbatu"
 	
 	gen svy_date = 				startdate
 

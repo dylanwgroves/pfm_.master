@@ -184,12 +184,15 @@ ________________________________________________________________________________
 		la def s3q19_tribe 45 "Wanyamwanga" , modify
 		replace resp_tribe = 46 if s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "Wamuha" | s3q19_tribe_oth == "Mmakua"
 		la def s3q19_tribe 46 "Wamakua" , modify
+		replace resp_tribe = 47 if s3q19_tribe_oth == "MTUMBATU" | s3q19_tribe_oth == "Watumbatu" | s3q19_tribe_oth == "Mtumbatu"
+		la def s3q19_tribe 47 "Watumbatu" , modify
 
 		replace s3q19_tribe_oth = "" if s3q19_tribe_oth == "Wanyasa" | s3q19_tribe_oth == "Wapangwa" | s3q19_tribe_oth == "Mpangwa" | ////
 										s3q19_tribe_oth == "Waha" | s3q19_tribe_oth == "Muha" | s3q19_tribe_oth == "Wasegeju" |s3q19_tribe_oth == "Msegeju" | ////
 										s3q19_tribe_oth == "Mpemba" | s3q19_tribe_oth == "Wapemba"  | s3q19_tribe_oth == "Wapembaa" | s3q19_tribe_oth == "Washirazi" | ////
 										s3q19_tribe_oth == "Wanyamwanga" | s3q19_tribe_oth == "Wamakua" | s3q19_tribe_oth == "Wamuha" | s3q19_tribe_oth == "Mmakua" | ////
-										s3q19_tribe_oth == "MSHIRAZI" | s3q19_tribe_oth == "Mrangi"
+										s3q19_tribe_oth == "MSHIRAZI" | s3q19_tribe_oth == "Mrangi" | ////
+										s3q19_tribe_oth == "MTUMBATU" | s3q19_tribe_oth == "Watumbatu" | s3q19_tribe_oth == "Mtumbatu"
 			
 		
 	gen svy_date = 				startdate
@@ -231,10 +234,11 @@ ________________________________________________________________________________
 
 	rename s3q20_tz_tribe		values_tzovertribe
 		gen values_tzovertribe_dum = (values_tzovertribe == 1 | values_tzovertribe == 2)
-		replace values_tzovertribe_dum = . if values_tzovertribe == -888 | values_tzovertribe == .
+		replace values_tzovertribe_dum = 0 if values_tzovertribe == .d
+		replace values_tzovertribe_dum = . if values_tzovertribe == -888 | values_tzovertribe == .r  | values_tzovertribe == .
 		lab val values_tzovertribe_dum tzovertribe
 	
-	recode values_* (-999 = .d)(-888 = .r)
+	recode values_* (-999 = .)(-888 = .)
 	
 	
 
@@ -332,8 +336,18 @@ rename s5q9				efficacy_speakout
 		gen prej_thermo_out_rel = prej_thermo_muslims if resp_muslim == 0
 			replace prej_thermo_out_rel = prej_thermo_christians if resp_muslim == 1
 		
-		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe != 38
-			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe == 38
+			gen prej_thermo_in_rel = prej_thermo_muslims if resp_muslim == 1
+				replace prej_thermo_in_rel = prej_thermo_christians if resp_muslim == 0
+
+		
+		gen resp_tribe_digo = 1 if resp_tribe == 38				// digo
+			replace resp_tribe_digo = 0 if resp_tribe == 32		// samba
+		
+		gen prej_thermo_out_eth = prej_thermo_digo if resp_tribe_digo == 0
+			replace prej_thermo_out_eth = prej_thermo_sambaa if resp_tribe_digo == 1
+
+			gen prej_thermo_in_eth = prej_thermo_digo if resp_tribe_digo == 1
+				replace prej_thermo_in_eth = prej_thermo_sambaa if resp_tribe_digo == 0
 
 			
 /* Political Prefences __________________________________________________________*/
@@ -615,6 +629,9 @@ rename s5q9				efficacy_speakout
 			lab var `var'_dum "1=prog/bal : Ideally, who is responsible for..."
 		}
 
+	egen ge_hhlabor_index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_kids_dum ge_hhlabor_money_dum)
+	lab var ge_hhlabor_index "Index of 3 HH IDEAL labor questions"
+
 
 /* Forced Marriage _____________________________________________________________*/
 
@@ -654,7 +671,7 @@ rename s5q9				efficacy_speakout
 	rename s15q2b	ptixpart_villmeet
 	rename s15q2c	ptixpart_collact
 		
-	cap rename s15q7 ptixpart_contact_satisfied
+	* rename s15q7 ptixpart_contact_satisfied // dropped after pilot
 
 
 /* Political Knowledge _________________________________________________________*/
@@ -987,6 +1004,8 @@ rename s5q9				efficacy_speakout
 	
 	recode hhlabor* (-999 = .d)(-888 = .r)		
 
+	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
+	lab var hhlabor_index "Index of 3 HH labor questions"
 
 /* HH Decisions _____________________________________________________________________*/
 
@@ -1015,6 +1034,9 @@ rename s5q9				efficacy_speakout
 	
 	recode hhdecision* (-999 = .d)(-888 = .r)		
 
+	egen hhdecision_index = rowtotal(hhdecision_school_dum hhdecision_hhfix_dum)
+		lab var hhdecision_index "Index of two hhdecision questions"
+
 	
 /* Relationships _______________________________________________________________*/
 
@@ -1024,6 +1046,10 @@ rename s5q9				efficacy_speakout
 	rename s12q13_9		couples_talk_none
 
 	rename s12q14		couples_autonomy
+		recode couples_autonomy (4=0) (3=1) (2=2) (1=3)
+		la de couples_autonomy 0 "Always" 1 "Most times" 2 "Sometimes" 3 "Never" , modify
+		la val couples_autonomy couples_autonomy
+ 		lab var couples_autonomy "Partner prohibits you going to maket / friends"
 	
 	recode couples* (-999 = .d)(-888 = .r)		
 
@@ -1032,8 +1058,6 @@ rename s5q9				efficacy_speakout
 /* Parenting ___________________________________________________________________*/
 
 	rename s11q0		parent_hhkids
-
-	rename s11q1		parent_currentevents
 
 	rename s11q3		parent_question
 		recode parent_question (2=1) (1=0)
@@ -1045,6 +1069,9 @@ rename s5q9				efficacy_speakout
 	rename s11q4b		parent_control_punish
 	rename s11q4c		parent_responsive_praise
 	rename s11q4d		parent_responsive_school
+
+	rename s11q1		parent_currentevents
+		gen parent_currentevents_dum = (parent_currentevents > 1)
 
 	rename s11q5_1		parent_talk_news
 	rename s11q5_2		parent_talk_school
@@ -1069,7 +1096,9 @@ rename s5q9				efficacy_speakout
 									radio_listen == 3 | ///
 									radio_listen == 4 | ///
 									radio_listen == 5
-		recode radio_ever (-999 = .d) (-888 = .r)
+		replace radio_ever = 0 if radio_ever == . 
+		replace radio_ever = 0 if -999
+		recode radio_ever (-888 = .r)
 
 	* Favorite Radio Program Types
 	rename s4q5_programs_sm				radio_type	
@@ -1135,12 +1164,12 @@ rename s5q9				efficacy_speakout
 
 /* Assetts _____________________________________________________________________*/
 
-	rename s16q1		assets_radio
-	rename s16q2		assets_radio_num
-		replace assets_radio_num = 0 if assets_radio == 0
-	rename s16q3		assets_radio_self
+	rename s16q1		asset_radio
+	rename s16q2		asset_radio_num
+		replace asset_radio_num = 0 if asset_radio == 0
+	rename s16q3		asset_radio_self
 
-		foreach var of varlist assets_* {
+		foreach var of varlist asset_* {
 			recode `var' (-888 = .r)(-999 = .d)
 		}
 
