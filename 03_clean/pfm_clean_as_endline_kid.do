@@ -609,6 +609,9 @@ ________________________________________________________________________________
 	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
 	lab var hhlabor_index "Index of 3 HH labor questions"
 	
+	egen hhlabor_2index = rowmean( hhlabor_chores_dum  hhlabor_money_dum)
+	lab var hhlabor_2index "Index of 2 HH IDEAL labor questions"
+	
 	/* Core outcome */
 	rename scouples_q2_f		ge_wep
 		replace ge_wep = scouples_q2_m if resp_female == 0
@@ -662,8 +665,8 @@ ________________________________________________________________________________
 										gen(ge_hhlabor_money_dum) label(ge_hhlabor_money_dum)				
 										lab var ge_hhlabor_money_dum "[1=prog/bal] Who is ideally responsible for making money"
 
-	egen ge_hhlabor_index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_money_dum)
-	lab var ge_hhlabor_index "Index of 2 HH IDEAL labor questions"
+	egen ge_hhlabor_2index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_money_dum)
+	lab var ge_hhlabor_2index "Index of 2 HH IDEAL labor questions"
 
 	egen ge_index = rowmean(ge_wep_dum ge_earning ge_school)
 										
@@ -819,7 +822,9 @@ ________________________________________________________________________________
 		lab val as_parentattend as_parentattend 
 		
 	rename s31q3 		as_parentattend_topic									// add check whether the topic is the right one!
+	
 	rename s31q4 		as_parentattend_findout
+		recode as_parentattend_findout (1=1) (2=0) (3 = .)
 
 	recode as_parent* (-999=.d)(-888=.r) (-222=.)
 

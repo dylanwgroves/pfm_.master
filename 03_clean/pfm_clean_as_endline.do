@@ -616,6 +616,8 @@ We are coding that higher is always "more gender equality"
 	egen ge_hhlabor_index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_kids_dum ge_hhlabor_money_dum)
 	lab var ge_hhlabor_index "Index of 3 HH IDEAL labor questions"
 	
+	egen ge_hhlabor_2index = rowmean(ge_hhlabor_chores_dum ge_hhlabor_money_dum)
+	lab var ge_hhlabor_2index "Index of 2 HH IDEAL labor questions"
 		
 /* Forced Marriage _____________________________________________________________*/
 
@@ -1002,6 +1004,9 @@ We are coding that higher is always "more gender equality"
 
 	egen hhlabor_index = rowmean(hhlabor_chores_dum hhlabor_kids_dum hhlabor_money_dum)
 	lab var hhlabor_index "Index of 3 HH labor questions"
+	
+	egen hhlabor_2index = rowmean( hhlabor_chores_dum  hhlabor_money_dum)
+	lab var hhlabor_2index "Index of 2 HH IDEAL labor questions"
 
 
 /* HH Decisions _____________________________________________________________________*/
