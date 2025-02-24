@@ -57,7 +57,7 @@ _______________________________________________________________________________*
 		drop a 
 	
 	* one id name was imputted wrong
-		replace id_resp_uid = "2_101_5_04" if id_resp_uid == "2_101_5_004"
+	*	replace id_resp_uid = "2_101_5_04" if id_resp_uid == "2_101_5_004"
 	
 	* final sort
 	sort id_resp_uid
