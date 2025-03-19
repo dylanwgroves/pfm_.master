@@ -1055,7 +1055,10 @@ _______________________________________________________________________________*
 	*drop treat treat_original treat_rd treat_rd_original 
 	drop treat_pull  treat_rd_pull 
 	
-	
+	/* Converting don't know/refuse/other to extended missing values first */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
 	
 	save "${data}/02_mid_data/pfm_as2_endline_clean_partner.dta" , replace
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear

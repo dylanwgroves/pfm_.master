@@ -1109,6 +1109,11 @@ _______________________________________________________________________________*
 	
 	label drop enum
 	
+	/* Converting don't know/refuse/other to extended missing values first */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
+	
 	save "${data}/02_mid_data/pfm_as2_endline_clean.dta", replace
 
 	

@@ -319,6 +319,13 @@ replace court_court = 2 if court_court == 1
 		foreach var of varlist gbv_friend_m_* gbv_safe_* gbv_resp_* {
 				recode `var' (-999 = .d)(-888 = .r)
 		}
+
+		* Generate same as midline and endline: higher is risky.
+			recode gbv_safe_boda 		(1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_boda)
+			recode gbv_safe_alone 		(1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_travel)
+			recode gbv_safe_boda_norm 	(1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_boda_norm)
+			recode gbv_safe_alone_norm (1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_travel_norm)
+	
 		
 
 /* Environmental Attitudes _____________________________________________________*/

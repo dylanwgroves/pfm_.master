@@ -135,6 +135,9 @@ ________________________________________________________________________________
 	/* AS2 Randomizations -- with RI */
 		merge n:1 village_id using `temp_ri',  gen(merge_rand_as_ri)
 		
+/* Converting don't know/refuse/other to extended missing values first -- here, before RI vars are added to save memory */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)		
 		
 	/* Radio Randomization -- without RI*/
 		
