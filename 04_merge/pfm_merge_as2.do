@@ -212,14 +212,14 @@ ________________________________________________________________________________
 	
 /* Merge Kids Long _____________________________________________________________*/
 		
-	/* Kids -- use the long dta! 
+	/* Kids -- use the long dta!  */
 	use "${data}/02_mid_data/pfm_as2_endline_clean_kids.dta", clear
 	gen k_resp_kidnum = substr(k_resp_id,-1,.)
 	rename resp_id_parent resp_id 
 	rename * k_*	
 	rename k_resp_id id_resp_uid
 	save `temp_end_kid_long'
-	*/
+	
 	
 	/* without RI 
 	
@@ -241,7 +241,7 @@ ________________________________________________________________________________
 		save "${data}/03_final_data/pfm_as2_merged_kids_long.dta", replace
 	*/    
 
-	/* with RI 
+	/* with RI */
 	
 		use "${data}/03_final_data/pfm_as2_merged_withri.dta", replace
 		drop as2_k_*  // drop wide kids
@@ -263,5 +263,5 @@ ________________________________________________________________________________
 		drop as2_treat_* 
 		drop as2_rd_treat_*
 		save "${data}/03_final_data/pfm_as2_merged_kids.dta", replace   
-	*/
+	
 	

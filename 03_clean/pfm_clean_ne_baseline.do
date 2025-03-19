@@ -125,9 +125,17 @@ use "${data}/01_raw_data/03_surveys/pfm_ne_baseline_nopii.dta", clear
 	rename vilyrs_q2_12 resp_yrsvill
 
 	* Know in village
-	rename vilnum_q2_13 resp_villknow
-	gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
-	replace resp_villknow_all = 0 if resp_villknow_all  == .
+	rename vilnum_q2_13 resp_villknow											// 2024: THIS NEEDS TO BE REVERSE CODED! NOW, HIGHER VALUES = LESS PEOPLE KNOWN.
+		gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
+		replace resp_villknow_all = 0 if resp_villknow_all  == .
+
+		gen resp_knowppl = 1 if resp_villknow == 4
+			replace resp_knowppl = 2 if resp_villknow == 3
+			replace resp_knowppl = 3 if resp_villknow == 2
+			replace resp_knowppl = 4 if resp_villknow == 1
+			lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
+			lab val resp_knowppl resp_knowppl
+			lab var resp_knowppl "How many ppl can you name in vill?"
 
 	* Big city
 	rename big_city_q2_14 resp_bigcity

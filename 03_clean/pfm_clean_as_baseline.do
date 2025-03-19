@@ -129,17 +129,17 @@ _______________________________________________________________________________*
 
 	rename s2q12 resp_yrsvill																										
 
-	rename s2q13 resp_villknow													// THIS NEEDS TO BE REVERSE CODED! NOW, HIGHER VALUES = LESS PEOPLE KNOWN.
-	gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
-	replace resp_villknow_all = 0 if resp_villknow_all  == .
+	rename s2q13 resp_villknow													// 2024: THIS NEEDS TO BE REVERSE CODED! NOW, HIGHER VALUES = LESS PEOPLE KNOWN.
+		gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
+		replace resp_villknow_all = 0 if resp_villknow_all  == .
 
-	gen resp_knowppl = 1 if resp_villknow == 4
-		replace resp_knowppl = 2 if resp_villknow == 3
-		replace resp_knowppl = 3 if resp_villknow == 2
-		replace resp_knowppl = 4 if resp_villknow == 1
-		lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
-		lab val resp_knowppl resp_knowppl
-		lab var resp_knowppl "How many ppl can you name in vill?"
+		gen resp_knowppl = 1 if resp_villknow == 4
+			replace resp_knowppl = 2 if resp_villknow == 3
+			replace resp_knowppl = 3 if resp_villknow == 2
+			replace resp_knowppl = 4 if resp_villknow == 1
+			lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
+			lab val resp_knowppl resp_knowppl
+			lab var resp_knowppl "How many ppl can you name in vill?"
 	
 	rename city_rand_txt resp_t_citytype
 	rename s2q14a resp_livecity_dum
@@ -251,8 +251,8 @@ _______________________________________________________________________________*
 		
 	rename s4q3 radio_any												
 	replace radio_any = 1 if radio_listen > 0 & radio_listen < 6	
-	replace radio_any = 0 if radio_any == .
-	replace radio_any = 0 if radio_any == -999
+	replace radio_any = 0 if radio_listen == .
+	*replace radio_any = 0 if radio_any == -999
 
 	* Favorite Topics At Different Times of Day
 	rename s4q6_sm_1 radio_time_morning												

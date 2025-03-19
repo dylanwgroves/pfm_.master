@@ -78,7 +78,12 @@ ________________________________________________________________________________
 	rename ward_pull		id_ward_n
 	rename village_pull		id_village_n
 	gen svy_date = 		 	startdate		
-
+	
+	** cleaning added on Feb 2025 after noticing 1 individual only in those villages, and therefore correcting manually based on name **
+	replace id_resp_uid = "8_103_1_17R" if id_resp_uid == "1_103_1_17R"
+	replace id_resp_uid = "3_211_5_27R" if id_resp_uid == "2_211_5_27R"
+	
+	
 /* Consent _____________________________________________________________________*/
 
 	rename consent consent															// HFC: Consent Check
@@ -106,7 +111,13 @@ ________________________________________________________________________________
 		replace resp_female = 1 if gender_pull == "Female"
 		replace resp_female = 0 if gender_pull == "Male"
 		lab val resp_female yesno 	
-		
+			
+	rename s3q16_school_grade resp_edu 
+		gen resp_standard7  = 1 if resp_edu > 7
+		replace resp_standard7 = 0 if resp_standard7 == .
+		lab var resp_standard7 "At least standard 7 education?"
+		lab val resp_standard7 yesnodkr
+	
 	rename s1q3 	resp_howyoudoing
 		
 	rename s3q3_status 	resp_rltn_status
@@ -130,6 +141,16 @@ ________________________________________________________________________________
 		recode resp_kids (-888 = .r)(-999 = .d)
 
 	rename s3q14_nbr_people 	resp_villknow
+		gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
+		replace resp_villknow_all = 0 if resp_villknow_all  == .
+
+		gen resp_knowppl = 1 if resp_villknow == 4
+			replace resp_knowppl = 2 if resp_villknow == 3
+			replace resp_knowppl = 3 if resp_villknow == 2
+			replace resp_knowppl = 4 if resp_villknow == 1
+			lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
+			lab val resp_knowppl resp_knowppl
+			lab var resp_knowppl "How many ppl can you name in vill?"
 
 	rename s3q15_city_town		resp_urbanvisit
 		recode resp_urbanvisit (-999 = .d)
@@ -640,7 +661,9 @@ ________________________________________________________________________________
 		lab val treat_pi treatment
 		lab var treat_pi "Pluralistic Ignorance Treatment"
 
-	rename s17q6	em_expected
+	*rename s17q6	em_expected
+		recode s17q6 (-999 = . ) (-888 = .) (2 = -1 "Less") (3 = 0 "Same") (1 = 1 "More") , gen(em_expected)
+		label var em_expected "Treat was Less/Same/More than expected"
 
 	rename s17q8a		em_reject_religion
 	rename s17q8b		em_reject_noschool

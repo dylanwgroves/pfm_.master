@@ -54,7 +54,7 @@ ________________________________________________________________________________
 		di "Globals have already been set."
 	}
 	
-/* Part 1: Import ______________________________________________________________*/
+/* Part 1: Import ______________________________________________________________
 
 * Note: This can only be run by authors with Boxcryptor Access
 
@@ -72,21 +72,24 @@ ________________________________________________________________________________
 		do "${code}/pfm_.master/01_import/pfm_import_as_endline_partner.do" 				// Endline (Partner)
 		do "${code}/pfm_.master/01_import/pfm_import_as_endline_friend.do" 					// Endline (Friend)
 		do "${code}/pfm_.master/01_import/pfm_import_as_endline_kid.do" 					// Endline (Kid)
+	
 
 	/* Natural Experiment */
 	
 		do "${code}/pfm_.master/01_import/pfm_import_ne_sample.do" 							// Sample
 		do "${code}/pfm_.master/01_import/pfm_import_ne_baseline.do" 						// Baseline
 		do "${code}/pfm_.master/01_import/pfm_import_ne_endline.do" 						// Endline
-
+	
+	
 	/* Village Master */
 	
 		do "${code}/pfm_.master/01_import/pfm_import_villagemaster.do"  					// Tanzania census of all villages
 
-	/* Village Leaders */
+	/* Village Leaders */	
 		
 		do "${code}/pfm_.master/01_import/pfm_import_leader.do" 							// Leader survey
-		
+	
+	
 	/* Audio Screening 2 */
 	
 																							// Sampling
@@ -96,18 +99,15 @@ ________________________________________________________________________________
 		do "${code}/pfm_.master/01_import/pfm_import_as2_endline_partner.do" 				// Endline (Partner)
 		do "${code}/pfm_.master/01_import/pfm_import_as2_endline_kid.do" 					// Endline (Kid)
 
-	/* Community Media in Pangani */
+	/* Community Media in Pangani 	*/
 																						
 		do "${code}/pfm_.master/01_import/pfm_import_cm_1_2020.do" 						// First Wave 	2020
 		do "${code}/pfm_.master/01_import/pfm_import_cm_2_2021.do" 						// Second Wave 	2021
 		*do "${code}/pfm_.master/01_import/pfm_import_cm_3_2023.do" 						// Third Wave 	2023
 
-		
+*/	
 		
 /* Part 2: Randomization ________________________________________________________
-Note that only radio distribution and audio screening are randomized, the natural
-experiment was generated using GenMatch											*/
-
 
 	/* Radio Distribution */
 		
@@ -120,9 +120,10 @@ experiment was generated using GenMatch											*/
 
 		do "${code}/pfm_.master/02_randomization/pfm_randomization_as.do" 					// Randomization - Audio screening 1
 	
+	
 	/* Natural Experiment */
 	
-		* No Randomization for Natural Experiment 								
+		* No Randomization for Natural Experiment: it was instead generated using GenMatch								
 
 	/* Audio Screening 2 */
 	
@@ -132,7 +133,7 @@ experiment was generated using GenMatch											*/
 	
 		* No Randomization for Community Media
 
-
+*/
 
 /* Part 2: Cleaning ____________________________________________________________
 Tasks: Clean, and generate variables 
@@ -143,7 +144,7 @@ Tasks: Clean, and generate variables
 	
 		do "${code}/pfm_.master/03_clean/pfm_clean_rd_distribution_as.do" 					// Distribution - Audio Screening
 		do "${code}/pfm_.master/03_clean/pfm_clean_rd_distribution_ne.do" 					// Distribution - Natural Experiment
-
+	
 		
 	/* Audio Screening */
 
@@ -153,13 +154,14 @@ Tasks: Clean, and generate variables
 		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_partner.do"					// Endline (Partner)
 		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_friend.do"					// Endline (Friend)		
 		do "${code}/pfm_.master/03_clean/pfm_clean_as_endline_kid.do"						// Endline (Kid)
-
+	
 					
 	/* Natural Experiment */
 	
 		do "${code}/pfm_.master/03_clean/pfm_clean_ne_baseline.do" 							// Baseline
 		do "${code}/pfm_.master/03_clean/pfm_clean_ne_endline.do" 							// Endline
-		
+	
+	
 	/* Audio Screening 2 */
 
 		do "${code}/pfm_.master/03_clean/pfm_clean_as2_baseline.do" 						// Baseline	
