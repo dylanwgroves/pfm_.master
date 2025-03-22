@@ -69,6 +69,12 @@ map_areas_as1as2 <- map_main +
 ggsave("Dropbox/Apps/Overleaf/BM - Socialization/00_tabfig/pfm_as1as2_map.png", 
        plot = map_areas_as1as2, width = 12, height = 8, units = "in")
 
+## AS2
+map_areas_as2 <- map_main + 
+  geom_polygon(data=as2_sample, aes(x=long, y=lat, group=group), fill=col_as2, size=.2, color= col_as2, alpha=0.5)
+ggsave("Dropbox/Apps/Overleaf/Tanzania - Audio Screening (bodabora)/02_Figures/pfm_as2_map.png", 
+       plot = map_areas_as2, width = 12, height = 8, units = "in")
+
 # Map Socialization ---------------------------------------------------------------------
 map_areas_socialization <- map_main + 
   geom_polygon(data=as_sample, aes(x=long, y=lat, group=group), fill=col_as, size=.2, color= col_as, alpha=0.5) +
