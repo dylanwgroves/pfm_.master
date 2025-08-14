@@ -1157,6 +1157,11 @@ We are coding that higher is always "more gender equality"
 
 	** Group Listening
 	rename s4q7					radio_group
+		replace radio_group = radio_group - 1 
+		label de radio_group 0	"Never" 1 "Sometimes" 2	"Often"  3 "Always" , modify
+		label val radio_group radio_group
+
+
 	rename s4q8					radio_group_who
 
 	** Reports

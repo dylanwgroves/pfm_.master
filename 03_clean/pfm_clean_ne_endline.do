@@ -828,7 +828,7 @@ ________________________________________________________________________________
 		lab var ipv_report_femleader "How respond to cousin being absued by husband?"
 		
 	egen ipv_report_index = rowmean(ipv_report_police ipv_report_vc ipv_report_parents ipv_report_femleader)
-
+	
 	drop s9q4 s9q5	// We dropped these variables after one day to save sapce									
 
 
