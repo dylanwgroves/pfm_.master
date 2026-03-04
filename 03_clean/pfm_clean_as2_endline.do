@@ -899,9 +899,9 @@ _______________________________________________________________________________*
 *		}
 		
 
-/* Willingness to Pay equivalent conjoint ______________________________________*/
-
 		gen resp_coupled = (resp_marital_status == 1 | resp_marital_status == 2 | resp_marital_status == 3)
+/* Willingness to Pay equivalent conjoint ______________________________________
+
 
 *
 		* BM:  need to clean let her go!!!
@@ -946,7 +946,7 @@ _______________________________________________________________________________*
 		gen wtp_safety_b1 = rand_safety2_txt 
 		gen wtp_safety_a2 = rand_safety3_txt 
 		gen wtp_safety_b2 = rand_safety4_txt 
-		
+*/		
 	/* preserve	
 	preserve		
 		reshape long 	wtp_choice_a wtp_choice_b ///
