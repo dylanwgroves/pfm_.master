@@ -118,13 +118,27 @@ use  "${data}/01_raw_data/03_surveys/pfm_rawnopii_as_endline_friend.dta", clear
 		destring resp_yrsinvill, replace
 		recode resp_yrsinvill (-888 = .r)(-999 = .d)
 	
-	rename s3q6				resp_villknow
+	rename s3q6				resp_villknow										// 2025: THIS NEEDS TO BE REVERSE CODED! NOW, HIGHER VALUES = LESS PEOPLE KNOWN.
+		gen resp_villknow_all  = 1 if resp_villknow == 1 | resp_villknow == 2
+		replace resp_villknow_all = 0 if resp_villknow_all  == .
+
+		gen resp_knowppl = 1 if resp_villknow == 4
+			replace resp_knowppl = 2 if resp_villknow == 3
+			replace resp_knowppl = 3 if resp_villknow == 2
+			replace resp_knowppl = 4 if resp_villknow == 1
+			lab def resp_knowppl 1 "Not many" 2 "Some" 3 "Almost all" 4 "Everyone" , modify
+			lab val resp_knowppl resp_knowppl
+			lab var resp_knowppl "How many ppl can you name in vill?"
 	
 	rename s3q7				resp_evercity
 			
 	rename s3q8				resp_urbanvisit
 	
 	rename s3q9				resp_edu
+
+		gen resp_standard7  =  (resp_edu > 7)
+		lab var resp_standard7 "At least standard 7 education?"
+		lab val resp_standard7 yesnodkr
 	
 	rename s3q10			resp_readandwrite
 		replace resp_readandwrite = 2 if resp_edu > 7
@@ -420,6 +434,9 @@ rename s8q5c		fm_friend_reject
 		lab val em_norm_reject_dum reject
 		lab var em_norm_reject_dum "(Dummy) Communtiy rejects early marriage"
 
+	rename s17q6 em_expected 	
+		
+		
 	rename s17q8a		em_reject_religion
 	rename s17q8d		em_reject_money
 
@@ -523,8 +540,10 @@ rename s8q5c		fm_friend_reject
 	
 /* Political Interest and Participation _________________________________________*/
 
-	** Generate Interest
-	rename s15q1	ptixpart_interest
+	/* Generate Interest */
+	rename s15q1	ptixpart_interest		
+		recode ptixpart_interest (1=3)(2=2)(3=1)(4=0)		// updated on Aug 2025 to be in line with main respondent
+		lab val ptixpart_interest interest
 
 	** Participation Activities														
 	rename s15q2a	ptixpart_vote
@@ -835,6 +854,7 @@ rename s8q5c		fm_friend_reject
 									radio_listen == 3 | ///
 									radio_listen == 4 | ///
 									radio_listen == 5
+		replace radio_ever = 0 if radio_listen == .
 		recode radio_ever (-999 = .d)(-888 = .r)(-222 = .o)
 
 	* Favorite Radio Program Types
@@ -890,6 +910,9 @@ rename s8q5c		fm_friend_reject
 
 	** Group Listening
 	rename s4q7					radio_group	
+		replace radio_group = radio_group - 1 
+		label de radio_group 0	"Never" 1 "Sometimes" 2	"Often"  3 "Always" , modify
+		label val radio_group radio_group
 	rename s4q8					radio_group_who
 
 	** Reports

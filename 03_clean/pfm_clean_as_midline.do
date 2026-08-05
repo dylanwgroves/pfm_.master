@@ -72,6 +72,10 @@
 /* Respondent Info _____________________________________________________________*/
 
 	rename s2q1 resp_gender
+	
+		 replace pre_resp_gender = "1" if pre_resp_gender == "" & resp_gender == 1
+		 gen resp_female = (pre_resp_gender == "2")
+	
 	rename s2q2 resp_howudoin
 	rename s2q4 resp_villageleader
 

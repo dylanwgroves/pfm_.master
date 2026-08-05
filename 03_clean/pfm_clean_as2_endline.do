@@ -30,8 +30,8 @@ _______________________________________________________________________________*
 
 /* ID information  _________________________________________________________*/
 
-	replace resp_id = "2_101_5_01" if resp_id == "2_101_5_001"
-	replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
+	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
+	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
 
 	drop resp_id_pull id id_re 
 	
@@ -162,7 +162,7 @@ _______________________________________________________________________________*
 	tab resp_visitcity_transport, m												
 	tab resp_visitcity_transport_oth
 
-		rename resp_visitcity_transport gbv_howvisitcity 
+		rename resp_visitcity_transport 	gbv_howvisitcity 
 		rename resp_visitcity_transport_oth gbv_howvisitcity_oth
 
 	tab resp_boda_safe, m
@@ -899,9 +899,9 @@ _______________________________________________________________________________*
 *		}
 		
 
-/* Willingness to Pay equivalent conjoint ______________________________________*/
-
 		gen resp_coupled = (resp_marital_status == 1 | resp_marital_status == 2 | resp_marital_status == 3)
+/* Willingness to Pay equivalent conjoint ______________________________________
+
 
 *
 		* BM:  need to clean let her go!!!
@@ -946,7 +946,7 @@ _______________________________________________________________________________*
 		gen wtp_safety_b1 = rand_safety2_txt 
 		gen wtp_safety_a2 = rand_safety3_txt 
 		gen wtp_safety_b2 = rand_safety4_txt 
-		
+*/		
 	/* preserve	
 	preserve		
 		reshape long 	wtp_choice_a wtp_choice_b ///
@@ -1108,6 +1108,11 @@ _______________________________________________________________________________*
 	drop treat treat_rd
 	
 	label drop enum
+	
+	/* Converting don't know/refuse/other to extended missing values first */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
 	
 	save "${data}/02_mid_data/pfm_as2_endline_clean.dta", replace
 

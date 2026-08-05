@@ -15,7 +15,7 @@ rename q1_2_geopointlatitude latitude
 rename q1_2_geopointlongitude longitude
 save "/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/wellspring_01_master/01_data/02_mid_data/ne_sample_villages.dta", replace
 
-use "/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening/01 Data/pfm2_randomized_vills.dta", clear
+use "/Users/BeatriceMontano/Dropbox/Wellspring Tanzania Papers/Wellspring Tanzania - Audio Screening (hiv midline)/01 Data/pfm2_randomized_vills.dta", clear
 keep district_c district_n ward_c ward_n village_n village_c radius dist_road dist_pfm dist_town area region_n region_c length latitude longitude dist_road_cent dist_coast vill_dist_pfm vill_dist_road vill_dist_town villcent_lat villcent_long treat 
 order region_n region_c district_c district_n ward_c ward_n village_n village_c length area treat  latitude longitude radius dist_road dist_pfm dist_town dist_road_cent dist_coast vill_dist_pfm vill_dist_road vill_dist_town villcent_lat villcent_long
 rename length shape_leng

@@ -27,8 +27,8 @@ _______________________________________________________________________________*
 	
 /* ID information  _________________________________________________________*/
 
-*	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
-*	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
+	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
+	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
 
 	gen id_village_uid 			= substr(resp_id, 1, (strlen(resp_id)-4))
 	gen id_ward_uid 			= substr(id_village_uid, 1, (strlen(id_village_uid)-2))
@@ -555,6 +555,10 @@ gen enviro_elect = s3q4b_1
 	order id_ward_uid id_village_uid resp_id region_code  district_code  ward_code  village_code  id_resp_c  enum  
 	
 	drop id_re 
+	
+	/* Converting don't know/refuse/other to extended missing values first */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 	save "${data}/02_mid_data/pfm_as2_midline_clean.dta", replace
 											

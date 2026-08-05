@@ -46,16 +46,12 @@ ________________________________________________________________________________
 
 /* Pulled Data / Confirmations _________________________________________________*/
 
-	destring resp_female, replace
-	lab def resp_female 0 "Male" 1 "Female" , modify
-	lab val resp_female resp_female 
-	
-		* check that resp_female was correctly replaced if gender was not confirmed from pull
-		*rename gender_correction correction_gender
-		*gen check_gender = (gender_confirm == 0)
-			*tab resp_female correction_gender if check_gender == 1 
-		*drop check_gender
-	
+	gen  resp_female_str = gender_pull
+	replace resp_female_str = "1" if enum_gender == 1 & gender_pull == ""
+	replace resp_female_str = "0" if enum_gender == 0 & gender_pull == "" 
+	drop resp_female gender_pull gender_pull_txt enum_gender enum_gender_txt
+	destring resp_female_str , gen(resp_female)
+
 	*tab info_confirm														
 
 	rename info_correction_1	correction_name
@@ -636,7 +632,7 @@ ________________________________________________________________________________
 		
 		*/
 		
-	/*  GBV Indeces */
+	/*  GBV Indeces 
 	
 		rename gbv_boda_risky_* gbv_risky_boda_* 
 		egen gbv_risk_index = rowmean(gbv_risky_boda_short ///
@@ -650,7 +646,8 @@ ________________________________________________________________________________
 		egen gbv_prior_index = rowmean(gbv_elect ptixpref1_rank_gbv_short)
 	tab gbv_prior_index
 			
-			
+	*/
+	
 /* GBV for Boda Drivers ________________________________________________________*/
 	
 

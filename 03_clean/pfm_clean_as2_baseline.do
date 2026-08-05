@@ -26,8 +26,8 @@ _______________________________________________________________________________*
 
 /* Clean IDs ___________________________________________________________________*/
 
-*	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
-*	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
+	replace resp_id = "2_101_5_001" if resp_id == "2_101_5_01"
+	replace resp_id = "2_101_5_004" if resp_id == "2_101_5_04"
 	
 	replace ward_code = "91" if resp_id == "2_91_7_062"
 	replace ward_code = "91" if resp_id == "2_91_7_065"
@@ -319,6 +319,13 @@ replace court_court = 2 if court_court == 1
 		foreach var of varlist gbv_friend_m_* gbv_safe_* gbv_resp_* {
 				recode `var' (-999 = .d)(-888 = .r)
 		}
+
+		* Generate same as midline and endline: higher is risky.
+			recode gbv_safe_boda 		(1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_boda)
+			recode gbv_safe_alone 		(1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_travel)
+			recode gbv_safe_boda_norm 	(1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_boda_norm)
+			recode gbv_safe_alone_norm (1 = 0 "Safe")(0 = 1 "Risky"), gen(gbv_risky_travel_norm)
+	
 		
 
 /* Environmental Attitudes _____________________________________________________*/
@@ -629,6 +636,11 @@ forval i = 1/7 {
 	order id_ward_uid id_village_uid resp_id region_code  district_code  ward_code  village_code  id_resp_c  enum  
 	
 	drop id id_re 
+
+/* Converting don't know/refuse/other to extended missing values _______________*/
+
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 	
 	save "${data}/02_mid_data/pfm_as2_baseline_clean.dta", replace
 											

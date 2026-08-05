@@ -69,12 +69,23 @@ _______________________________________________________________________________*
 	la de treat 0 "env" 1 "gbv"
 	la val treat treat
 
-
 /*
 	la de treat_rd 0 "flashlight" 1 "radio"
 	la val treat_rd treat_rd
 */
 
+/* PI experiment  _____________________________________________________________*/
+
+	fre rand_pi
+	replace rand_pi = "comm" if rand_pi == "parent"
+	
+	destring emreject_comm_pull, gen(rand_pi_value_num)
+	destring emcount_comm_pull,  gen(rand_pi_value_den)
+	replace rand_pi_value_num = 9 	if startdate <= date("7aug2023", "DMY")
+	replace rand_pi_value_den = 10 	if startdate <= date("7aug2023", "DMY")
+	gen  rand_pi_value =	rand_pi_value_num/rand_pi_value_den
+
+	
 /* Converting don't know/refuse/other to extended missing values _______________*/
 
 	qui ds, has(type numeric)
@@ -92,7 +103,7 @@ _______________________________________________________________________________*
 /* Pulled Data / Confirmations _________________________________________________*/
 
 	* IDs 
-	replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
+	*replace resp_id = "2_101_5_04" if resp_id == "2_101_5_004"
 
 	
 	destring resp_female, replace
@@ -375,28 +386,31 @@ _______________________________________________________________________________*
 	}
 	
 
-/* Forced marriage _____________________________________________________________*/
 
-	fre rand_pi
+	
+	
+/* Forced marriage _____________________________________________________________*/
+	
 	tab gender_fm, m
+		
+	recode gender_fm (1 = 0 "Accept FM") (2 = 1 "Reject FM"), gen(fm_reject) 											// recoded on June 18, 2024!
 	
-	tab gender_fm rand_pi, m
-	
-	recode gender_fm (2 = 0 "Accept FM") (1 = 1 "Reject FM"), gen(fm_reject)
-	
-	recode gender_fm_branched (2 = 0 "Strong accept FM")(1 = 1 "Accept FM")(3 = 2 "Reject FM")(4 = 3 "Strong reject FM"), gen(ge_fm_long)
+	recode gender_fm_branched (2 = 0 "Strong accept FM") (1 = 1 "Accept FM") (3 = 2 "Reject FM") (4 = 3 "Strong reject FM"), gen(ge_fm_long)
 		replace ge_fm_long = 3 if gender_fm_down == 2
 		replace ge_fm_long = 2 if gender_fm_down == 1
 		
 	gen ge_fm_norm_parent = gender_fm_parent
 	gen ge_fm_norm_comm = gender_fm_norm
 	
-	recode gender_earning 		 (2 = 0 "PRO Women$$>Man") (1 = 1 "AGAINST Women$$>Man"), gen(ge_earning)
-	recode gender_earning_parent (2 = 0 "PRO Women$$>Man") (1 = 1 "AGAINST Women$$>Man"), gen(ge_earning_norm_parent)
-	recode ge_school (2 = 0 "Equal school") (1 = 1 "Boys more school"), gen(ge_school_dum)
+/* Gender norms ________________________________________________________________*/
+
+	recode gender_earning 		 (2 = 1 "PRO Women$$>Man") (1 = 0 "AGAINST Women$$>Man"), gen(ge_earning) 				// recoded on June 18, 2024!
+	recode gender_earning_parent (2 = 1 "PRO Women$$>Man") (1 = 0 "AGAINST Women$$>Man"), gen(ge_earning_norm_parent)	// recoded on June 18, 2024!
+	
+	recode ge_school 			 (2 = 1 "Equal school") (1 = 0 "Boys more school"), gen(ge_school_dum)					// recoded on June 18, 2024!
 			
 	rename parenting_helicopter sb_helicopter
-	recode sb_helicopter (1 = 1 "Helicopter good")(2 = 0 "Helicopter bad"), gen(parenting_helicopter)
+	recode sb_helicopter (1 = 0 "Helicopter good")(2 = 1 "Helicopter bad"), gen(parenting_helicopter)					// recoded on June 18, 2024!
 	
 		
 
@@ -539,7 +553,17 @@ _______________________________________________________________________________*
 	
 	
 /* Save ________________________________________________________________________*/	
+	
+	replace k_resp_id = "8_181_1_027_k1" if k_resp_id == "8_181_1_027_k2"
+	replace k_resp_id = "8_181_1_027_k2" if k_resp_id == "8_181_1_027_k3"
+	replace k_resp_id = "8_181_1_061_k1" if k_resp_id == "8_181_1_061_k2"
 
+	
+	/* Converting don't know/refuse/other to extended missing values first */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
+
+	
 	save "${data}/02_mid_data/pfm_as2_endline_clean_kids.dta" , replace
 	*use "${data_endline}/pfm5_endline_cleaned_field_research.dta" , clear
 
@@ -561,6 +585,10 @@ _______________________________________________________________________________*
 
 					 
 /* Export Wide __________________________________________________________________*/
+
+	/* Converting don't know/refuse/other to extended missing values first */
+	qui ds, has(type numeric)
+	recode `r(varlist)' (-888 = .r) (-999 = .d) (-222 = .o) (-666 = .o)
 
 	save "${data}/02_mid_data/pfm_as_endline_clean_kid_wide.dta", replace
 	
