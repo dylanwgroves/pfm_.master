@@ -39,16 +39,17 @@ as2_sample <- readOGR(dsn = "X:/Dropbox/Wellspring Tanzania Papers/wellspring_01
 
 # Set colors ---------------------------------------------------------------
 
-col_uzi <- "#007AC1"
-col_as <- "#002D62"
-col_as2 <- "#EF3B24"
-col_ne <- "#FFC72C" 
+col_ne <- "#98002E" 
+col_as <- "#98002E"
+col_as2 <- "darkblue"
+col_uzi <- "darkblue"
+
 
 # Map ---------------------------------------------------------------------
 ggmap::register_google(key = "AIzaSyAzh5EMvmLELIQXvFJhbmD9pCD4vM_XPXA")
 
-map_main <- ggmap(get_googlemap(center = c(lon = 38.8482, lat = -5.2),
-                                zoom = 9, scale = 2, color = "bw")) +
+map_main <- ggmap(get_googlemap(center = c(lon = 34.8482, lat = -5.2),
+                                zoom = 6, scale = 2, color = "bw")) +
   theme(axis.text.x = element_blank(),
         axis.text.y = element_blank(),
         axis.ticks = element_blank())
@@ -60,4 +61,10 @@ map_areas <- map_main +
   geom_polygon(data=as_sample, aes(x=long, y=lat, group=group), fill=col_as, size=.2, color= col_as, alpha=0.5) +
   geom_polygon(data=as2_sample, aes(x=long, y=lat, group=group), fill=col_as2, size=.2, color= col_as2, alpha=0.5)
   
+map_areas
 
+ggsave("X:/Dropbox/Apps/Overleaf/Tanzania - Radio Distribution/Figures/rd_map.pdf", 
+       plot = map_areas, 
+       width = 10, 
+       height = 10, 
+       units = "in")
